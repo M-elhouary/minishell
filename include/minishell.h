@@ -5,7 +5,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <libft.h>
 #include <readline/readline.h>
+#include <readline/history.h>
 
 
 typedef enum e_token_type

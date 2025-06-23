@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 14:57:18 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/06/23 20:17:21 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/06/23 20:39:31 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 
 
-t_token *new_tok(char *value, t_token *type)
+t_token *new_tok(char *value, t_token_type type)
 {
         
     t_token *new_token;
@@ -29,7 +29,7 @@ t_token *new_tok(char *value, t_token *type)
     return new_token;
     
 }
-void add_tok(t_token **head, t_token *new)
+void add_tok(t_token **head, t_token  *new)
 {
     t_token *tmp;
 
@@ -83,7 +83,7 @@ t_token *tokenze(char *line)
         else
         {
             start = i;
-            while (line[i] && !is_space(line[i]) && line[i] != '>' && line[i] != '<', line[i] != '|')
+            while (line[i] && !is_space(line[i]) && line[i] != '>' && line[i] != '<' && line[i] != '|')
                 i++;
             word = ft_strndup(line + i, i - start);
             add_tok(&tokinzes, new_tok(ft_strdup(word), WORD));
@@ -92,7 +92,3 @@ t_token *tokenze(char *line)
     return tokinzes;
 }
 
-int main()
-{
-    
-}

@@ -1,26 +1,26 @@
-NAME        = minishell
-CC          = cc
-CFLAGS      = -Wall -Wextra -Werror -Iinclude -Ilibft
+NAME = minishell$
+CC = cc
+CFLAGS = -Wall -Wextra -Werror -Iinclude -Ilibft
 
 # Source and Object Files
 
-SRCS        = src/parser/tokeniz.c \
-              src/parser/utils.c \
-              src/main.c
+SRCS = src/parser/tokeniz.c\
+    src/parser/utiles.c\
+    src/main.c
 
-OBJS        = $(SRCS:.c=.o)
+OBJS = $(SRCS:.c=.o)
 
 # Libft
 
-LIBFT_DIR   = libft
-LIBFT_A     = $(LIBFT_DIR)/libft.a
+LIBFT_DIR = libft
+LIBFT_A = $(LIBFT_DIR)/libft.a
 
 # Rules
 
 all: $(NAME)
 
 $(NAME): $(LIBFT_A) $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(LIBFT_A) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT_A) -lreadline -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
