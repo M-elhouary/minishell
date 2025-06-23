@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 14:57:18 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/06/23 16:30:26 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/06/23 20:17:21 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,28 +57,28 @@ t_token *tokenze(char *line)
             i++;
         else if(line[i] == '|')
             {
-                add_tok(&tokinzes,new_tok(ft_strdup('|'), PIPE));
+                add_tok(&tokinzes,new_tok(ft_strdup("|"), PIPE));
                 i++;
             }
         else if(line[i] == '<')
             {
-                add_tok(&tokinzes, new_tok(ft_strdup('<'), REDIR_IN));
+                add_tok(&tokinzes, new_tok(ft_strdup("<"), REDIR_IN));
                 i++;
             }
         else if(line[i] == '>')
             {
-                 add_tok(&tokinzes, new_tok(ft_strdup('>'), REDIR_OUT));
+                 add_tok(&tokinzes, new_tok(ft_strdup(">"), REDIR_OUT));
                 i++;
             }
         else if(line[i] == '>' && line[i+1] == '>')
             {
                  add_tok(&tokinzes, new_tok(ft_strdup(">>"), REDIR_APPEND));
-                i++;
+                i += 2;
             }
         else if(line[i] == '<' && line[i+1] == '<')
             {
                  add_tok(&tokinzes, new_tok(ft_strdup("<<"), HEREDOC));
-                i++;
+                i += 2;
             }
         else
         {

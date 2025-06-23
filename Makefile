@@ -1,47 +1,41 @@
-
 NAME        = minishell
 CC          = cc
 CFLAGS      = -Wall -Wextra -Werror -Iinclude -Ilibft
 
+# Source and Object Files
 
-#Source and Object Files
+SRCS        = src/parser/tokeniz.c \
+              src/parser/utils.c \
+              src/main.c
 
-SRC_DIR     = src
-OBJ_DIR     = obj
+OBJS        = $(SRCS:.c=.o)
 
-SRCS        = $(wildcard $(SRC_DIR)/*.c) \
-              $(wildcard $(SRC_DIR)/*/*.c)
+# Libft
 
-OBJS        = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-
-#Libft
 LIBFT_DIR   = libft
 LIBFT_A     = $(LIBFT_DIR)/libft.a
 
-#Rules
+# Rules
 
 all: $(NAME)
 
 $(NAME): $(LIBFT_A) $(OBJS)
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT_A) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT_A) -o $(NAME)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -c $< -o $@
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(LIBFT_A):
 	@make -C $(LIBFT_DIR)
 
 clean:
-	@rm -rf $(OBJ_DIR)
+	rm -f $(OBJS)
 	@make -C $(LIBFT_DIR) clean
 
 fclean: clean
-	@rm -f $(NAME)
+	rm -f $(NAME)
 	@make -C $(LIBFT_DIR) fclean
 
 re: fclean all
 
 .PHONY: all clean fclean re
-
-
