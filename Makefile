@@ -1,4 +1,4 @@
-NAME = minishell$
+NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -Iinclude -Ilibft
 

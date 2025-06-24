@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 16:04:05 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/06/23 16:10:15 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/06/24 13:30:07 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,9 @@ char *ft_strndup(const char *s, size_t n)
 
     if (!s)
         return NULL;
-
     dup = malloc(n + 1);
     if (!dup)
         return NULL;
-
     i = 0;
     while (i < n && s[i])
     {
@@ -33,7 +31,6 @@ char *ft_strndup(const char *s, size_t n)
         i++;
     }
     dup[i] = '\0';
-
     return dup;
 }
 int is_space(char c)
