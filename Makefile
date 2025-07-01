@@ -1,11 +1,13 @@
 NAME = minishell
-CC = cc
+CC = cc -g
 CFLAGS = -Wall -Wextra -Werror -Iinclude -Ilibft
 
 # Source and Object Files
 
 SRCS = src/parser/tokeniz.c\
     src/parser/utiles.c\
+	src/parser/tokenz_help.c\
+	src/parser/syntax_error.c\
     src/main.c
 
 OBJS = $(SRCS:.c=.o)

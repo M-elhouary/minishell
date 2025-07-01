@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 16:04:05 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/06/24 13:30:07 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/06/26 16:55:57 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,20 @@ char *ft_strndup(const char *s, size_t n)
 int is_space(char c)
 {
     return ((c >= 9 && c <= 13 ) || c == 32);
+}
+
+
+int free_token(t_token *token)
+{
+    t_token *tmp;
+
+    while(token)
+    {
+        tmp = token;
+        token = token->next;
+        if(tmp->value)
+            free(tmp->value);
+        free(tmp);
+    }
+    return (1);
 }

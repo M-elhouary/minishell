@@ -27,24 +27,17 @@ int main(void)
     char *line;
     t_token *tokens;
 
-    while (1)
-    {
+    
+    
+    do{
         line = readline("minishell$ ");
+        add_history(line);
         if (!line)
             break;
-
-        printf("[DEBUG] Input: %s\n", line);
-
         tokens = tokenze(line);
-        if (!tokens)
-        {
-            printf("[DEBUG] tokenze() returned NULL!\n");
-            continue;
-        }
-
         print_tokens(tokens); // This might crash if token is invalid
         free(line);
-    }
+    }while (1);
     return 0;
 
 //    char *line = "'unclosed";

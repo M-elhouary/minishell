@@ -40,6 +40,9 @@ typedef struct s_command
 
 
 char *ft_strndup(const char *s, size_t n);
+t_token *handl_quote(char *line, int *i);
+int check_syntax_token(t_token *token);
+int free_token(t_token *token);
 int is_space(char c);
 t_token *tokenze(char *line);
 #endif
