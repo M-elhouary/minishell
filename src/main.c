@@ -22,8 +22,11 @@ void print_tokens(t_token *token)
     }
 }
 
-int main(void)
+int main(int ac, char **av, char **env)
 {
+
+    (void)ac;
+    (void)av;
     char *line;
     t_token *tokens;
 
@@ -34,7 +37,7 @@ int main(void)
         add_history(line);
         if (!line)
             break;
-        tokens = tokenze(line);
+        tokens = tokenze(line, env);
         print_tokens(tokens); // This might crash if token is invalid
         free(line);
     }while (1);

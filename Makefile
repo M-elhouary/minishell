@@ -8,6 +8,7 @@ SRCS = src/parser/tokeniz.c\
     src/parser/utiles.c\
 	src/parser/tokenz_help.c\
 	src/parser/syntax_error.c\
+	src/parser/expand.c\
     src/main.c
 
 OBJS = $(SRCS:.c=.o)

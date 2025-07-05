@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 14:57:18 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/01 14:52:48 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/07/05 23:53:20 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,45 +39,17 @@ void	add_tok(t_token **head, t_token *new)
 	}
 }
 
-char *extract_word(const char *line, int *i)
-{
-    int start = *i;
-    int len = 0;
-    char quote = 0;
-    char *word = NULL;
 
 
-    while (line[*i] && !is_space(line[*i]) && line[*i] != '>' && line[*i] != '<' && line[*i] != '|')
-    {
-        if (line[*i] == '\'' || line[*i] == '"')
-        {
-            quote = line[(*i)++];
-            while (line[*i] && line[*i] != quote)
-                (*i)++;
-            if (line[*i] == quote)
-                (*i)++;
-            else
-                return (NULL); // Unclosed quote
-        }
-        else
-            (*i)++;
-    }
-    len = *i - start;
-    word = (char *)malloc(len + 1);
-    if (!word)
-        return (NULL);
-    strncpy(word, line + start, len);
-    word[len] = '\0';
-    return (word);
-}
 
-
-t_token	*tokenze(char *line)
+t_token	*tokenze(char *line, char **env)
 {
 	int		i;
 	char	*word;
 	t_token	*tokinzes;
 	t_token	*quote_token;
+	t_token *tmp;
+	char *value;
 
 	tokinzes = NULL;
 	quote_token = NULL;
@@ -90,7 +62,6 @@ t_token	*tokenze(char *line)
 			i++;
 			while (is_space(line[i]))
 				i++;
-			printf("%d\n", i);
 			quote_token = handl_quote(line, &i);
 			if (!quote_token)
 				return (NULL);
@@ -130,7 +101,7 @@ t_token	*tokenze(char *line)
                     word = extract_word(line, &i);
                     if (!word)
                     {
-                        free_token(tokinzes); // implement this to free your token list
+                        free_token(tokinzes);
                         return (NULL);
                     }
 				    add_tok(&tokinzes, new_tok(word, WORD));
@@ -139,5 +110,27 @@ t_token	*tokenze(char *line)
 	}
 	if (!check_syntax_token(tokinzes))
 		return (NULL);
+	tmp = tokinzes;
+	while(tmp)
+	{
+		if(tmp->type == WORD && ft_strchr(tmp->value, '$'))
+		{
+			
+			value = expand_variables(tmp->value, env);
+			if(value)
+			{
+				
+				free(tmp->value);
+				tmp->value = ft_strdup(value);
+			}
+			else
+			{
+				free(tmp->value);
+				tmp->value = ft_strdup("");
+			}
+		}
+		tmp = tmp->next;
+		
+	}
 	return (tokinzes);
 }
