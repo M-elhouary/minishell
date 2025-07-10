@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 16:04:05 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/04 23:05:00 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/07/06 22:27:51 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char *ft_strndup(const char *s, size_t n)
     }
     dup[i] = '\0';
     return dup;
-}
+}   
 int is_space(char c)
 {
     return ((c >= 9 && c <= 13 ) || c == 32);

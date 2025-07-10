@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 14:57:18 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/05 23:53:20 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/07/10 21:30:57 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,39 @@ void	add_tok(t_token **head, t_token *new)
 }
 
 
+char **separt_variable(char *str)
+{
+
+		char *befor_$;
+		char *after_$;
+		char *var;
+		int j = 0;
+		int i = 0;
+		while (str[i] != '$')
+			i++;
+		j = i;
+		befor_$ = ft_strndup(str, i);
+		while ((str[i + 1] != ft_isdigit(str[i + 1])
+				|| (str[i + 1] != ft_isalpha(str[i + 1]))
+				|| (str[i + 1] != '+')))
+		{
+			i++;
+		}
+	var = ft_strndup(str + j, i - j);
+	after_$ = ft_strdup(str+ i);
+	printf("%s\n", befor_$);
+	printf("%s\n", var);
+	printf("%s\n", after_$);
+	return()
+}
 
 
 t_token	*tokenze(char *line, char **env)
 {
-	int		i;
-	char	*word;
-	t_token	*tokinzes;
-	t_token	*quote_token;
+	int i;
+	char *word;
+	t_token *tokinzes;
+	t_token *quote_token;
 	t_token *tmp;
 	char *value;
 
@@ -98,39 +123,53 @@ t_token	*tokenze(char *line, char **env)
 			}
 			else
 			{
-                    word = extract_word(line, &i);
-                    if (!word)
-                    {
-                        free_token(tokinzes);
-                        return (NULL);
-                    }
-				    add_tok(&tokinzes, new_tok(word, WORD));
+				word = extract_word(line, &i);
+				if (!word)
+				{
+					free_token(tokinzes);
+					return (NULL);
+				}
+				add_tok(&tokinzes, new_tok(word, WORD));
 			}
 		}
 	}
 	if (!check_syntax_token(tokinzes))
 		return (NULL);
 	tmp = tokinzes;
-	while(tmp)
+	char **var;
+	while (tmp)
 	{
-		if(tmp->type == WORD && ft_strchr(tmp->value, '$'))
+		if (tmp->type == WORD && ft_strchr(tmp->value, '$'))
 		{
-			
-			value = expand_variables(tmp->value, env);
-			if(value)
-			{
+			var = separt_variable(tmp->value);
 				
-				free(tmp->value);
-				tmp->value = ft_strdup(value);
+				value = expand_variables(var[1], env);
+				if (value)
+				{
+					free(tmp->value);
+					tmp->value = ft_strdup(value);
+				}
+				else
+				{
+					free(tmp->value);
+					tmp->value = ft_strdup("");
+				}
 			}
-			else
-			{
-				free(tmp->value);
-				tmp->value = ft_strdup("");
-			}
+			// else if (tmp->type == WORD && ft_strchr(tmp->value, '~'))
+			// {
+			// 	value = expand_variables("HOME", env);
+			// 	if (value)
+			// 	{
+			// 		free(tmp->value);
+			// 		tmp->value = ft_strdup(value);
+			// 	}
+			// 	else
+			// 	{
+			// 		free(tmp->value);
+			// 		tmp->value = ft_strdup("");
+			// 	}
+			// }
+			tmp = tmp->next;
 		}
-		tmp = tmp->next;
-		
+		return (tokinzes);
 	}
-	return (tokinzes);
-}

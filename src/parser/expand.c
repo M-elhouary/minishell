@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/05 23:55:58 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/07/10 19:07:56 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,15 +62,13 @@ t_env *my_env(char **env)
     {
         var = ft_strdup(env[index]);
         i = 0;
-        while(var[i] != '=')
-                i++;
+        while(var[i++] != '=')
         key = ft_strndup(var, i);
         content = ft_strdup(var+(i+1));
         add_node(&(variables), new_node(key, content));
         index++;
     }
     return (variables);
-    
 }
 
 
@@ -85,15 +83,18 @@ char *expand_variables(const char *str, char **env)
     
     value = NULL;
     tmp = my_env(env);
-    new_str = ft_strdup(str+1);
+    new_str = ft_strdup(str);
+    
+    
     if(!new_str)
         return NULL;
     while(tmp)
     {
-        if(new_str == tmp->key)
+        if(ft_strncmp(new_str, tmp->key, (ft_strlen(new_str))) == 0)//
+        {
             value = tmp->content;
-        if(value)
-            printf("%s\n", value);
+            break;    
+        }
         tmp = tmp->next;
     }
     free(new_str);

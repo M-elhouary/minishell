@@ -9,10 +9,8 @@ void print_tokens(t_token *token)
     while (token)
     {
         if (token->value)
-        {
-
-        
-            printf("Token: %-15s\n" , token->value);
+        { 
+            printf("Token: %-s\n" , token->value);
             printf("Type: %s\n", types[token->type]);
             printf("+++++++++++++++++++++++++++++++\n");
         }
