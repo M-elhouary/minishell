@@ -27,6 +27,9 @@ int main(int ac, char **av, char **env)
     (void)av;
     char *line;
     t_token *tokens;
+    t_env *env_list;
+
+    env_list = my_env(env);
 
     
     
@@ -35,29 +38,10 @@ int main(int ac, char **av, char **env)
         add_history(line);
         if (!line)
             break;
-        tokens = tokenze(line, env);
+        tokens = tokenze(line, env_list);
         print_tokens(tokens); // This might crash if token is invalid
         free(line);
     }while (1);
     return 0;
 
-//    char *line = "'unclosed";
-//     int i = 0;
-
-//     t_token *tok = handl_quote(line, &i);
-
-//     if (tok)
-//     {
-//         printf("Token: [%s]\n", tok->value);
-//         printf("Index after quote: %d\n", i);
-//         free(tok->value);
-//         free(tok);
-//     }
-//     else
-//     {
-//         printf("Quote parsing failed.\n");
-//     }
-
-//     return 0;
 }
-

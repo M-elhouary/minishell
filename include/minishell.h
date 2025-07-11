@@ -45,14 +45,16 @@ typedef struct s_command
 }   t_command;
 
 
-
+char *ft_strcpy(char *dest, const char *src);
+char *get_env_value(char *key, t_env *env);
 char *ft_strndup(const char *s, size_t n);
 t_env *my_env(char **env);
 t_token *handl_quote(char *line, int *i);
 int check_syntax_token(t_token *token);
 int free_token(t_token *token);
 char *extract_word(const char *line, int *i);
-char *expand_variables(const char *str, char **env);
+char *expand_variables(const char *str, t_env *env);
 int is_space(char c);
-t_token *tokenze(char *line, char **env);
+int ft_strcmp(const char *s1, const char *s2);
+t_token *tokenze(char *line, t_env *env);
 #endif

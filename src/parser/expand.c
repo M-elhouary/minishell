@@ -6,100 +6,59 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/10 19:07:56 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/07/11 01:13:09 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 
-t_env	*new_node(char *key, char *content)
+char *expand_variables(const char *str, t_env *env)
 {
-	t_env	*new_node;
-
-	new_node = (t_env *)malloc(sizeof(t_env));
-	if (!new_node)
-		return (NULL);
-	new_node->key = key;
-	new_node->content = content;
-	new_node->next = NULL;
-	return (new_node);
-}
-
-
-void	add_node(t_env **head, t_env *new)
-{
-	t_env	*tmp;
-
-	if (!*head)
-		*head = new;
-	else
-	{
-		tmp = *head;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = new;
-	}
-}
-
-
-t_env *my_env(char **env)
-{
-    int index;
-    t_env *variables;
-    char *var;
-    char *key;
-    char *content;
     int i;
-    
-    index = 0;
+    int start;
+    char *result;  
+    char *tmp;
+    char *var_name;
+    char *var_value;
+    char *joined;
+
     i = 0;
-    var = NULL;
-    variables = NULL;
-    key = NULL;
-    content = NULL;
-    while(env[index])
+    result = ft_strdup(""); 
+    while (str[i])
     {
-        var = ft_strdup(env[index]);
-        i = 0;
-        while(var[i++] != '=')
-        key = ft_strndup(var, i);
-        content = ft_strdup(var+(i+1));
-        add_node(&(variables), new_node(key, content));
-        index++;
-    }
-    return (variables);
-}
-
-
-
-
-
-char *expand_variables(const char *str, char **env)
-{
-    char *value;
-    char *new_str;
-    t_env *tmp;
-    
-    value = NULL;
-    tmp = my_env(env);
-    new_str = ft_strdup(str);
-    
-    
-    if(!new_str)
-        return NULL;
-    while(tmp)
-    {
-        if(ft_strncmp(new_str, tmp->key, (ft_strlen(new_str))) == 0)//
+        if (str[i] == '$')
         {
-            value = tmp->content;
-            break;    
+            tmp = ft_strndup(str, i);
+            joined = ft_strjoin(result, tmp);
+            free(result);
+            free(tmp);
+            result = joined;
+
+            i++;
+            start = i;
+            while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+                i++;
+            var_name = ft_strndup(str + start, i - start);
+            var_value = get_env_value(var_name, env);
+            free(var_name);
+            joined = ft_strjoin(result, var_value);
+            free(result);
+            free(var_value);
+            result = joined;
+            str += i;
+            i = 0;
         }
-        tmp = tmp->next;
+        else
+        {
+            tmp = ft_strndup(str, 1);
+            joined = ft_strjoin(result, tmp);
+            free(result);
+            free(tmp);
+            result = joined;
+            str++;
+        }
     }
-    free(new_str);
-    if(value)
-        return ft_strdup(value);
-    else
-        return ft_strdup("");
+    return result;
 }
+
