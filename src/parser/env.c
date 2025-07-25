@@ -1,24 +1,21 @@
 #include "minishell.h"
 
-char *get_env_value(char *key, t_env *env)
+char	*get_env_value(char *key, t_env *env)
 {
-    char *key_not_found;
-    while (env)
-    {
-        if (ft_strcmp(env->key, key) == 0)
-            return env->content;
-        env = env->next;
-    }
-    key_not_found = malloc(ft_strlen(key) + 2);
-    if (!key_not_found)
-        return NULL;
-    key_not_found[0] = '$';
-    ft_strcpy(key_not_found + 1, key);
-    return key_not_found;
+	if (!key || !*key)
+		return (ft_strdup("$"));
+	
+	while (env)
+	{
+		if (ft_strcmp(env->key, key) == 0)
+			return (ft_strdup(env->content));
+		env = env->next;
+	}
+	return (ft_strdup(""));
 }
 
 
-t_env	*new_node(char *key, char *content)
+static t_env	*env_new_node(char *key, char *content)
 {
 	t_env	*new_node;
 
@@ -31,11 +28,12 @@ t_env	*new_node(char *key, char *content)
 	return (new_node);
 }
 
-
-void	add_node(t_env **head, t_env *new)
+static void	env_add_node(t_env **head, t_env *new)
 {
 	t_env	*tmp;
 
+	if (!head || !new)
+		return ;
 	if (!*head)
 		*head = new;
 	else
@@ -47,32 +45,54 @@ void	add_node(t_env **head, t_env *new)
 	}
 }
 
-
-t_env *my_env(char **env)
+static char	*get_key(char *env_str)
 {
-    int index;
-    t_env *variables;
-    char *var;
-    char *key;
-    char *content;
-    int i;
-    
-    index = 0;
-    i = 0;
-    var = NULL;
-    variables = NULL;
-    key = NULL;
-    content = NULL;
-    while(env[index])
-    {
-        var = ft_strdup(env[index]);
-        i = 0;
-        while(var[i] != '=')
-            i++;
-        key = ft_strndup(var, i);
-        content = ft_strdup(var+i+1);
-        add_node(&(variables), new_node(key, content));
-        index++;
-    }
-    return (variables);
+	int		i;
+	char	*key;
+
+	i = 0;
+	while (env_str[i] && env_str[i] != '=')
+		i++;
+	key = ft_strndup(env_str, i);
+	return (key);
+}
+
+static char	*get_content(char *env_str)
+{
+	int		i;
+	char	*content;
+
+	i = 0;
+	while (env_str[i] && env_str[i] != '=')
+		i++;
+	if (!env_str[i])
+		return (NULL);
+	content = ft_strdup(env_str + i + 1);
+	return (content);
+}
+
+t_env	*my_env(char **env)
+{
+	t_env	*env_list;
+	char	*key;
+	char	*content;
+	int		i;
+
+	env_list = NULL;
+	i = 0;
+	while (env && env[i])
+	{
+		key = get_key(env[i]);
+		content = get_content(env[i]);
+		if (!key || !content)
+		{
+			free(key);
+			free(content);
+			i++;
+			continue ;
+		}
+		env_add_node(&env_list, env_new_node(key, content));
+		i++;
+	}
+	return (env_list);
 }

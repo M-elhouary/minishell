@@ -4,13 +4,15 @@ CFLAGS = -Wall -Wextra -Werror -Iinclude -Ilibft
 
 # Source and Object Files
 
-SRCS = src/parser/tokeniz.c\
-    src/parser/utiles.c\
-	src/parser/tokenz_help.c\
-	src/parser/syntax_error.c\
-	src/parser/expand.c\
-	src/parser/env.c\
-    src/main.c
+
+SRCS = src/main.c \
+       src/parser/tokenize.c\
+       src/parser/tokenize_utils.c \
+       src/parser/tokenize_words.c \
+       src/parser/tokenize_quotes.c \
+       src/parser/syntax_checker.c \
+       src/parser/expand.c \
+       src/parser/env.c
 
 OBJS = $(SRCS:.c=.o)
 

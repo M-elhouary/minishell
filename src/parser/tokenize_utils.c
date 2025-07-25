@@ -1,18 +1,53 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utiles.c                                           :+:      :+:    :+:   */
+/*   tokenize_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 16:04:05 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/11 00:42:57 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/07/25 20:35:01 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 
 #include "minishell.h"
+
+
+
+int	skip_spaces(const char *line, int *i)
+{
+	while (line[*i] && is_space(line[*i]))
+		(*i)++;
+	return (line[*i] != '\0');
+}
+
+
+
+int	is_metacharacter(char c)
+{
+	return (c == '|' || c == '<' || c == '>' || c == ' ' 
+		|| c == '\t' || c == '\n');
+}
+
+int	is_redirection(t_token_type type)
+{
+	return (type == REDIR_IN || type == REDIR_OUT
+		|| type == REDIR_APPEND || type == HEREDOC);
+}
+
+void	print_error(char *error, char *detail)
+{
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	if (detail)
+	{
+		ft_putstr_fd(detail, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+	}
+	ft_putstr_fd(error, STDERR_FILENO);
+	ft_putstr_fd("\n", STDERR_FILENO);
+}
 
 char *ft_strndup(const char *s, size_t n)
 {
