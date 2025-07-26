@@ -27,7 +27,11 @@ static t_env	*env_new_node(char *key, char *content)
 	new_node->next = NULL;
 	return (new_node);
 }
+// "$"  def $      '$' no       
 
+
+// echo "a"$HOME'fg  , echo '"'"$HOME"'"' => "/home/mel-houa"   '"$HOME"'
+// ec""ho '"'ee"'"
 static void	env_add_node(t_env **head, t_env *new)
 {
 	t_env	*tmp;
@@ -89,7 +93,7 @@ t_env	*my_env(char **env)
 			free(key);
 			free(content);
 			i++;
-			continue ;
+			continue ; //
 		}
 		env_add_node(&env_list, env_new_node(key, content));
 		i++;

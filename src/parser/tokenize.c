@@ -33,36 +33,55 @@ static void	add_token(t_token **head, t_token *new)
 static int	handle_special(t_token **tokens, char *line, int *i)
 {
 	if (line[*i] == '|')
+	{
+
 		add_token(tokens, create_token(ft_strdup("|"), PIPE));
+		return 1;
+	}
 	else if (!ft_strncmp(&line[*i], ">>", 2))
+	{
 		add_token(tokens, create_token(ft_strdup(">>"), REDIR_APPEND));
+		return 2;
+
+	}
 	else if (!ft_strncmp(&line[*i], "<<", 2))
+	{
 		add_token(tokens, create_token(ft_strdup("<<"), HEREDOC));
+		return 2;
+
+	}
 	else if (line[*i] == '>')
+	{
 		add_token(tokens, create_token(ft_strdup(">"), REDIR_OUT));
+		return 1;
+
+	}
 	else if (line[*i] == '<')
+	{
 		add_token(tokens, create_token(ft_strdup("<"), REDIR_IN));
+		return 1;
+
+	}
 	else
 		return (0);
-	return (1);
 }
 
-static int	process_word(t_token **tokens, char *line, int *i, t_env *env)
+static int	process_word(t_token **tokens, char *line, int *i, t_env *env, t_flags *flags)
 {
 	char	*word;
 	t_token	*new;
 	t_token_type	type;
 
-	if (*tokens == NULL)
-		type = COMMAND;
+	if (*tokens == NULL) //
+		type = WORD;
 	else
 		type = ARGUMENT;
-	word = extract_word(line, i);
+	word = extract_word(line, i, flags);
 	if (!word)
 		return (0);
 	if (!(word[0] == '\0' && (line[*i-1] == '\'' || line[*i-1] == '"')))
 		word = remove_quotes(word);
-	if (ft_strchr(word, '$'))
+	if (ft_strchr(word, '$') && flags->f_squote == 0)
 	{
 		word = expand_variables(word, env);
 		if (!word)
@@ -75,9 +94,10 @@ static int	process_word(t_token **tokens, char *line, int *i, t_env *env)
 	return (1);
 }
 
-t_token	*tokenize(char *line, t_env *env)
+t_token	*tokenize(char *line, t_env *env, t_flags *flags)
 {
 	int		i;
+	int incremt;
 	t_token	*tokens;
 
 	i = 0;
@@ -88,12 +108,14 @@ t_token	*tokenize(char *line, t_env *env)
 			break ;
 		if (line[i] == '\'' || line[i] == '"')
 		{
-			if (!process_word(&tokens, line, &i, env))
+			if (!process_word(&tokens, line, &i, env, flags))
 				return (free_token(tokens), NULL);
 		}
-		else if (handle_special(&tokens, line, &i))
-			i += (tokens->type == REDIR_APPEND || tokens->type == HEREDOC) ? 2 : 1;
-		else if (!process_word(&tokens, line, &i, env))
+		else if ((incremt = handle_special(&tokens, line, &i)))
+		{
+			i += incremt;
+		}
+		else if (!process_word(&tokens, line, &i, env, flags))
 			return (free_token(tokens), NULL);
 	}
 	return (tokens);

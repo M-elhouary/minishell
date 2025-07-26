@@ -6,13 +6,18 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/25 02:00:19 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:17:04 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "minishell.h"
 
+
+
+// echo $HOME'$HOME' not expand in squotes
+// bash-5.2$ echo adf > $a
+// bash: $a: ambiguous redirect
 
 static char	*extract_var_name(const char *str, int *i)
 {
@@ -48,7 +53,7 @@ char	*expand_variables(const char *str, t_env *env)
 	char	*var_value;
 
 	i = 0;
-	result = ft_strdup("");
+	result = ft_strdup("");//
 	while (str[i])
 	{
 		if (str[i] == '$' && (ft_isalpha(str[i + 1]) || str[i + 1] == '_'))
