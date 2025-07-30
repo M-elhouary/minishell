@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/26 20:55:15 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/07/25 20:41:04 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	print_tokens(t_token *token)
 {
-	const char	*types[] = {"WORD", "PIPE", "REDIR_IN", "REDIR_OUT", 
+	const char	*types[] = {"COMMAND", "PIPE", "REDIR_IN", "REDIR_OUT", 
 		"REDIR_APPEND", "HEREDOC", "ARGUMENT"};
 	const char	*separator = "----------------------";
 
@@ -40,16 +40,7 @@ int	main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
-	t_exit *exit = malloc(sizeof(t_exit));
-	if (!exit) 
-    	return (perror("malloc failed"), 1); 
-
-	t_flags *flags = malloc(sizeof(t_flags));
-	if (!flags) 
-    	return (perror("malloc failed"), 1);
-	flags->f_squote = 0;
 	env_list = my_env(env);
-	exit->exit_status = 0;
 	while (1)
 	{
 		line = readline("minishell$ ");
@@ -58,17 +49,11 @@ int	main(int ac, char **av, char **env)
 		if (*line)
 		{
 			add_history(line);
-			tokens = tokenize(line, env_list, flags);
+			tokens = tokenize(line, env_list);
 			if (tokens)
-			{	
+			{
 				if (check_syntax_token(tokens))
-				{
-					
-					print_tokens(tokens);  
-				}
-				else
-					exit->exit_status = 2;
-					
+					print_tokens(tokens);  // Debug print
 				free_token(tokens);
 			}
 		}

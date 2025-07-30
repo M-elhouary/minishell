@@ -6,11 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 16:04:05 by mel-houa          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/07/26 21:41:02 by mel-houa         ###   ########.fr       */
-=======
-/*   Updated: 2025/07/30 16:52:24 by mel-houa         ###   ########.fr       */
->>>>>>> 002946b (update expand with quote)
+/*   Updated: 2025/07/30 16:58:16 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +91,7 @@ char *ft_strndup(const char *s, size_t n)
 
     if (!s)
         return NULL;
-    dup = malloc(n + 1); 
+    dup = malloc(n + 1);
     if (!dup)
         return NULL;
     i = 0;

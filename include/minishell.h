@@ -9,7 +9,7 @@
 
 typedef enum e_token_type
 {
-	WORD,
+	COMMAND,
 	PIPE,
 	REDIR_IN,
 	REDIR_OUT,
@@ -24,15 +24,6 @@ typedef struct s_env
 	char			*content;
 	struct s_env	*next;
 }	t_env;
-typedef struct s_exit
-{
-	int exit_status;
-}	t_exit;
-
-typedef struct s_flags
-{
-	int f_squote;
-}	t_flags;
 
 typedef struct s_token
 {
@@ -51,17 +42,16 @@ typedef struct s_command
 	struct s_command	*next;
 }	t_command;
 
-
 /* Environment functions */
 t_env	*my_env(char **env);
 char	*get_env_value(char *key, t_env *env);
 
 /* Token functions */
-t_token	*tokenize(char *line, t_env *env, t_flags *flags);
+t_token	*tokenize(char *line, t_env *env);
 int		check_syntax_token(t_token *token);
 int		free_token(t_token *token);
 int		handle_quotes(const char *line, int *i);
-char	*extract_word(const char *line, int *i, t_flags *flags);
+char	*extract_word(const char *line, int *i);
 
 /* Parsing functions
 t_command	*parse_commands(t_token *tokens);
