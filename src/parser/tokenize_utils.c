@@ -6,13 +6,52 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 16:04:05 by mel-houa          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/07/26 21:41:02 by mel-houa         ###   ########.fr       */
+=======
+/*   Updated: 2025/07/30 16:52:24 by mel-houa         ###   ########.fr       */
+>>>>>>> 002946b (update expand with quote)
 /*                                                                            */
 /* ************************************************************************** */
 
 
 
 #include "minishell.h"
+
+
+char	*remove_syntactic_quotes(char *str)
+{
+	int		len;
+	char	*new;
+	
+	if (!str)
+		return (NULL);
+	
+	len = ft_strlen(str);
+	if (len >= 2)
+	{
+		// Only remove matching outer quotes
+		if ((str[0] == '\'' && str[len-1] == '\'') ||
+			(str[0] == '"' && str[len-1] == '"'))
+		{
+			new = ft_strndup(str+1, len-2);
+			free(str);
+			return (new);
+		}
+	}
+	return (str);
+}
+
+
+char	*ft_strjoin_free(char *s1, char *s2)
+{
+	char	*result;
+
+	result = ft_strjoin(s1, s2);
+	free(s1);
+	free(s2);
+	return (result);
+}
 
 
 

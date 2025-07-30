@@ -67,7 +67,7 @@ static char	*get_content(char *env_str)
 	char	*content;
 
 	i = 0;
-	while (env_str[i] && env_str[i] != '=')
+	while (env_str[i] && env_str[i] != '=') // increment to name = content
 		i++;
 	if (!env_str[i])
 		return (NULL);

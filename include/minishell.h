@@ -69,6 +69,8 @@ void		free_commands(t_command *commands);
  */
 
 /* Utility functions */
+char	*remove_syntactic_quotes(char *str);
+char	*ft_strjoin_free(char *s1, char *s2);
 int		is_metacharacter(char c);
 int		is_redirection(t_token_type type);
 void	print_error(char *error, char *detail);

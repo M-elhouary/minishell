@@ -70,8 +70,8 @@ static int	process_word(t_token **tokens, char *line, int *i, t_env *env, t_flag
 {
 	char	*word;
 	t_token	*new;
-	t_token_type	type;
 
+<<<<<<< HEAD
 	if (*tokens == NULL) //
 		type = WORD;
 	else
@@ -88,6 +88,18 @@ static int	process_word(t_token **tokens, char *line, int *i, t_env *env, t_flag
 			return (0);
 	}
 	new = create_token(word, type);
+=======
+	word = extract_word(line, i);
+	if (!word)
+		return (0);
+	
+	// Always expand variables and handle quotes in expand_variables
+	word = expand_variables(word, env);
+	if (!word)
+		return (0);
+	
+	new = create_token(word, (*tokens) ? ARGUMENT : COMMAND);
+>>>>>>> 002946b (update expand with quote)
 	if (!new)
 		return (free(word), 0);
 	add_token(tokens, new);
