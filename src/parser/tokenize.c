@@ -60,24 +60,40 @@ static int	handle_special(t_token **tokens, char *line, int *i)
 static int	process_word(t_token **tokens, char *line, int *i, t_env *env)
 {
 	char	*word;
+	char	**split_words;
 	t_token	*new;
+	int		j;
 
 	word = extract_word(line, i);
 	if (!word)
 		return (0);
 	
-	// Always expand variables and handle quotes in expand_variables
-	word = expand_variables(word, env);
-	if (!word)
+	// Expand and potentially split the word
+	split_words = expand_and_split(word, env);
+	free(word);
+	if (!split_words)
 		return (0);
-	if (*tokens == NULL)
-		new = create_token(word, COMMAND); // first token is COMMAND
-	else
-		new = create_token(word, ARGUMENT); // all others are ARGUMENT
-	new = create_token(word, (*tokens) ? ARGUMENT : COMMAND);
-	if (!new)
-		return (free(word), 0);
-	add_token(tokens, new);
+	
+	// Add all resulting words as tokens
+	j = 0;
+	while (split_words[j])
+	{
+		if (*tokens == NULL)
+			new = create_token(split_words[j], COMMAND);
+		else
+			new = create_token(split_words[j], ARGUMENT);
+		if (!new)
+		{
+			// Free remaining words and return error
+			while (split_words[j])
+				free(split_words[j++]);
+			free(split_words);
+			return (0);
+		}
+		add_token(tokens, new);
+		j++;
+	}
+	free(split_words);
 	return (1);
 }
 

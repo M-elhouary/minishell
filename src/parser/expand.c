@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/30 17:10:40 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/07/30 23:48:17 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,10 +102,41 @@ char	*result;
 	return (result);
 }
 
+// Helper function to check if string contains unquoted variables
+static int	has_unquoted_variables(const char *str)
+{
+	int	i;
+	int	in_quotes;
+	char quote_char;
+
+	i = 0;
+	in_quotes = 0;
+	quote_char = 0;
+	while (str[i])
+	{
+		if (!in_quotes && (str[i] == '\'' || str[i] == '"'))
+		{
+			in_quotes = 1;
+			quote_char = str[i];
+		}
+		else if (in_quotes && str[i] == quote_char)
+		{
+			in_quotes = 0;
+			quote_char = 0;
+		}
+		else if (!in_quotes && str[i] == '$' && (ft_isalnum(str[i+1]) || str[i+1] == '_'))
+		{
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
 char	*expand_variables(const char *str, t_env *env)
 {
 	char	*result;
-char	*expnd;
+	char	*expnd;
 	int		i;
 
 	if (!str)

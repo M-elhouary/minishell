@@ -67,6 +67,8 @@ void	print_error(char *error, char *detail);
 int		is_space(char c);
 char	*ft_strndup(const char *s, size_t n);
 char	*expand_variables(const char *str, t_env *env);
+char	**expand_and_split(const char *word, t_env *env);
+int		has_unquoted_variables(const char *str);
 int		skip_spaces(const char *line, int *i);
 int		ft_strcmp(const char *s1, const char *s2);
 char	*ft_strcpy(char *dest, const char *src);
