@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/31 22:54:26 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/01 00:28:59 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ static char	*expand_var_in_string(const char *str, t_env *env)
 			else
 				result = ft_strjoin_free(result, ft_strdup(""));
 			free(tmp);
+			free(var_value);
 		}
 		else
 		{

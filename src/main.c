@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/31 23:00:04 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/01 00:21:06 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,13 +71,11 @@ int	main(int ac, char **av, char **env)
 	t_token		*tokens;
 	t_command	*cmds;
 	t_env		*env_list;
-	t_gc		*gc;
+	t_gc		gc;
 
 	(void)ac;
 	(void)av;
-	gc = gc_init();
-	if (!gc)
-		return (1);
+	gc_init(&gc);
 	env_list = my_env(env);
 	while (1)
 	{
@@ -103,8 +101,8 @@ int	main(int ac, char **av, char **env)
 			}
 		}
 		free(line);
-		gc_free_all(gc);
+		gc_free_all(&gc);
 	}
-	gc_destroy(gc);
+	gc_destroy(&gc);
 	return (0);
 }

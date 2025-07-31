@@ -6,21 +6,17 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 00:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/31 23:00:03 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/01 00:21:05 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_gc	*gc_init(void)
+void	gc_init(t_gc *gc)
 {
-	t_gc	*gc;
-
-	gc = malloc(sizeof(t_gc));
 	if (!gc)
-		return (NULL);
+		return ;
 	gc->head = NULL;
-	return (gc);
 }
 
 void	*gc_malloc(t_gc *gc, size_t size)
@@ -118,5 +114,4 @@ void	gc_destroy(t_gc *gc)
 	if (!gc)
 		return ;
 	gc_free_all(gc);
-	free(gc);
 }
