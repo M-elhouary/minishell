@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/30 23:48:17 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/07/31 17:06:34 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ static char	*expand_var_in_string(const char *str, t_env *env)
 
 	result = ft_strdup("");
 	i = 0;
-
 	while (str[i])
 	{
 		if (str[i] == '$' && (ft_isalnum(str[i+1]) || str[i+1] == '_'))
@@ -60,30 +59,22 @@ char	*expnd;
 	char	*result;
 
 	quote = str[*i];
-	(*i)++; // Skip opening quote
+	(*i)++; 
 	start = *i;
-	
 	while (str[*i] && str[*i] != quote)
 		(*i)++;
-	
 	if (!str[*i])
-		return (ft_strdup("")); // Unclosed quote
-	
+		return (ft_strdup(""));
 	expnd = ft_strndup(str + start, *i - start);
-	(*i)++; // Skip closing quote
-	
+	(*i)++;
 	if (quote == '"')
 	{
-		// Expand variables inside double quotes
 		result = expand_var_in_string(expnd, env);
 		free(expnd);
 		return (result);
 	}
 	else
-	{
-		// Single quotes: no expansion
 		return (expnd);
-	}
 }
 
 static char	*process_unquoted(const char *str, int *i, t_env *env)
@@ -103,7 +94,7 @@ char	*result;
 }
 
 // Helper function to check if string contains unquoted variables
-static int	has_unquoted_variables(const char *str)
+int	has_unquoted_variables(const char *str)
 {
 	int	i;
 	int	in_quotes;
@@ -125,9 +116,7 @@ static int	has_unquoted_variables(const char *str)
 			quote_char = 0;
 		}
 		else if (!in_quotes && str[i] == '$' && (ft_isalnum(str[i+1]) || str[i+1] == '_'))
-		{
 			return (1);
-		}
 		i++;
 	}
 	return (0);
@@ -141,10 +130,8 @@ char	*expand_variables(const char *str, t_env *env)
 
 	if (!str)
 		return (ft_strdup(""));
-	
 	result = ft_strdup("");
 	i = 0;
-
 	while (str[i])
 	{
 		if (str[i] == '\'' || str[i] == '"')

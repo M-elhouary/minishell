@@ -34,9 +34,11 @@ typedef struct s_token
 
 typedef struct s_command
 {
+	int             count;
+	char 			*path;
 	char			**args;
-	char			*infile;
-	char			*outfile;
+	char			**infile;
+	char			**outfile;
 	int				append;
 	int				heredoc;
 	struct s_command	*next;
@@ -53,10 +55,10 @@ int		free_token(t_token *token);
 int		handle_quotes(const char *line, int *i);
 char	*extract_word(const char *line, int *i);
 
-/* Parsing functions
+// Parsing functions
 t_command	*parse_commands(t_token *tokens);
 void		free_commands(t_command *commands);
- */
+ 
 
 /* Utility functions */
 char	*remove_syntactic_quotes(char *str);

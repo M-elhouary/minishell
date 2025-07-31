@@ -1,42 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tokenize_utils.c                                   :+:      :+:    :+:   */
+/*   func_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 16:04:05 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/30 16:58:16 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/07/31 17:08:48 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 
 #include "minishell.h"
-
-
-char	*remove_syntactic_quotes(char *str)
-{
-	int		len;
-	char	*new;
-	
-	if (!str)
-		return (NULL);
-	
-	len = ft_strlen(str);
-	if (len >= 2)
-	{
-		// Only remove matching outer quotes
-		if ((str[0] == '\'' && str[len-1] == '\'') ||
-			(str[0] == '"' && str[len-1] == '"'))
-		{
-			new = ft_strndup(str+1, len-2);
-			free(str);
-			return (new);
-		}
-	}
-	return (str);
-}
 
 
 char	*ft_strjoin_free(char *s1, char *s2)
@@ -109,20 +85,6 @@ int is_space(char c)
 }
 
 
-int free_token(t_token *token)
-{
-    t_token *tmp;
-
-    while(token)
-    {
-        tmp = token;
-        token = token->next;
-        if(tmp->value)
-            free(tmp->value);
-        free(tmp);
-    }
-    return (1);
-}
 
 
 int ft_strcmp(const char *s1, const char *s2) 

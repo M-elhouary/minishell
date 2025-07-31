@@ -68,13 +68,11 @@ static int	process_word(t_token **tokens, char *line, int *i, t_env *env)
 	if (!word)
 		return (0);
 	
-	// Expand and potentially split the word
 	split_words = expand_and_split(word, env);
 	free(word);
 	if (!split_words)
 		return (0);
 	
-	// Add all resulting words as tokens
 	j = 0;
 	while (split_words[j])
 	{
@@ -84,7 +82,6 @@ static int	process_word(t_token **tokens, char *line, int *i, t_env *env)
 			new = create_token(split_words[j], ARGUMENT);
 		if (!new)
 		{
-			// Free remaining words and return error
 			while (split_words[j])
 				free(split_words[j++]);
 			free(split_words);

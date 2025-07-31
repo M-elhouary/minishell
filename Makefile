@@ -7,12 +7,14 @@ CFLAGS = -Wall -Wextra -Werror -Iinclude -Ilibft
 
 SRCS = src/main.c \
        src/parser/tokenize.c\
-       src/parser/tokenize_utils.c \
        src/parser/tokenize_words.c \
        src/parser/tokenize_quotes.c \
+	   src/parser/func_utils.c \
+	   src/parser/word_split.c\
        src/parser/syntax_checker.c \
        src/parser/expand.c \
-       src/parser/env.c
+       src/parser/env.c\
+	   src/parser/parse_command.c
 
 OBJS = $(SRCS:.c=.o)
 

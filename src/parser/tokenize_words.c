@@ -1,20 +1,5 @@
 #include "minishell.h"
 
-// static int	handle_word_quotes(const char *line, int *i, char quote)
-// {
-// 	(*i)++;
-// 	while (line[*i] && line[*i] != quote)
-// 	{
-// 		if (line[*i] == '\\' && quote == '\"')
-// 			(*i)++;
-// 		if (line[*i])
-// 			(*i)++;
-// 	}
-// 	if (!line[*i])
-// 		return (print_error("unclosed quote in word", NULL), 0);
-// 	(*i)++;
-// 	return (1);
-// }
 
 char	*remove_quotes(char *str)
 {
@@ -38,14 +23,17 @@ char	*remove_quotes(char *str)
 	new[j] = '\0';
 	free(str);
 	return (new);
-}static int	skip_quoted_section(const char *line, int *i, char quote)
+}
+
+
+static int	skip_quoted_section(const char *line, int *i, char quote)
 {
-	(*i)++; // Skip opening quote
+	(*i)++; 
 	while (line[*i] && line[*i] != quote)
 		(*i)++;
 	if (!line[*i])
-		return (0); // Unclosed quote
-	(*i)++; // Skip closing quote
+		return (0); 
+	(*i)++; 
 	return (1);
 }
 
@@ -60,7 +48,7 @@ char	*extract_word(const char *line, int *i)
 		if (line[*i] == '\'' || line[*i] == '"')
 		{
 			if (!skip_quoted_section(line, i, line[*i]))
-				break; // Unclosed quote, stop here
+				break;
 		}
 		else
 			(*i)++;
