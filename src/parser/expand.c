@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/31 17:06:34 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/07/31 22:54:26 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static char	*expand_var_in_string(const char *str, t_env *env)
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '$' && (ft_isalnum(str[i+1]) || str[i+1] == '_'))
+		if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
 		{
 			i++;
 			start = i;
@@ -36,7 +36,7 @@ static char	*expand_var_in_string(const char *str, t_env *env)
 			tmp = ft_strndup(str + start, i - start);
 			var_value = get_env_value(tmp, env);
 			if (var_value && *var_value)
-				result = ft_strjoin_free(result, var_value);
+				result = ft_strjoin_free(result, ft_strdup(var_value));
 			else
 				result = ft_strjoin_free(result, ft_strdup(""));
 			free(tmp);
@@ -55,11 +55,11 @@ static char	*process_quoted(const char *str, int *i, t_env *env)
 {
 	char	quote;
 	int		start;
-char	*expnd;
+	char	*expnd;
 	char	*result;
 
 	quote = str[*i];
-	(*i)++; 
+	(*i)++;
 	start = *i;
 	while (str[*i] && str[*i] != quote)
 		(*i)++;
@@ -79,14 +79,13 @@ char	*expnd;
 
 static char	*process_unquoted(const char *str, int *i, t_env *env)
 {
-int		start;
-char	*expnd;
-char	*result;
+	int		start;
+	char	*expnd;
+	char	*result;
 
 	start = *i;
 	while (str[*i] && str[*i] != '\'' && str[*i] != '"')
 		(*i)++;
-	
 	expnd = ft_strndup(str + start, *i - start);
 	result = expand_var_in_string(expnd, env);
 	free(expnd);

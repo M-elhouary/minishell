@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/31 18:59:10 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/07/31 23:00:04 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,55 +15,96 @@
 
 
 
-void print_commands(t_command *cmd)
+void	print_commands(t_command *cmd)
 {
-    int i;
-    while (cmd)
-    {
-        printf("Command:\n");
-        for (i = 0; cmd->args && cmd->args[i]; i++)
-            printf("  arg[%d]: %s\n", i, cmd->args[i]);
-        if (cmd->infile)
-            printf("  infile: %s\n", cmd->infile);
-        if (cmd->outfile)
-            printf("  outfile: %s (append: %d)\n", cmd->outfile, cmd->append);
-        if (cmd->heredoc)
-            printf("  heredoc: yes\n");
-        printf("------------------\n");
-        cmd = cmd->next;
-    }
+	int	i;
+	int	cmd_num;
+
+	cmd_num = 1;
+	while (cmd)
+	{
+		printf("=== Command %d ===\n", cmd_num);
+		if (cmd->args)
+		{
+			printf("Arguments:\n");
+			i = 0;
+			while (cmd->args[i])
+			{
+				printf("  args[%d]: '%s'\n", i, cmd->args[i]);
+				i++;
+			}
+		}
+		else
+			printf("Arguments: (none)\n");
+		if (cmd->infile)
+		{
+			printf("Input files:\n");
+			i = 0;
+			while (cmd->infile[i])
+			{
+				printf("  infile[%d]: '%s'\n", i, cmd->infile[i]);
+				i++;
+			}
+		}
+		if (cmd->outfile)
+		{
+			printf("Output files:\n");
+			i = 0;
+			while (cmd->outfile[i])
+			{
+				printf("  outfile[%d]: '%s'\n", i, cmd->outfile[i]);
+				i++;
+			}
+		}
+		printf("Flags:\n");
+		printf("  append: %d\n", cmd->append);
+		printf("  heredoc: %d\n", cmd->heredoc);
+		printf("------------------\n");
+		cmd = cmd->next;
+		cmd_num++;
+	}
 }
 
-
-int main(int ac, char **av, char **env)
+int	main(int ac, char **av, char **env)
 {
-    (void)ac;
-    (void)av;
-    char *line;
-    t_token *tokens;
-    t_env *env_list = my_env(env);
+	char		*line;
+	t_token		*tokens;
+	t_command	*cmds;
+	t_env		*env_list;
+	t_gc		*gc;
 
-    while (1)
-    {
-        line = readline("minishell$ ");
-        if (!line)
-            break;
-        if (*line)
-        {
-            add_history(line);
-            tokens = tokenize(line, env_list);
-            if (tokens)
-            {
-                if (check_syntax_token(tokens))
-                {
-                    t_command *cmds = parse_commands(tokens);
-                    print_commands(cmds);
-                    // free commands here if you have free function
-                }
-                free_token(tokens);
-            }
-        }
-        free(line);
-    }
-    return 0;
+	(void)ac;
+	(void)av;
+	gc = gc_init();
+	if (!gc)
+		return (1);
+	env_list = my_env(env);
+	while (1)
+	{
+		line = readline("minishell$ ");
+		if (!line)
+			break ;
+		if (*line)
+		{
+			add_history(line);
+			tokens = tokenize(line, env_list);
+			if (tokens)
+			{
+				if (check_syntax_token(tokens))
+				{
+					cmds = parse_commands(tokens);
+					if (cmds)
+					{
+						print_commands(cmds);
+						free_commands(cmds);
+					}
+				}
+				free_token(tokens);
+			}
+		}
+		free(line);
+		gc_free_all(gc);
+	}
+	gc_destroy(gc);
+	return (0);
 }

@@ -9,6 +9,7 @@ static t_token	*create_token(char *value, t_token_type type)
 		return (NULL);
 	new->value = value;
 	new->type = type;
+	new->is_empty_expansion = 0;
 	new->next = NULL;
 	return (new);
 }
@@ -63,16 +64,30 @@ static int	process_word(t_token **tokens, char *line, int *i, t_env *env)
 	char	**split_words;
 	t_token	*new;
 	int		j;
+	char	*expanded;
+	int		has_vars;
 
 	word = extract_word(line, i);
 	if (!word)
 		return (0);
-	
+	has_vars = has_unquoted_variables(word);
+	expanded = expand_variables(word, env);
+	if (has_vars && (!expanded || !*expanded))
+	{
+		new = create_token(ft_strdup(""), ARGUMENT);
+		if (!new)
+			return (free(word), free(expanded), 0);
+		new->is_empty_expansion = 1;
+		add_token(tokens, new);
+		free(word);
+		free(expanded);
+		return (1);
+	}
+	free(expanded);
 	split_words = expand_and_split(word, env);
 	free(word);
 	if (!split_words)
-		return (0);
-	
+		return (1);
 	j = 0;
 	while (split_words[j])
 	{

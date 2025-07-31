@@ -14,7 +14,9 @@ SRCS = src/main.c \
        src/parser/syntax_checker.c \
        src/parser/expand.c \
        src/parser/env.c\
-	   src/parser/parse_command.c
+	   src/parser/parse_command.c \
+	   src/parser/tokenz_help.c \
+	   src/garbage_collector.c
 
 OBJS = $(SRCS:.c=.o)
 

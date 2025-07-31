@@ -3,6 +3,7 @@
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <unistd.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "libft.h"
@@ -29,6 +30,7 @@ typedef struct s_token
 {
 	char			*value;
 	t_token_type	type;
+	int				is_empty_expansion;
 	struct s_token	*next;
 }	t_token;
 
@@ -43,6 +45,18 @@ typedef struct s_command
 	int				heredoc;
 	struct s_command	*next;
 }	t_command;
+
+/* Garbage Collector */
+typedef struct s_gc_node
+{
+	void				*ptr;
+	struct s_gc_node	*next;
+}	t_gc_node;
+
+typedef struct s_gc
+{
+	t_gc_node	*head;
+}	t_gc;
 
 /* Environment functions */
 t_env	*my_env(char **env);
@@ -75,5 +89,13 @@ int		skip_spaces(const char *line, int *i);
 int		ft_strcmp(const char *s1, const char *s2);
 char	*ft_strcpy(char *dest, const char *src);
 char	*remove_quotes(char *str);
+
+/* Garbage Collector functions */
+t_gc	*gc_init(void);
+void	*gc_malloc(t_gc *gc, size_t size);
+char	*gc_strdup(t_gc *gc, const char *s);
+char	**gc_split(t_gc *gc, char const *s, char c);
+void	gc_free_all(t_gc *gc);
+void	gc_destroy(t_gc *gc);
 
 #endif
