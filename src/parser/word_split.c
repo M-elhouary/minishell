@@ -33,7 +33,6 @@ static char	**split_expanded_word(const char *expanded)
 	word_count = count_words_in_expanded(expanded);
 	if (word_count == 0)
 		return (NULL);
-	
 	words = malloc(sizeof(char *) * (word_count + 1));
 	if (!words)
 		return (NULL);
