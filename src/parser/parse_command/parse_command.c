@@ -6,12 +6,15 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 00:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/31 22:48:41 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/01 02:15:50 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+
+
+// creat new nod == new command
 t_command	*create_cmd_node(char **args, char **infile, char **outfile,
 		int append, int heredoc)
 {
@@ -28,7 +31,7 @@ t_command	*create_cmd_node(char **args, char **infile, char **outfile,
 	new_cmd->next = NULL;
 	return (new_cmd);
 }
-
+// add new command to linkliste
 static void	add_cmd_node(t_command **head, t_command *new)
 {
 	t_command	*tmp;
@@ -46,24 +49,9 @@ static void	add_cmd_node(t_command **head, t_command *new)
 	}
 }
 
-static void	count_tokens(t_token *temp, int *arg_count, int *in_count,
-		int *out_count)
-{
-	while (temp && temp->type != PIPE)
-	{
-		if ((temp->type == COMMAND || temp->type == ARGUMENT) 
-			&& !temp->is_empty_expansion)
-			(*arg_count)++;
-		else if (temp->type == REDIR_IN || temp->type == HEREDOC)
-			(*in_count)++;
-		else if (temp->type == REDIR_OUT || temp->type == REDIR_APPEND)
-			(*out_count)++;
-		temp = temp->next;
-	}
-}
 
-static int	allocate_arrays(char ***args, char ***infiles, char ***outfiles,
-		int arg_count, int in_count, int out_count)
+
+static int	allocate_arrays(char ***args, char ***infiles, char ***outfiles, int arg_count, int in_count, int out_count)
 {
 	*args = malloc((arg_count + 1) * sizeof(char *));
 	*infiles = malloc((in_count + 1) * sizeof(char *));
@@ -73,8 +61,7 @@ static int	allocate_arrays(char ***args, char ***infiles, char ***outfiles,
 	return (1);
 }
 
-static t_token	*fill_arrays(t_token *current, char **args, char **infiles,
-		char **outfiles)
+static t_token	*fill_arrays(t_token *current, char **args, char **infiles, char **outfiles)
 {
 	int	arg_count;
 	int	in_count;
@@ -108,26 +95,17 @@ static t_token	*fill_arrays(t_token *current, char **args, char **infiles,
 	return (current);
 }
 
-static int	check_flags(t_token *temp, int *append_flag, int *heredoc_flag)
-{
-	while (temp && temp->type != PIPE)
-	{
-		if (temp->type == REDIR_APPEND)
-			*append_flag = 1;
-		else if (temp->type == HEREDOC)
-			*heredoc_flag = 1;
-		temp = temp->next;
-	}
-	return (1);
-}
 
+
+
+// main func of build command 
 t_command	*parse_commands(t_token *tokens)
 {
 	t_command	*cmd_list;
 	char		**args;
 	char		**infiles;
 	char		**outfiles;
-	int			counts[3];
+	int			count[3];
 	int			flags[2];
 	t_token		*current;
 
@@ -135,15 +113,15 @@ t_command	*parse_commands(t_token *tokens)
 	current = tokens;
 	while (current)
 	{
-		counts[0] = 0;
-		counts[1] = 0;
-		counts[2] = 0;
+		count[0] = 0;
+		count[1] = 0;
+		count[2] = 0;
 		flags[0] = 0;
 		flags[1] = 0;
-		count_tokens(current, &counts[0], &counts[1], &counts[2]);
+		count_tokens(current, &count[0], &count[1], &count[2]);
 		check_flags(current, &flags[0], &flags[1]);
 		if (!allocate_arrays(&args, &infiles, &outfiles,
-				counts[0], counts[1], counts[2]))
+				count[0], count[1], count[2]))
 			return (NULL);
 		current = fill_arrays(current, args, infiles, outfiles);
 		add_cmd_node(&cmd_list, create_cmd_node(args, infiles,
@@ -152,36 +130,4 @@ t_command	*parse_commands(t_token *tokens)
 			current = current->next;
 	}
 	return (cmd_list);
-}
-
-static void	free_string_array(char **array)
-{
-	int	i;
-
-	if (!array)
-		return ;
-	i = 0;
-	while (array[i])
-	{
-		free(array[i]);
-		i++;
-	}
-	free(array);
-}
-
-void	free_commands(t_command *commands)
-{
-	t_command	*current;
-	t_command	*next;
-
-	current = commands;
-	while (current)
-	{
-		next = current->next;
-		free_string_array(current->args);
-		free_string_array(current->infile);
-		free_string_array(current->outfile);
-		free(current);
-		current = next;
-	}
 }

@@ -11,16 +11,17 @@ NC = \033[0m
 
 # Source and Object Files
 SRCS = src/main.c \
-       src/parser/tokenize.c\
-       src/parser/tokenize_words.c \
-       src/parser/tokenize_quotes.c \
-	   src/parser/func_utils.c \
-	   src/parser/word_split.c\
+       src/parser/tokens/tokenize.c\
+       src/parser/tokens/tokenize_words.c \
+       src/parser/tokens/tokenize_quotes.c \
+	   src/parser/tokens/tokenz_help.c \
+       src/parser/expansion/expand.c \
+	   src/parser/expansion/word_split.c\
        src/parser/syntax_checker.c \
-       src/parser/expand.c \
        src/parser/env.c\
-	   src/parser/parse_command.c \
-	   src/parser/tokenz_help.c \
+	   src/parser/func_utils.c \
+	   src/parser/parse_command/parse_command.c \
+	   src/parser/parse_command/func_help.c\
 	   src/garbage_collector.c
 
 OBJS = $(SRCS:.c=.o)
