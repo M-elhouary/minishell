@@ -6,12 +6,13 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/01 17:45:36 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/03 19:49:22 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "minishell.h"
+
 
 
 
@@ -30,7 +31,7 @@ void	print_commands(t_command *cmd)
 			i = 0;
 			while (cmd->args[i])
 			{
-				printf("  args[%d]: '%s'\n", i, cmd->args[i]);
+				printf("  args[%d]: %s\n", i, cmd->args[i]);
 				i++;
 			}
 		}
@@ -93,7 +94,8 @@ int	main(int ac, char **av, char **env)
 					cmds = parse_commands(tokens);
 					if (cmds)
 					{
-						print_commands(cmds);
+						
+						//print_commands(cmds);
 						free_commands(cmds);
 					}
 				}

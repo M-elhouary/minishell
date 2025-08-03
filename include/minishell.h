@@ -46,7 +46,7 @@ typedef struct s_command
 	struct s_command	*next;
 }	t_command;
 
-/* Garbage Collector */
+// Garbage Collector 
 typedef struct s_gc_node
 {
 	void				*ptr;
@@ -58,11 +58,14 @@ typedef struct s_gc
 	t_gc_node	*head;
 }	t_gc;
 
-/* Environment functions */
+// Environment functions 
+char	*get_content(char *env_str);
+char	*get_key(char *env_str);
 t_env	*my_env(char **env);
 char	*get_env_value(char *key, t_env *env);
 
-/* Token functions */
+
+// Token functions 
 t_token	*tokenize(char *line, t_env *env);
 t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc);
 int		check_syntax_token(t_token *token);
@@ -79,7 +82,7 @@ void	free_string_array(char **array);
 void	free_commands(t_command *commands);
  
 
-/* Utility functions */
+// Utility functions
 char	*remove_syntactic_quotes(char *str);
 char	*ft_strjoin_free(char *s1, char *s2);
 int		is_metacharacter(char c);
@@ -96,7 +99,7 @@ int		ft_strcmp(const char *s1, const char *s2);
 char	*ft_strcpy(char *dest, const char *src);
 char	*remove_quotes(char *str);
 
-/* Garbage Collector functions */
+// Garbage Collector functions
 void	gc_init(t_gc *gc);
 void	*gc_malloc(t_gc *gc, size_t size);
 char	*gc_strdup(t_gc *gc, const char *s);

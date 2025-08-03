@@ -1,34 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tokenize_quotes.c                                  :+:      :+:    :+:   */
+/*   func_help.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/01 20:02:53 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/01 20:02:54 by mel-houa         ###   ########.fr       */
+/*   Created: 2025/08/01 21:13:44 by mel-houa          #+#    #+#             */
+/*   Updated: 2025/08/01 21:20:44 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	handle_quotes(const char *line, int *i)
+char	*get_key(char *env_str)
 {
-	char	quote;
+	int		i;
+	char	*key;
 
-	if (line[*i] != '\'' && line[*i] != '\"')
-		return (0);
-	quote = line[*i];
-	(*i)++;
-	while (line[*i] && line[*i] != quote)
-	{
-		if (line[*i] == '\\' && quote == '\"')
-			(*i)++;
-		if (line[*i])
-			(*i)++;
-	}
-	if (!line[*i])
-		return (print_error("unclosed quote", NULL), 0);
-	(*i)++;
-	return (1);
+	i = 0;
+	while (env_str[i] && env_str[i] != '=')
+		i++;
+	key = ft_strndup(env_str, i);
+	return (key);
+}
+
+char	*get_content(char *env_str)
+{
+	int		i;
+	char	*content;
+
+	i = 0;
+	while (env_str[i] && env_str[i] != '=') // increment to name = content
+		i++;
+	if (!env_str[i])
+		return (NULL);
+	content = ft_strdup(env_str + i + 1);
+	return (content);
 }

@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 00:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/01 02:15:50 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/01 21:34:01 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,23 @@ static int	allocate_arrays(char ***args, char ***infiles, char ***outfiles, int 
 	return (1);
 }
 
+
+
+static void init_index_array(int	*arg_count, int	*in_count, int	*out_count) 
+{
+	
+	*arg_count = 0;
+	*in_count = 0;
+	*out_count = 0;
+}
+
 static t_token	*fill_arrays(t_token *current, char **args, char **infiles, char **outfiles)
 {
 	int	arg_count;
 	int	in_count;
 	int	out_count;
 
-	arg_count = 0;
-	in_count = 0;
-	out_count = 0;
+	init_index_array(&arg_count, &in_count, &out_count);
 	while (current && current->type != PIPE)
 	{
 		if ((current->type == COMMAND || current->type == ARGUMENT)
@@ -89,13 +97,9 @@ static t_token	*fill_arrays(t_token *current, char **args, char **infiles, char 
 		}
 		current = current->next;
 	}
-	args[arg_count] = NULL;
-	infiles[in_count] = NULL;
-	outfiles[out_count] = NULL;
-	return (current);
+	return (args[arg_count] = NULL, infiles[in_count] = NULL, 
+					outfiles[out_count] = NULL, current);
 }
-
-
 
 
 // main func of build command 
