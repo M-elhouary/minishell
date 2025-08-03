@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenize_words.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/01 20:02:58 by mel-houa          #+#    #+#             */
+/*   Updated: 2025/08/03 15:07:35 by mel-houa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 
@@ -47,6 +59,7 @@ char	*extract_word(const char *line, int *i)
 	{
 		if (line[*i] == '\'' || line[*i] == '"')
 		{
+			// skip second quote
 			if (!skip_quoted_section(line, i, line[*i]))
 				break;
 		}
