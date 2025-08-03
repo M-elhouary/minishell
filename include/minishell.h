@@ -73,10 +73,6 @@ char	*extract_word(const char *line, int *i);
 // Parsing functions
 t_command	*parse_commands(t_token *tokens);
 void		free_commands(t_command *commands);
-void	count_tokens(t_token *temp, int *arg_count, int *in_count, int *out_count);
-int	check_flags(t_token *temp, int *append_flag, int *heredoc_flag);
-void	free_string_array(char **array);
-void	free_commands(t_command *commands);
  
 
 /* Utility functions */
