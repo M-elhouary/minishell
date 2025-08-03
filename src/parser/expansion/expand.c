@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/01 00:28:59 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/03 20:49:57 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 
 
+// Expand all $VAR in a string using the environment
 static char	*expand_var_in_string(const char *str, t_env *env)
 {
 	char	*result;
@@ -52,6 +53,7 @@ static char	*expand_var_in_string(const char *str, t_env *env)
 	return (result);
 }
 
+// Handle quoted substrings, expanding variables if needed
 static char	*process_quoted(const char *str, int *i, t_env *env)
 {
 	char	quote;
@@ -78,6 +80,7 @@ static char	*process_quoted(const char *str, int *i, t_env *env)
 		return (expnd);
 }
 
+// Handle unquoted substrings, expanding variables
 static char	*process_unquoted(const char *str, int *i, t_env *env)
 {
 	int		start;
@@ -94,6 +97,7 @@ static char	*process_unquoted(const char *str, int *i, t_env *env)
 }
 
 // Helper function to check if string contains unquoted variables
+// Check if a string contains unquoted variables ($VAR)
 int	has_unquoted_variables(const char *str)
 {
 	int	i;
@@ -122,28 +126,33 @@ int	has_unquoted_variables(const char *str)
 	return (0);
 }
 
-char	*expand_variables(const char *str, t_env *env)
-{
-	char	*result;
-	char	*expnd;
-	int		i;
 
-	if (!str)
-		return (ft_strdup(""));
-	result = ft_strdup("");
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '\'' || str[i] == '"')
-		{
+// Helper to process the main loop of expand_variables
+// Helper for expand_variables: processes the main loop
+static char *expand_variables_loop(const char *str, t_env *env, int *i_ptr) {
+	char *result = ft_strdup("");
+	char *expnd;
+	int i = *i_ptr;
+	while (str[i]) {
+		if (str[i] == '\'' || str[i] == '"') {
 			expnd = process_quoted(str, &i, env);
 			result = ft_strjoin_free(result, expnd);
-		}
-		else
-		{
+		} else {
 			expnd = process_unquoted(str, &i, env);
 			result = ft_strjoin_free(result, expnd);
 		}
 	}
-	return (result);
+	*i_ptr = i;
+	return result;
+}
+
+// Expand all variables in a string, handling quotes
+char *expand_variables(const char *str, t_env *env)
+{
+	char *result;
+	int i = 0;
+	if (!str)
+		return (ft_strdup(""));
+	result = expand_variables_loop(str, env, &i);
+	return result;
 }

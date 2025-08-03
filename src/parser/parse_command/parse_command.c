@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 00:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/01 21:34:01 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/03 20:46:48 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,36 +102,33 @@ static t_token	*fill_arrays(t_token *current, char **args, char **infiles, char 
 }
 
 
-// main func of build command 
-t_command	*parse_commands(t_token *tokens)
-{
-	t_command	*cmd_list;
-	char		**args;
-	char		**infiles;
-	char		**outfiles;
-	int			count[3];
-	int			flags[2];
-	t_token		*current;
 
-	cmd_list = NULL;
-	current = tokens;
+// Helper to process a single command in the parse_commands loop
+static t_token *process_command_node(t_token *current, t_command **cmd_list) {
+	char **args, **infiles, **outfiles;
+	int count[3] = {0, 0, 0};
+	int flags[2] = {0, 0};
+	count_tokens(current, &count[0], &count[1], &count[2]);
+	check_flags(current, &flags[0], &flags[1]);
+	if (!allocate_arrays(&args, &infiles, &outfiles, count[0], count[1], count[2]))
+		return NULL;
+	current = fill_arrays(current, args, infiles, outfiles);
+	add_cmd_node(cmd_list, create_cmd_node(args, infiles, outfiles, flags[0], flags[1]));
+	if (current && current->type == PIPE)
+		current = current->next;
+	return current;
+}
+
+// main func of build command 
+t_command *parse_commands(t_token *tokens)
+{
+	t_command *cmd_list = NULL;
+	t_token *current = tokens;
 	while (current)
 	{
-		count[0] = 0;
-		count[1] = 0;
-		count[2] = 0;
-		flags[0] = 0;
-		flags[1] = 0;
-		count_tokens(current, &count[0], &count[1], &count[2]);
-		check_flags(current, &flags[0], &flags[1]);
-		if (!allocate_arrays(&args, &infiles, &outfiles,
-				count[0], count[1], count[2]))
-			return (NULL);
-		current = fill_arrays(current, args, infiles, outfiles);
-		add_cmd_node(&cmd_list, create_cmd_node(args, infiles,
-				outfiles, flags[0], flags[1]));
-		if (current && current->type == PIPE)
-			current = current->next;
+		current = process_command_node(current, &cmd_list);
+		if (!current && cmd_list == NULL)
+			return NULL;
 	}
-	return (cmd_list);
+	return cmd_list;
 }

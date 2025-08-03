@@ -6,14 +6,18 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/02 20:58:26 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/03 20:41:26 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
+// Include the main minishell header for required types and function declarations
 #include "minishell.h"
 
 
 
+
+// Create a new token, allocating memory using the garbage collector
 static t_token	*create_token_gc(char *value, t_token_type type, t_gc *gc)
 {
 	t_token	*new;
@@ -28,6 +32,8 @@ static t_token	*create_token_gc(char *value, t_token_type type, t_gc *gc)
 	return (new);
 }
 
+
+// Add a token to the end of the token linked list
 static void	add_token(t_token **head, t_token *new)
 {
 	t_token	*tmp;
@@ -47,6 +53,9 @@ static void	add_token(t_token **head, t_token *new)
 
 
 
+
+// Handle special shell characters (|, >, >>, <, <<) and add them as tokens
+// Returns 1 if a special token was found and handled, 0 otherwise
 static int	handle_special_gc(t_token **tokens, char *line, int *i, t_gc *gc)
 {
 	if (line[*i] == '|') {
@@ -75,6 +84,16 @@ static int	handle_special_gc(t_token **tokens, char *line, int *i, t_gc *gc)
 }
 
 
+
+/*
+ * Process a word from the input line:
+ * - Extracts the word (handles quotes)
+ * - Expands variables if present
+ * - Handles empty expansions (e.g., $UNSET_VAR)
+ * - Splits the word if necessary (e.g., after expansion)
+ * - Adds the resulting tokens as COMMAND or ARGUMENT
+ * Returns 1 on success, 0 on error
+ */
 static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_gc *gc)
 {
 	char	*word;
@@ -91,6 +110,7 @@ static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_g
 	expanded = expand_variables(word, env);
 	if (has_vars && (!expanded || !*expanded))
 	{
+		// If variable expansion results in empty, add a special empty token
 		new = create_token_gc(gc_strdup(gc, ""), ARGUMENT, gc);
 		if (!new)
 			return (free(word), free(expanded), 0);
@@ -108,6 +128,7 @@ static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_g
 	j = 0;
 	while (split_words[j])
 	{
+		// The first word is considered a COMMAND, others are ARGUMENTs
 		if (*tokens == NULL)
 			new = create_token_gc(split_words[j], COMMAND, gc);
 		else
@@ -121,6 +142,15 @@ static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_g
 }
 
 
+
+/*
+ * Main tokenization function:
+ * - Iterates through the input line
+ * - Skips spaces
+ * - Handles quoted words, special shell characters, and normal words
+ * - Builds a linked list of tokens representing the parsed input
+ * Returns the head of the token list, or NULL on error
+ */
 t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc)
 {
 	int		i;
@@ -134,6 +164,7 @@ t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc)
 			break ;
 		if (line[i] == '\'' || line[i] == '"')
 		{
+			// Handle quoted word
 			if (!process_word_gc(&tokens, line, &i, env, gc))
 				return (NULL);
 		}

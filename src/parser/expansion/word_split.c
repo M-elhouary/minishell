@@ -1,5 +1,6 @@
 #include "minishell.h"
 
+// Count the number of words in a string, separated by spaces
 static int	count_words_in_expanded(const char *str)
 {
 	int	count;
@@ -23,6 +24,7 @@ static int	count_words_in_expanded(const char *str)
 	return (count);
 }
 
+// Split a string into words (by spaces), return array of words
 static char	**split_expanded_word(const char *expanded)
 {
 	char	**words;
@@ -55,6 +57,7 @@ static char	**split_expanded_word(const char *expanded)
 	return (words);
 }
 
+// Expand variables in a word, then split the result into words
 char	**expand_and_split(const char *word, t_env *env)
 {
 	char	*expanded;
@@ -82,6 +85,7 @@ char	**expand_and_split(const char *word, t_env *env)
 	return (split_words);
 }
 
+// Like split_expanded_word, but uses garbage collector for memory
 static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 {
 	char	**words;
@@ -114,6 +118,7 @@ static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 	return (words);
 }
 
+// Expand variables in a word, split result, use garbage collector for memory
 char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc)
 {
 	char	*expanded;

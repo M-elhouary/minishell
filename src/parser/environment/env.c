@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:12 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/01 21:19:54 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/03 20:43:35 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,27 +59,28 @@ static void	env_add_node(t_env **head, t_env *new)
 
 
 
-t_env	*my_env(char **env)
-{
-	t_env	*env_list;
-	char	*key;
-	char	*content;
-	int		i;
 
-	env_list = NULL;
-	i = 0;
+// Helper function to process a single environment entry
+static void process_env_entry(char *env_entry, t_env **env_list)
+{
+	char *key = get_key(env_entry);
+	char *content = get_content(env_entry);
+	if (!key || !content)
+	{
+		free(key);
+		free(content);
+		return;
+	}
+	env_add_node(env_list, env_new_node(key, content));
+}
+
+t_env *my_env(char **env)
+{
+	t_env *env_list = NULL;
+	int i = 0;
 	while (env && env[i])
 	{
-		key = get_key(env[i]);
-		content = get_content(env[i]);
-		if (!key || !content)
-		{
-			free(key);
-			free(content);
-			i++;
-			continue ;
-		}
-		env_add_node(&env_list, env_new_node(key, content));
+		process_env_entry(env[i], &env_list);
 		i++;
 	}
 	return (env_list);

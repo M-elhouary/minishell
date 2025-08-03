@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/03 19:49:22 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/03 20:46:50 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,47 +16,40 @@
 
 
 
-void	print_commands(t_command *cmd)
-{
-	int	i;
-	int	cmd_num;
 
-	cmd_num = 1;
+static void print_args(char **args) {
+	int i = 0;
+	if (args) {
+		printf("Arguments:\n");
+		while (args[i]) {
+			printf("  args[%d]: %s\n", i, args[i]);
+			i++;
+		}
+	} else {
+		printf("Arguments: (none)\n");
+	}
+}
+
+static void print_files(const char *label, char **files) {
+	int i = 0;
+	if (files) {
+		printf("%s:\n", label);
+		while (files[i]) {
+			printf("  %s[%d]: '%s'\n", label, i, files[i]);
+			i++;
+		}
+	}
+}
+
+void print_commands(t_command *cmd)
+{
+	int cmd_num = 1;
 	while (cmd)
 	{
 		printf("=== Command %d ===\n", cmd_num);
-		if (cmd->args)
-		{
-			printf("Arguments:\n");
-			i = 0;
-			while (cmd->args[i])
-			{
-				printf("  args[%d]: %s\n", i, cmd->args[i]);
-				i++;
-			}
-		}
-		else
-			printf("Arguments: (none)\n");
-		if (cmd->infile)
-		{
-			printf("Input files:\n");
-			i = 0;
-			while (cmd->infile[i])
-			{
-				printf("  infile[%d]: '%s'\n", i, cmd->infile[i]);
-				i++;
-			}
-		}
-		if (cmd->outfile)
-		{
-			printf("Output files:\n");
-			i = 0;
-			while (cmd->outfile[i])
-			{
-				printf("  outfile[%d]: '%s'\n", i, cmd->outfile[i]);
-				i++;
-			}
-		}
+		print_args(cmd->args);
+		print_files("Input files", cmd->infile);
+		print_files("Output files", cmd->outfile);
 		printf("Flags:\n");
 		printf("  append: %d\n", cmd->append);
 		printf("  heredoc: %d\n", cmd->heredoc);
