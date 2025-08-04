@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 16:55:13 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/04 17:16:33 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,23 +99,25 @@ int	main(int ac, char **av, char **env)
 		}
 		add_history(line);
 		tokens = tokenize_gc(line, env_list, &gc);
-		if (tokens)
+		if (!tokens)
 		{
-			if (check_syntax_token(tokens))
+			// Error already printed by print_error, just skip execution
+			continue;
+		}
+		if (check_syntax_token(tokens))
+		{
+			cmd = parse_commands(tokens);
+			if (cmd)
 			{
-				cmd = parse_commands(tokens);
-				if (cmd)
-				{
-					cmd->path = locate_cmd(cmd->args[0]);
-					// if (!cmd->path)
-					exit_code = exec_cmd(cmd, &env_list);
-					
-					//wher used this variable 
-					//last_exit = exit_code;
-					if (exit_code != 0)
-						printf("[Exit code: %d]\n", exit_code);
-					free_commands(cmd);
-				}
+				cmd->path = locate_cmd(cmd->args[0]);
+				// if (!cmd->path)
+				exit_code = exec_cmd(cmd, &env_list);
+				
+				//wher used this variable 
+				//last_exit = exit_code;
+				if (exit_code != 0)
+					printf("[Exit code: %d]\n", exit_code);
+				free_commands(cmd);
 			}
 		}
 		free(line);

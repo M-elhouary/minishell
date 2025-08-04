@@ -61,12 +61,13 @@ $(LIBFT_A):
 clean:
 	@printf "\033[0;31mCleaning object files...\033[0m\n"
 	@rm -f $(OBJS)
+	@find . -name '*.o' -delete
 	@make -C $(LIBFT_DIR) clean -s
 	@printf "\033[0;32m✓ Clean completed\033[0m\n"
 
 fclean: clean
 	@printf "\033[0;31mRemoving $(NAME)...\033[0m\n"
-	@rm -f $(NAME)
+	@rm -f $(NAME) parse
 	@make -C $(LIBFT_DIR) fclean -s
 	@printf "\033[0;32m✓ Full clean completed\033[0m\n"
 
