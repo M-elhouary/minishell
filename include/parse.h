@@ -1,5 +1,5 @@
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef PARSE_H
+# define PARSE_H
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -66,7 +66,6 @@ char	*get_env_value(char *key, t_env *env);
 
 
 // Token functions 
-t_token	*tokenize(char *line, t_env *env);
 t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc);
 int		check_syntax_token(t_token *token);
 int		free_token(t_token *token);
@@ -76,7 +75,9 @@ char	*extract_word(const char *line, int *i);
 // Parsing functions
 t_command	*parse_commands(t_token *tokens);
 void		free_commands(t_command *commands);
- 
+int	check_flags(t_token *temp, int *append_flag, int *heredoc_flag);
+void		count_tokens(t_token *temp, int *arg_count, int *in_count, int *out_count);
+
 
 // Utility functions
 char	*remove_syntactic_quotes(char *str);

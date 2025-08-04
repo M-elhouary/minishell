@@ -6,12 +6,12 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/03 20:46:50 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/03 23:23:57 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#include "minishell.h"
+#include "parse.h"
 
 
 
@@ -88,7 +88,7 @@ int	main(int ac, char **av, char **env)
 					if (cmds)
 					{
 						
-						//print_commands(cmds);
+						print_commands(cmds);
 						free_commands(cmds);
 					}
 				}

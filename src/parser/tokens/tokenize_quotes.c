@@ -6,11 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:53 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/01 20:02:54 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/03 23:28:20 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "parse.h"
 
 int	handle_quotes(const char *line, int *i)
 {

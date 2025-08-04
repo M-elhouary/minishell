@@ -6,12 +6,12 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:25 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/01 20:03:26 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/03 23:28:09 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#include "minishell.h"
+#include "parse.h"
 
 void	gc_init(t_gc *gc)
 {

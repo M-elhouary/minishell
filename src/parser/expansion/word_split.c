@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "parse.h"
 
 // Count the number of words in a string, separated by spaces
 static int	count_words_in_expanded(const char *str)
