@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 01:22:12 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/04 16:55:13 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,13 +78,13 @@ int	main(int ac, char **av, char **env)
 	t_env		*env_list;
 	t_gc		gc;
 	int			exit_code;
-	int			last_exit;
+	//int			last_exit;
 
 	(void)ac;
 	(void)av;
 	gc_init(&gc);
 	env_list = my_env(env);
-	last_exit = 0;
+	//last_exit = 0;
 	signal(SIGINT, sigint_);
 	signal(SIGQUIT, sigquit_);
 	while (1)
@@ -109,7 +109,9 @@ int	main(int ac, char **av, char **env)
 					cmd->path = locate_cmd(cmd->args[0]);
 					// if (!cmd->path)
 					exit_code = exec_cmd(cmd, &env_list);
-					last_exit = exit_code;
+					
+					//wher used this variable 
+					//last_exit = exit_code;
 					if (exit_code != 0)
 						printf("[Exit code: %d]\n", exit_code);
 					free_commands(cmd);

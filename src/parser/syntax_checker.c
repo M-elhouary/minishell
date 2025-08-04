@@ -6,13 +6,13 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 16:11:58 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/03 23:28:23 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/04 16:48:10 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 
-#include "parse.h"
+#include "minishell.h"
 
 
 static int	check_pipe_start(t_token *tokens)

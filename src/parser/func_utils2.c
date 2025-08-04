@@ -6,11 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 23:30:02 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/03 23:28:09 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/04 16:48:00 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parse.h"
+#include "minishell.h"
 
 
 char	*ft_strjoin_free(char *s1, char *s2)

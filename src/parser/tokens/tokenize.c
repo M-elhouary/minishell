@@ -6,13 +6,13 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/03 23:28:23 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/04 16:47:17 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 // Include the main minishell header for required types and function declarations
-#include "parse.h"
+#include "minishell.h"
 
 
 
