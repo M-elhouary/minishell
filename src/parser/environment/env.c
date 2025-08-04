@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:12 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/03 23:24:00 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/04 01:17:18 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ char	*get_env_value(char *key, t_env *env)
 }
 
 
-static t_env	*env_new_node(char *key, char *content)
+t_env	*env_new_node(char *key, char *content)
 {
 	t_env	*new_node;
 
@@ -40,7 +40,7 @@ static t_env	*env_new_node(char *key, char *content)
 	return (new_node);
 }
 
-static void	env_add_node(t_env **head, t_env *new)
+void	env_add_node(t_env **head, t_env *new)
 {
 	t_env	*tmp;
 
@@ -85,3 +85,4 @@ t_env *my_env(char **env)
 	}
 	return (env_list);
 }
+

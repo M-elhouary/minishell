@@ -1,3 +1,58 @@
+<<<<<<< HEAD
+<<<<<<<< HEAD:include/parse.h
+#ifndef PARSE_H
+# define PARSE_H
+========
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
+/*   Updated: 2025/08/04 00:33:24 by houardi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+>>>>>>>> a320554f3f55ee65bf3dad673c5898d0053ce9f8:include/minishell.h
+
+# ifndef MINISHELL_H
+#define MINISHELL_H
+
+#include <sys/wait.h>
+#include <errno.h>
+#include <signal.h>
+#include <linux/limits.h>
+#include <sys/stat.h>
+#include <parse.h>
+
+typedef enum
+{
+	NOT_BUILTIN = -1,
+	BUILTIN_SUCCESS = 0,
+	BUILTIN_ERROR = 1
+}	t_builtin;
+
+char		*locate_cmd(char *cmd);
+t_command	*create_cmd(char **args);
+int			exec_cmd(t_command *cmd, t_env **env);
+void		free_cmd(t_command *cmd);
+long		atol_s(const char *str, char **endptr);
+
+int	echo_c(char **args);
+int	pwd_c();
+int	cd_c(char **args, t_env **env);
+int	env_c(t_env *env);
+int	export_c(char **args, t_env **env);
+int	unset_c(char **args, t_env **env);
+int	exit_c(char **args);
+t_builtin	exec_builtin(t_command *cmd, t_env **env);
+
+<<<<<<<< HEAD:include/parse.h
+typedef struct s_command
+{
+	int             count;
+=======
 #ifndef PARSE_H
 # define PARSE_H
 
@@ -36,7 +91,8 @@ typedef struct s_token
 
 typedef struct s_command
 {
-	int             count;
+	int             ac;
+>>>>>>> a320554f3f55ee65bf3dad673c5898d0053ce9f8
 	char 			*path;
 	char			**args;
 	char			**infile;
@@ -63,9 +119,18 @@ char	*get_content(char *env_str);
 char	*get_key(char *env_str);
 t_env	*my_env(char **env);
 char	*get_env_value(char *key, t_env *env);
+<<<<<<< HEAD
 
 
 // Token functions 
+=======
+t_env	*env_new_node(char *key, char *content);
+void	env_add_node(t_env **head, t_env *new);
+
+
+// Token functions 
+t_token	*tokenize(char *line, t_env *env);
+>>>>>>> a320554f3f55ee65bf3dad673c5898d0053ce9f8
 t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc);
 int		check_syntax_token(t_token *token);
 int		free_token(t_token *token);
@@ -75,9 +140,16 @@ char	*extract_word(const char *line, int *i);
 // Parsing functions
 t_command	*parse_commands(t_token *tokens);
 void		free_commands(t_command *commands);
+<<<<<<< HEAD
 int	check_flags(t_token *temp, int *append_flag, int *heredoc_flag);
 void		count_tokens(t_token *temp, int *arg_count, int *in_count, int *out_count);
 
+=======
+void	count_tokens(t_token *temp, int *arg_count, int *in_count, int *out_count);
+int	check_flags(t_token *temp, int *append_flag, int *heredoc_flag);
+
+ 
+>>>>>>> a320554f3f55ee65bf3dad673c5898d0053ce9f8
 
 // Utility functions
 char	*remove_syntactic_quotes(char *str);
@@ -103,5 +175,15 @@ char	*gc_strdup(t_gc *gc, const char *s);
 char	**gc_split(t_gc *gc, char const *s, char c);
 void	gc_free_all(t_gc *gc);
 void	gc_destroy(t_gc *gc);
+<<<<<<< HEAD
+========
+char	*ft_strcat(char *dst, char *src);
+int	set_env_value(t_env **env, char *key, char *value);
+int	unset_env_value(t_env **env, char *key);
+char	**env_to_array(t_env *env);
+void	free_env_array(char **envp);
+>>>>>>>> a320554f3f55ee65bf3dad673c5898d0053ce9f8:include/minishell.h
+=======
+>>>>>>> a320554f3f55ee65bf3dad673c5898d0053ce9f8
 
 #endif
