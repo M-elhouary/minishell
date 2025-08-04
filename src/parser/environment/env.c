@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:12 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/03 20:43:35 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/03 20:51:49 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,6 @@ static void	env_add_node(t_env **head, t_env *new)
 	}
 }
 
-
-
-
-// Helper function to process a single environment entry
 static void process_env_entry(char *env_entry, t_env **env_list)
 {
 	char *key = get_key(env_entry);
