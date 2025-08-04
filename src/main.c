@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 00:06:00 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/04 23:55:00 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,12 @@ int	main(int ac, char **av, char **env)
 	(void)ac;
 	(void)av;
 	gc_init(&gc);
+	cmd  = malloc(sizeof(t_command));
+	if(!cmd)
+		return 1;
 	env_list = my_env(env);
 	last_exit = 0;
+	cmd->status_exit = 0;
 	signal(SIGINT, sigint_);
 	signal(SIGQUIT, sigquit_);
 	while (1)
@@ -102,10 +106,10 @@ int	main(int ac, char **av, char **env)
 			continue;
 		}
 		add_history(line);
-		tokens = tokenize_gc(line, env_list, &gc);
+		tokens = tokenize_gc(line, env_list, &gc, cmd);
 		if (tokens)
 		{
-			if (check_syntax_token(tokens))
+			if (check_syntax_token(tokens, cmd))
 			{
 				cmd = parse_commands(tokens);
 				if (cmd)

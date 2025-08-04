@@ -66,7 +66,7 @@ clean:
 
 fclean: clean
 	@printf "\033[0;31mRemoving $(NAME)...\033[0m\n"
-	@rm -f $(NAME)
+	@rm -f $(NAME) parse
 	@make -C $(LIBFT_DIR) fclean -s
 	@printf "\033[0;32m✓ Full clean completed\033[0m\n"
 

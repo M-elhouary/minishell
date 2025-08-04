@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   word_split.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/04 20:10:10 by mel-houa          #+#    #+#             */
+/*   Updated: 2025/08/04 23:26:01 by mel-houa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 // Count the number of words in a string, separated by spaces
@@ -58,7 +70,7 @@ static char	**split_expanded_word(const char *expanded)
 }
 
 // Expand variables in a word, then split the result into words
-char	**expand_and_split(const char *word, t_env *env)
+char	**expand_and_split(const char *word, t_env *env, t_command *cmd)
 {
 	char	*expanded;
 	char	**split_words;
@@ -66,7 +78,7 @@ char	**expand_and_split(const char *word, t_env *env)
 
 	if (!has_unquoted_variables(word))
 	{
-		expanded = expand_variables(word, env);
+		expanded = expand_variables(word, env, cmd);
 		result = malloc(sizeof(char *) * 2);
 		if (!result)
 			return (free(expanded), NULL);
@@ -74,7 +86,7 @@ char	**expand_and_split(const char *word, t_env *env)
 		result[1] = NULL;
 		return (result);
 	}
-	expanded = expand_variables(word, env);
+	expanded = expand_variables(word, env, cmd);
 	if (!expanded || !*expanded)
 	{
 		free(expanded);
@@ -119,7 +131,7 @@ static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 }
 
 // Expand variables in a word, split result, use garbage collector for memory
-char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc)
+char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc, t_command *cmd)
 {
 	char	*expanded;
 	char	**split_words;
@@ -127,7 +139,7 @@ char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc)
 
 	if (!has_unquoted_variables(word))
 	{
-		expanded = expand_variables(word, env);
+		expanded = expand_variables(word, env, cmd);
 		result = gc_malloc(gc, sizeof(char *) * 2);
 		if (!result)
 			return (free(expanded), NULL);
@@ -136,7 +148,7 @@ char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc)
 		free(expanded);
 		return (result);
 	}
-	expanded = expand_variables(word, env);
+	expanded = expand_variables(word, env, cmd);
 	if (!expanded || !*expanded)
 	{
 		free(expanded);
