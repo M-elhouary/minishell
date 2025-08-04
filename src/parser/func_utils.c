@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 16:04:05 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/01 23:30:42 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/04 16:47:49 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,14 @@
 
 void	print_error(char *error, char *detail)
 {
-	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	if (detail)
-	{
-		ft_putstr_fd(detail, STDERR_FILENO);
-		ft_putstr_fd(": ", STDERR_FILENO);
-	}
-	ft_putstr_fd(error, STDERR_FILENO);
-	ft_putstr_fd("\n", STDERR_FILENO);
+    ft_putstr_fd("minishell: ", STDERR_FILENO);
+    if (detail)
+    {
+        ft_putstr_fd(detail, STDERR_FILENO);
+        ft_putstr_fd(": ", STDERR_FILENO);
+    }
+    ft_putstr_fd(error, STDERR_FILENO);
+    ft_putstr_fd("\n", STDERR_FILENO);
 }
 
 char *ft_strndup(const char *s, size_t n)

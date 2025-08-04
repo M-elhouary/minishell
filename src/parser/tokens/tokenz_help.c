@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 17:15:23 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/31 17:08:33 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/04 16:47:24 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,15 +40,15 @@ char	*remove_syntactic_quotes(char *str)
 
 int free_token(t_token *token)
 {
-    t_token *tmp;
+	t_token *tmp;
 
-    while(token)
-    {
-        tmp = token;
-        token = token->next;
-        if(tmp->value)
-            free(tmp->value);
-        free(tmp);
-    }
-    return (1);
+	while(token)
+	{
+		tmp = token;
+		token = token->next;
+		if(tmp->value)
+			free(tmp->value);
+		free(tmp);
+	}
+	return (1);
 }

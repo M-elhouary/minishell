@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/03 20:41:26 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/04 17:17:18 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,9 +164,10 @@ t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc)
 			break ;
 		if (line[i] == '\'' || line[i] == '"')
 		{
-			// Handle quoted word
-			if (!process_word_gc(&tokens, line, &i, env, gc))
-				return (NULL);
+			int quote_ok = handle_quotes(line, &i);
+			if (!quote_ok)
+				return (NULL); // Stop tokenizing on unclosed quote
+			continue;
 		}
 		else if (handle_special_gc(&tokens, line, &i, gc))
 			; // index increment handled in handle_special_gc
