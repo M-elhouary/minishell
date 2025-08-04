@@ -1,109 +1,51 @@
-#ifndef MINISHELL_H
-# define MINISHELL_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
+/*   Updated: 2025/08/04 00:33:24 by houardi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-# include <stdio.h>
-# include <stdlib.h>
-# include <unistd.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include "libft.h"
+# ifndef MINISHELL_H
+#define MINISHELL_H
 
-typedef enum e_token_type
+#include <sys/wait.h>
+#include <errno.h>
+#include <signal.h>
+#include <linux/limits.h>
+#include <sys/stat.h>
+#include <parse.h>
+
+typedef enum
 {
-	COMMAND,
-	PIPE,
-	REDIR_IN,
-	REDIR_OUT,
-	REDIR_APPEND,
-	HEREDOC,
-	ARGUMENT
-}	t_token_type;
+	NOT_BUILTIN = -1,
+	BUILTIN_SUCCESS = 0,
+	BUILTIN_ERROR = 1
+}	t_builtin;
 
-typedef struct s_env
-{
-	char			*key;
-	char			*content;
-	struct s_env	*next;
-}	t_env;
+char		*locate_cmd(char *cmd);
+t_command	*create_cmd(char **args);
+int			exec_cmd(t_command *cmd, t_env **env);
+void		free_cmd(t_command *cmd);
+long		atol_s(const char *str, char **endptr);
 
-typedef struct s_token
-{
-	char			*value;
-	t_token_type	type;
-	int				is_empty_expansion;
-	struct s_token	*next;
-}	t_token;
+int	echo_c(char **args);
+int	pwd_c();
+int	cd_c(char **args, t_env **env);
+int	env_c(t_env *env);
+int	export_c(char **args, t_env **env);
+int	unset_c(char **args, t_env **env);
+int	exit_c(char **args);
+t_builtin	exec_builtin(t_command *cmd, t_env **env);
 
-typedef struct s_command
-{
-	int             count;
-	char 			*path;
-	char			**args;
-	char			**infile;
-	char			**outfile;
-	int				append;
-	int				heredoc;
-	struct s_command	*next;
-}	t_command;
-
-// Garbage Collector 
-typedef struct s_gc_node
-{
-	void				*ptr;
-	struct s_gc_node	*next;
-}	t_gc_node;
-
-typedef struct s_gc
-{
-	t_gc_node	*head;
-}	t_gc;
-
-// Environment functions 
-char	*get_content(char *env_str);
-char	*get_key(char *env_str);
-t_env	*my_env(char **env);
-char	*get_env_value(char *key, t_env *env);
-
-
-// Token functions 
-t_token	*tokenize(char *line, t_env *env);
-t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc);
-int		check_syntax_token(t_token *token);
-int		free_token(t_token *token);
-int		handle_quotes(const char *line, int *i);
-char	*extract_word(const char *line, int *i);
-
-// Parsing functions
-t_command	*parse_commands(t_token *tokens);
-void		free_commands(t_command *commands);
-void	count_tokens(t_token *temp, int *arg_count, int *in_count, int *out_count);
-int	check_flags(t_token *temp, int *append_flag, int *heredoc_flag);
-
- 
-
-// Utility functions
-char	*remove_syntactic_quotes(char *str);
-char	*ft_strjoin_free(char *s1, char *s2);
-int		is_metacharacter(char c);
-int		is_redirection(t_token_type type);
-void	print_error(char *error, char *detail);
-int		is_space(char c);
-char	*ft_strndup(const char *s, size_t n);
-char	*expand_variables(const char *str, t_env *env);
-char	**expand_and_split(const char *word, t_env *env);
-char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc);
-int		has_unquoted_variables(const char *str);
-int		skip_spaces(const char *line, int *i);
-int		ft_strcmp(const char *s1, const char *s2);
-char	*ft_strcpy(char *dest, const char *src);
-char	*remove_quotes(char *str);
-
-// Garbage Collector functions
-void	gc_init(t_gc *gc);
-void	*gc_malloc(t_gc *gc, size_t size);
-char	*gc_strdup(t_gc *gc, const char *s);
-char	**gc_split(t_gc *gc, char const *s, char c);
-void	gc_free_all(t_gc *gc);
-void	gc_destroy(t_gc *gc);
+char	*ft_strcat(char *dst, char *src);
+int	set_env_value(t_env **env, char *key, char *value);
+int	unset_env_value(t_env **env, char *key);
+char	**env_to_array(t_env *env);
+void	free_env_array(char **envp);
 
 #endif
