@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 20:06:25 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/05 02:09:27 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,30 +16,41 @@
 
 
 // Expand all $VAR in a string
-static char	*expand_var_in_string(const char *str, t_env *env)
+static char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd)
 {
 	char	*result;
 	int		i;
 	char	*tmp;
 	char	*var_value;
 	int		start;
+	int check;
 
-	result = ft_strdup("");
+	result = ft_strdup("");//
 	i = 0;
+	check = 0;
 	while (str[i])
 	{
 		if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
 		{
+			
 			i++;
-			start = i;
-			while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-				i++;
-			tmp = ft_strndup(str + start, i - start);
-			var_value = get_env_value(tmp, env);
+			if(str[i] == '?')
+				 check = 1;
+			if(!check)
+			{
+				start = i;
+				while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+					i++;
+				tmp = ft_strndup(str + start, i - start);
+				var_value = get_env_value(tmp, env);
+			}
+			else
+				var_value = ft_itoa(cmd->status_exit);
+
 			if (var_value && *var_value)
 				result = ft_strjoin_free(result, ft_strdup(var_value));
 			else
-				result = ft_strjoin_free(result, ft_strdup(""));
+				result = ft_strjoin_free(result, ft_strdup(""));//
 			free(tmp);
 			free(var_value);
 		}
@@ -54,7 +65,7 @@ static char	*expand_var_in_string(const char *str, t_env *env)
 }
 
 // Handle quoted substrings  expanding variables if needed
-static char	*process_quoted(const char *str, int *i, t_env *env)
+static char	*process_quoted(const char *str, int *i, t_env *env, t_command *cmd)
 {
 	char	quote;
 	int		start;
@@ -72,7 +83,7 @@ static char	*process_quoted(const char *str, int *i, t_env *env)
 	(*i)++;
 	if (quote == '"')
 	{
-		result = expand_var_in_string(expnd, env);
+		result = expand_var_in_string(expnd, env, cmd);
 		free(expnd);
 		return (result);
 	}
@@ -81,7 +92,7 @@ static char	*process_quoted(const char *str, int *i, t_env *env)
 }
 
 // Handle unquoted substrings and  expanding variables
-static char	*process_unquoted(const char *str, int *i, t_env *env)
+static char	*process_unquoted(const char *str, int *i, t_env *env, t_command *cmd)
 {
 	int		start;
 	char	*expnd;
@@ -91,8 +102,9 @@ static char	*process_unquoted(const char *str, int *i, t_env *env)
 	while (str[*i] && str[*i] != '\'' && str[*i] != '"')
 		(*i)++;
 	expnd = ft_strndup(str + start, *i - start);
-	result = expand_var_in_string(expnd, env);
+	result = expand_var_in_string(expnd, env, cmd);
 	free(expnd);
+	printf("%smmm\n", result);
 	return (result);
 }
 
@@ -129,30 +141,34 @@ int	has_unquoted_variables(const char *str)
 
 //  to process the main loop of expand_variables
 //  for expand_variables processes the main loop
-static char *expand_variables_loop(const char *str, t_env *env, int *i_ptr) {
+static char *expand_variables_loop(const char *str, t_env *env, int *i_ptr, t_command *cmd) 
+{
 	char *result = ft_strdup("");
 	char *expnd;
 	int i = *i_ptr;
 	while (str[i]) {
 		if (str[i] == '\'' || str[i] == '"') {
-			expnd = process_quoted(str, &i, env);
+			expnd = process_quoted(str, &i, env, cmd);
 			result = ft_strjoin_free(result, expnd);
-		} else {
-			expnd = process_unquoted(str, &i, env);
+		}
+		 else {
+			expnd = process_unquoted(str, &i, env, cmd);
 			result = ft_strjoin_free(result, expnd);
 		}
 	}
+	printf("%d\n", i);
 	*i_ptr = i;
 	return result;
 }
 
 // Expand all variables in a string, handling quotes
-char *expand_variables(const char *str, t_env *env)
+char *expand_variables(const char *str, t_env *env, t_command *cmd)
 {
 	char *result;
 	int i = 0;
 	if (!str)
 		return (ft_strdup(""));
-	result = expand_variables_loop(str, env, &i);
+	result = expand_variables_loop(str, env, &i, cmd);
+	printf("%s\n", result);
 	return result;
 }

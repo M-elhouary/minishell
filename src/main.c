@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 17:16:33 by mel-houa         ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2025/08/05 02:06:51 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "minishell.h"
 
@@ -83,6 +84,9 @@ int	main(int ac, char **av, char **env)
 	(void)ac;
 	(void)av;
 	gc_init(&gc);
+	cmd  = malloc(sizeof(t_command));
+	if(!cmd)
+		return 1;
 	env_list = my_env(env);
 	//last_exit = 0;
 	signal(SIGINT, sigint_);

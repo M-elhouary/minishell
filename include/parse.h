@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/04 16:53:49 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/05 02:12:12 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ typedef struct s_token
 
 typedef struct s_command
 {
+	int			status_exit;
 	int             ac;
 	char 			*path;
 	char			**args;
@@ -89,8 +90,8 @@ void	env_add_node(t_env **head, t_env *new);
 
 
 // Token functions 
-t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc);
-int		check_syntax_token(t_token *token);
+t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc, t_command *cmd);
+int		check_syntax_token(t_token *token, t_command *cmd);
 int		free_token(t_token *token);
 int		handle_quotes(const char *line, int *i);
 char	*extract_word(const char *line, int *i);
@@ -113,9 +114,8 @@ int		is_redirection(t_token_type type);
 void	print_error(char *error, char *detail);
 int		is_space(char c);
 char	*ft_strndup(const char *s, size_t n);
-char	*expand_variables(const char *str, t_env *env);
-char	**expand_and_split(const char *word, t_env *env);
-char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc);
+char	*expand_variables(const char *str, t_env *env, t_command *cmd);
+char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc, t_command *cmd);
 int		has_unquoted_variables(const char *str);
 int		skip_spaces(const char *line, int *i);
 int		ft_strcmp(const char *s1, const char *s2);
