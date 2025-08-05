@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 23:51:31 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/05 01:45:29 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ static char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd)
 			}
 			else
 				var_value = ft_itoa(cmd->status_exit);
+
 			if (var_value && *var_value)
 				result = ft_strjoin_free(result, ft_strdup(var_value));
 			else
@@ -103,6 +104,7 @@ static char	*process_unquoted(const char *str, int *i, t_env *env, t_command *cm
 	expnd = ft_strndup(str + start, *i - start);
 	result = expand_var_in_string(expnd, env, cmd);
 	free(expnd);
+	printf("%smmm\n", result);
 	return (result);
 }
 
@@ -154,6 +156,7 @@ static char *expand_variables_loop(const char *str, t_env *env, int *i_ptr, t_co
 			result = ft_strjoin_free(result, expnd);
 		}
 	}
+	printf("%d\n", i);
 	*i_ptr = i;
 	return result;
 }
@@ -166,5 +169,6 @@ char *expand_variables(const char *str, t_env *env, t_command *cmd)
 	if (!str)
 		return (ft_strdup(""));
 	result = expand_variables_loop(str, env, &i, cmd);
+	printf("%s\n", result);
 	return result;
 }
