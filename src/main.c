@@ -6,9 +6,10 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/05 00:14:31 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/05 03:42:11 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "minishell.h"
 
@@ -83,6 +84,9 @@ int	main(int ac, char **av, char **env)
 	(void)ac;
 	(void)av;
 	gc_init(&gc);
+	cmd  = malloc(sizeof(t_command));
+	if(!cmd)
+		return 1;
 	env_list = my_env(env);
 	//last_exit = 0;
 	signal(SIGINT, sigint_);
@@ -99,7 +103,7 @@ int	main(int ac, char **av, char **env)
 		}
 		add_history(line);
 		
-		tokens = tokenize_gc(line, env_list, &gc);
+		tokens = tokenize_gc(line, env_list, &gc, t_command *cmd);
 		if (!tokens)
 		{
 			// Error already printed by print_error, just skip execution

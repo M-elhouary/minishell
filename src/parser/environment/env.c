@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/01 20:03:12 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 01:17:18 by mel-houa         ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2025/08/05 02:05:47 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "parse.h"
 
@@ -57,10 +58,6 @@ void	env_add_node(t_env **head, t_env *new)
 	}
 }
 
-
-
-
-// Helper function to process a single environment entry
 static void process_env_entry(char *env_entry, t_env **env_list)
 {
 	char *key = get_key(env_entry);
