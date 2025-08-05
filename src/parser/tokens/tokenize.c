@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 17:17:18 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/05 00:22:28 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,11 +157,29 @@ t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc)
 	t_token	*tokens;
 
 	i = 0;
+	int		in_single = 0;
+    int		in_double = 0;
 	tokens = NULL;
 	while (line[i])
 	{
 		if (!skip_spaces(line, &i))
 			break ;
+
+		if (line[i] == '\'' && !in_double)
+            in_single = !in_single;
+        else if (line[i] == '"' && !in_single)
+            in_double = !in_double;
+
+        // Only treat | as a pipe if not inside any quotes
+        if (line[i] == '|' && !in_single && !in_double)
+        {
+            t_token *new = create_token_gc("|", PIPE, gc);
+            if (!new)
+                return (NULL);
+            add_token(&tokens, new);
+            i++;
+            continue;
+        }
 		if (line[i] == '\'' || line[i] == '"')
 		{
 			int quote_ok = handle_quotes(line, &i);

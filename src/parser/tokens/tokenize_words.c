@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:58 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 16:46:59 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/05 00:26:24 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,34 +38,41 @@ char	*remove_quotes(char *str)
 }
 
 
-static int	skip_quoted_section(const char *line, int *i, char quote)
-{
-	(*i)++; 
-	while (line[*i] && line[*i] != quote)
-		(*i)++;
-	if (!line[*i])
-		return (0); 
-	(*i)++; 
-	return (1);
-}
+// static int	skip_quoted_section(const char *line, int *i, char quote)
+// {
+// 	(*i)++; 
+// 	while (line[*i] && line[*i] != quote)
+// 		(*i)++;
+// 	if (!line[*i])
+// 		return (0); 
+// 	(*i)++; 
+// 	return (1);
+// }
 
-char	*extract_word(const char *line, int *i)
+char *extract_word(const char *line, int *i)
 {
-	int		start;
-	char	*word;
+    // int start = *i;
+    int j = 0;
+    char *word = malloc(ft_strlen(line) + 1);
+    if (!word)
+        return NULL;
 
-	start = *i;
-	while (line[*i] && !is_metacharacter(line[*i]))
-	{
-		if (line[*i] == '\'' || line[*i] == '"')
-		{
-			// skip second quote
-			if (!skip_quoted_section(line, i, line[*i]))
-				break;
-		}
-		else
-			(*i)++;
-	}
-	word = ft_strndup(line + start, *i - start);
-	return (word);
+    while (line[*i] && !is_space(line[*i]) && !is_metacharacter(line[*i]))
+    {
+        if (line[*i] == '\'' || line[*i] == '"')
+        {
+            char quote = line[(*i)++];
+            word[j++] = quote; // Optionally keep the quote, or skip if you want to remove
+            while (line[*i] && line[*i] != quote)
+                word[j++] = line[(*i)++];
+            if (line[*i] == quote)
+                word[j++] = line[(*i)++]; // Optionally keep the quote, or skip
+        }
+        else
+        {
+            word[j++] = line[(*i)++];
+        }
+    }
+    word[j] = '\0';
+    return word;
 }

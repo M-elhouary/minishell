@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 17:16:33 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/05 00:14:31 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ int	main(int ac, char **av, char **env)
 			continue;
 		}
 		add_history(line);
+		
 		tokens = tokenize_gc(line, env_list, &gc);
 		if (!tokens)
 		{
