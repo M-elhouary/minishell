@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/04 00:33:24 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/04 04:07:08 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ int	exit_c(char **args);
 t_builtin	exec_builtin(t_command *cmd, t_env **env);
 
 char	*ft_strcat(char *dst, char *src);
-int	set_env_value(t_env **env, char *key, char *value);
-int	unset_env_value(t_env **env, char *key);
+int		set_env_value(t_env **env, char *key, char *value);
+int		unset_env_value(t_env **env, char *key);
 char	**env_to_array(t_env *env);
 void	free_env_array(char **envp);
 
