@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/05 03:42:11 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/08 01:32:39 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,64 +70,96 @@ void	sigquit_(int sig)
 {
 	(void)sig;
 }
-
 int	main(int ac, char **av, char **env)
 {
-	char		*line;
-	t_token		*tokens;
-	t_command	*cmd;
-	t_env		*env_list;
-	t_gc		gc;
-	int			exit_code;
-	//int			last_exit;
+    char		*line;
+    t_token		*tokens;
+    t_command	*cmd;
+	t_command *new_cmd;
+    t_env		*env_list;
+    t_gc		gc;
+    int			exit_code;
 
-	(void)ac;
-	(void)av;
-	gc_init(&gc);
-	cmd  = malloc(sizeof(t_command));
-	if(!cmd)
-		return 1;
-	env_list = my_env(env);
-	//last_exit = 0;
-	signal(SIGINT, sigint_);
-	signal(SIGQUIT, sigquit_);
-	while (1)
-	{
-		line = readline("minishell$ ");
-		if (!line)
-			break ;
-		if (!*line)
-		{
-			//free(line);
-			continue;
-		}
-		add_history(line);
-		
-		tokens = tokenize_gc(line, env_list, &gc, t_command *cmd);
-		if (!tokens)
-		{
-			// Error already printed by print_error, just skip execution
-			continue;
-		}
-		if (check_syntax_token(tokens))
-		{
-			cmd = parse_commands(tokens);
-			if (cmd)
-			{
-				cmd->path = locate_cmd(cmd->args[0]);
-				// if (!cmd->path)
-				exit_code = exec_cmd(cmd, &env_list);
-				
-				//wher used this variable 
-				//last_exit = exit_code;
-				if (exit_code != 0)
-					printf("[Exit code: %d]\n", exit_code);
-				free_commands(cmd);
-			}
-		}
-		free(line);
-		gc_free_all(&gc);
-	}
+    (void)ac;
+    (void)av;
+    gc_init(&gc);
+    cmd = NULL;
+    env_list = my_env(env);
+    signal(SIGINT, sigint_);
+    signal(SIGQUIT, sigquit_);
+    
+    while (1)
+    {
+        // Ensure cmd always exists for $? expansion
+        if (!cmd)
+        {
+            cmd = malloc(sizeof(t_command));
+            if (!cmd)
+                return (1);
+            cmd->status_exit = 0;
+            cmd->args = NULL;
+			cmd->path = NULL;
+            cmd->infile = NULL;
+            cmd->outfile = NULL;
+            cmd->next = NULL;
+        }
+        
+        line = readline("minishell$ ");
+        if (!line)
+            break;
+        if (!*line)
+        {
+            free(line);
+            continue;
+        }
+        add_history(line);
+        
+        tokens = tokenize_gc(line, env_list, &gc, cmd);
+        if (!tokens)
+        {
+            free(line);
+            continue;
+        }
+        
+        // Check syntax and continue if error (status already set in check_syntax_token)
+        if (!check_syntax_token(tokens, cmd))
+        {
+            free(line);
+            gc_free_all(&gc);
+            continue;
+        }
+		 // Only create new command if syntax is correct
+        new_cmd = parse_commands(tokens);
+        if (new_cmd)
+        {
+            // Save the previous exit status in the new command
+            int prev_status = cmd->status_exit;
+            
+            // Free old cmd safely
+            free_commands(cmd);
+            
+            // Use new command and restore exit status
+            cmd = new_cmd;
+            cmd->status_exit = prev_status;
+            
+            // Set path and execute
+            cmd->path = locate_cmd(cmd->args[0]);
+            exit_code = exec_cmd(cmd, &env_list);
+            
+            // Update exit status for next command
+            cmd->status_exit = exit_code;
+            
+            if (exit_code != 0)
+                printf("[Exit code: %d]\n", exit_code);
+        }
+        
+        free(line);
+        gc_free_all(&gc);
+    }
+    
+    // Final cleanup
+    	if (cmd)
+    		free_commands(cmd);
 	gc_destroy(&gc);
-	return (0);
-}
+    return (0);
+} // Initialize to prevent undefined behavior

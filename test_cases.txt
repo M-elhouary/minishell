@@ -89,7 +89,6 @@ echo $HOME!           # Expected: <your $HOME value>!
 echo "$HOME!"         # Expected: <your $HOME value>!
 echo '$HOME!'         # Expected: $HOME!
 
-
 ###############################################################
 #                                                             #
 #                ✅ End of minishell Test Cases ✅             #
