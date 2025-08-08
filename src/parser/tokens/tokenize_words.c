@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:58 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/05 03:40:52 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/07 23:00:20 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,30 +49,43 @@ char	*remove_quotes(char *str)
 // 	return (1);
 // }
 
-char *extract_word(const char *line, int *i)
+char	*extract_word(char *line, int *i)
 {
-    // int start = *i;
-    int j = 0;
-    char *word = malloc(ft_strlen(line) + 1);
-    if (!word)
-        return NULL;
-
-    while (line[*i] && !is_space(line[*i]) && !is_metacharacter(line[*i]))
+    int		j = 0;
+    char	*word;
+    char	quote = 0;
+    int		word_len = 0;
+    
+    // Calculate word length (including quotes and adjacent parts)
+    while (line[*i + word_len] && (!is_space(line[*i + word_len]) || quote))
     {
-        if (line[*i] == '\'' || line[*i] == '"')
-        {
-            char quote = line[(*i)++];
-            word[j++] = quote; // Optionally keep the quote, or skip if you want to remove
-            while (line[*i] && line[*i] != quote)
-                word[j++] = line[(*i)++];
-            if (line[*i] == quote)
-                word[j++] = line[(*i)++]; // Optionally keep the quote, or skip
-        }
-        else
-        {
-            word[j++] = line[(*i)++];
-        }
+        // Track quote state
+        if (!quote && (line[*i + word_len] == '\'' || line[*i + word_len] == '"'))
+            quote = line[*i + word_len];
+        else if (quote && line[*i + word_len] == quote)
+            quote = 0;
+            
+        // Only stop at special characters if not in quotes
+        if (!quote && is_metacharacter(line[*i + word_len]) && 
+            word_len > 0)  // Don't stop if at beginning of word
+            break;
+            
+        word_len++;
+    }
+    
+    // Allocate and copy the word
+    word = malloc(word_len + 1);
+    if (!word)
+        return (NULL);
+        
+    j = 0;
+    while (j < word_len)
+    {
+        word[j] = line[*i];
+        (*i)++;
+        j++;
     }
     word[j] = '\0';
+    
     return word;
 }
