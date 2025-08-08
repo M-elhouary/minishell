@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/05 02:12:12 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/07 22:54:10 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,8 @@ t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc, t_command *cmd);
 int		check_syntax_token(t_token *token, t_command *cmd);
 int		free_token(t_token *token);
 int		handle_quotes(const char *line, int *i);
-char	*extract_word(const char *line, int *i);
+char	*extract_word(char *line, int *i);
+int	has_unclosed_quote(const char *line);
 
 // Parsing functions
 t_command	*parse_commands(t_token *tokens);
@@ -107,6 +108,7 @@ void	count_tokens(t_token *temp, int *arg_count, int *in_count, int *out_count);
  
 
 // Utility functions
+int	check_unclosed_quote(const char *line);
 char	*remove_syntactic_quotes(char *str);
 char	*ft_strjoin_free(char *s1, char *s2);
 int		is_metacharacter(char c);

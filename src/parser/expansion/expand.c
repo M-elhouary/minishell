@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/07 22:25:26 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/08 21:36:52 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,29 +23,28 @@ static char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd)
 	char	*tmp;
 	char	*var_value;
 	int		start;
-	int check;
 
 	result = ft_strdup("");//
 	i = 0;
-	check = 0;
 	while (str[i])
 	{
-		if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
+		 if (str[i] == '$' && str[i + 1] == '?')
+        {
+            char *exit_str = ft_itoa(cmd->status_exit);
+            tmp = ft_strjoin_free(result, exit_str);
+            result = tmp;
+            i += 2; // Skip both $ and ?
+            continue;
+        }
+		 if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
 		{
 			
 			i++;
-			if(str[i] == '?')
-				 check = 1;
-			if(!check)
-			{
 				start = i;
 				while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
 					i++;
 				tmp = ft_strndup(str + start, i - start);
 				var_value = get_env_value(tmp, env);
-			}
-			else
-				var_value = ft_itoa(cmd->status_exit);
 
 			if (var_value && *var_value)
 				result = ft_strjoin_free(result, ft_strdup(var_value));

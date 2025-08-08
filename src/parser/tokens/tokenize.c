@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/05 02:06:31 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/07 22:59:50 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,7 @@ static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_g
 	int		j;
 	char	*expanded;
 	int		has_vars;
-	int check;
 
-	check = 0;
 	// exatract word between first quote "'""mmm""'" ====> first word is ' second mmm theard '
  	word = extract_word(line, i);
 	if (!word)
@@ -157,29 +155,37 @@ static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_g
  */
 t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc, t_command *cmd)
 {
-	int		i;
-	t_token	*tokens;
-	
-	i = 0;
-	tokens = NULL;
-	while (line[i])
-	{
-		// skip space in the line 
-		// if only space in the  line break the while
-		if (!skip_spaces(line, &i))
-			break ;
-		// if start with quote 
-		if (line[i] == '\'' || line[i] == '"')
-		{
-			int quote_ok = handle_quotes(line, &i);
-			if (!quote_ok)
-				return (NULL); // Stop tokenizing on unclosed quote
-			continue;
-		}
-		else if (handle_special_gc(&tokens, line, &i, gc))
-			; // index increment handled in handle_special_gc
-		else if (!process_word_gc(&tokens, line, &i, env, gc, cmd))
-			return (NULL);
-	}
-	return (tokens);
+    int     i;
+    t_token *tokens;
+    
+    i = 0;
+    tokens = NULL;
+    
+    // Check for unclosed quotes before starting tokenization
+    if (has_unclosed_quote(line))
+    {
+        print_error("unclosed quote", NULL);
+        return (NULL);
+    }
+    
+    while (line[i])
+    {
+        // Skip spaces
+        if (!skip_spaces(line, &i))
+            break;
+        
+        // Handle special characters (redirections, but NOT pipe)
+        else if (handle_special_gc(&tokens, line, &i, gc))
+            ; // index increment handled in handle_special_no_pipe_gc
+        
+        // Handle normal words and pipe
+        else if (line[i] == '|')
+        {
+            add_token(&tokens, create_token_gc(gc_strdup(gc, "|"), PIPE, gc));
+            i++;
+        }
+        else if (!process_word_gc(&tokens, line, &i, env, gc, cmd))
+            return (NULL);
+    }
+    return (tokens);
 }

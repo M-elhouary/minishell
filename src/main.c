@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/08/07 22:16:38 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/08 21:36:35 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,16 +70,15 @@ void	sigquit_(int sig)
 {
 	(void)sig;
 }
-
 int	main(int ac, char **av, char **env)
 {
-	char		*line;
-	t_token		*tokens;
-	t_command	*cmd;
-	t_env		*env_list;
-	t_gc		gc;
-	int			exit_code;
-	//int			last_exit;
+    char		*line;
+    t_token		*tokens;
+    t_command	*cmd;
+	t_command *new_cmd;
+    t_env		*env_list;
+    t_gc		gc;
+    int			exit_code;
 
 	(void)ac;
 	(void)av;
@@ -128,5 +127,5 @@ int	main(int ac, char **av, char **env)
 		gc_free_all(&gc);
 	}
 	gc_destroy(&gc);
-	return (0);
-}
+    return (0);
+} // Initialize to prevent undefined behavior
