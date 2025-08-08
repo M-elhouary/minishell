@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/08/05 02:06:51 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/07 22:16:38 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,13 +102,13 @@ int	main(int ac, char **av, char **env)
 			continue;
 		}
 		add_history(line);
-		tokens = tokenize_gc(line, env_list, &gc);
+		tokens = tokenize_gc(line, env_list, &gc, cmd);
 		if (!tokens)
 		{
 			// Error already printed by print_error, just skip execution
 			continue;
 		}
-		if (check_syntax_token(tokens))
+		if (check_syntax_token(tokens, cmd))
 		{
 			cmd = parse_commands(tokens);
 			if (cmd)
