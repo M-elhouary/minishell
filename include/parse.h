@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/07 22:54:10 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/09 16:45:54 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <unistd.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+#include <fcntl.h>
 # include "libft.h"
 
 
@@ -104,7 +105,8 @@ int			check_flags(t_token *temp, int *append_flag, int *heredoc_flag);
 void	count_tokens(t_token *temp, int *arg_count, int *in_count, int *out_count);
 
 
-
+// herdoc
+void handl_herdoc(t_token *token);
  
 
 // Utility functions
