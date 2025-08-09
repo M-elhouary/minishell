@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/09 03:46:09 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/09 21:55:45 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,9 @@ int	main(int ac, char **av, char **env)
     int			exit_code;
 
     (void)ac;
+	
     (void)av;
+	
     gc_init(&gc);
     cmd = NULL;
     env_list = my_env(env);
@@ -146,7 +148,7 @@ int	main(int ac, char **av, char **env)
             cmd->path = locate_cmd(cmd->args[0]);
             exit_code = exec_cmd(cmd, &env_list);
             
-            // Update exit status for next command
+            // Update exit status for next command ==
             cmd->status_exit = exit_code;
             
             if (exit_code != 0)
