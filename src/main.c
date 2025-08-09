@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/08 01:32:39 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/09 03:46:09 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,6 @@ int	main(int ac, char **av, char **env)
             free(line);
             continue;
         }
-        
         // Check syntax and continue if error (status already set in check_syntax_token)
         if (!check_syntax_token(tokens, cmd))
         {
@@ -128,6 +127,7 @@ int	main(int ac, char **av, char **env)
             gc_free_all(&gc);
             continue;
         }
+		handle_heredoc(tokens, cmd);
 		 // Only create new command if syntax is correct
         new_cmd = parse_commands(tokens);
         if (new_cmd)
