@@ -1,3 +1,4 @@
+
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -6,7 +7,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/10 14:26:15 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/10 01:15:48 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +37,8 @@ int is_delimiter_quoted(char *token_value)
 char *gen_file_name()
 {
     char *name;
-    name = ft_itoa(getpid() + 98510);
-    name = ft_strjoin("/tmp/herdoc.c", name);
-    return name;
+    name = ft_itoa(getpid() + 12344);
+    return ft_strjoin("/tmp/herdoc_", name);
 }
 
 char   *similation_herdoc(char *dilimiter, t_env *env_list, t_command *cmd)
@@ -58,13 +58,23 @@ char   *similation_herdoc(char *dilimiter, t_env *env_list, t_command *cmd)
     while (1)
     {
         line = readline("herdoc>");
-        tmp = line;
-        if(has_unquoted_variables(delimeter))
-            // expam=nd content of tmp;
-        if(ft_strncmp(tmp, delimeter, len_d) == 0)
-           exit(0);
-        write(fd, tmp, ft_strlen(line));
-        free(line);
+        if(!line || ft_strcmp(line, dilimiter) == 0)
+        {
+            free(line);
+            break;
+        }
+        if (!is_delimiter_quoted(line))
+        {
+            expanded = expand_var_in_string(line, env_list, cmd);
+            write(fd, expanded, ft_strlen(expanded));
+            free(expanded);
+        }
+        else
+        {
+            write(fd, line, ft_strlen(line));
+            write(fd, "\n", 1);
+            free(line);
+        }
     }
     close(fd);
     return (exit(0), file_path);
@@ -123,4 +133,3 @@ void handl_herdoc(t_token *token, t_env *env_list, t_command *cmd)
         tmp = tmp->next;
     }
 }
-
