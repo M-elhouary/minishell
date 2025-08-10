@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/07 22:54:10 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/10 00:06:11 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <unistd.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+#include <fcntl.h>
 # include "libft.h"
 
 
@@ -104,6 +105,8 @@ int			check_flags(t_token *temp, int *append_flag, int *heredoc_flag);
 void	count_tokens(t_token *temp, int *arg_count, int *in_count, int *out_count);
 
 
+// herdoc
+void handl_herdoc(t_token *token, t_env *env_list, t_command *cmd);
 
  
 
@@ -123,6 +126,7 @@ int		skip_spaces(const char *line, int *i);
 int		ft_strcmp(const char *s1, const char *s2);
 char	*ft_strcpy(char *dest, const char *src);
 char	*remove_quotes(char *str);
+char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd);
 
 // Garbage Collector functions
 void	gc_init(t_gc *gc);
