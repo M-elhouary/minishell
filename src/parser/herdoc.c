@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/09 18:58:36 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/09 19:10:09 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 char *gen_file_name()
 {
     char *name;
-    name = ft_itoa(getpid() + 12344);
+    name = ft_itoa(getpid() + 98510);
     name = ft_strjoin("/tmp/herdoc.c", name);
     return name;
 }
@@ -42,8 +42,10 @@ int  similation_herdoc(char *delimeter)
     {
         line = readline("herdoc>");
         tmp = line;
+        if(has_unquoted_variables(delimeter))
+            // expam=nd content of tmp;
         if(ft_strncmp(tmp, delimeter, len_d) == 0)
-           return 1;
+           exit(0);
         write(fd, tmp, ft_strlen(line));
         free(line);
     }
