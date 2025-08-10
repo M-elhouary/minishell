@@ -6,11 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/08/09 21:55:45 by mel-houa         ###   ########.fr       */
-=======
-/*   Updated: 2025/08/10 00:06:39 by mel-houa         ###   ########.fr       */
->>>>>>> ef1f7c81c7f0d44fe1a279f40f96fcc3b44b7523
+/*   Updated: 2025/08/10 15:27:12 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,17 +80,9 @@ int	main(int ac, char **av, char **env)
     t_gc		gc;
     int			exit_code;
 
-<<<<<<< HEAD
-    (void)ac;
-	
-    (void)av;
-	
-    gc_init(&gc);
-=======
 	(void)ac;
 	(void)av;
 	gc_init(&gc);
->>>>>>> ef1f7c81c7f0d44fe1a279f40f96fcc3b44b7523
     cmd = NULL;
 	env_list = my_env(env);
 	signal(SIGINT, sigint_);
@@ -130,14 +118,9 @@ int	main(int ac, char **av, char **env)
 		if (!tokens)
 		{
             free(line);
-<<<<<<< HEAD
-            continue;
-        }
-=======
 			continue;
 		}
         
->>>>>>> ef1f7c81c7f0d44fe1a279f40f96fcc3b44b7523
         // Check syntax and continue if error (status already set in check_syntax_token)
         if (!check_syntax_token(tokens, cmd))
 		{
@@ -145,11 +128,7 @@ int	main(int ac, char **av, char **env)
             gc_free_all(&gc);
             continue;
         }
-<<<<<<< HEAD
-		handle_heredoc(tokens, cmd);
-=======
         handl_herdoc(tokens, env_list, cmd);
->>>>>>> ef1f7c81c7f0d44fe1a279f40f96fcc3b44b7523
 		 // Only create new command if syntax is correct
         new_cmd = parse_commands(tokens);
         if (new_cmd)
@@ -165,17 +144,10 @@ int	main(int ac, char **av, char **env)
             cmd->status_exit = prev_status;
             
             // Set path and execute
-<<<<<<< HEAD
-            cmd->path = locate_cmd(cmd->args[0]);
-            exit_code = exec_cmd(cmd, &env_list);
-            
-            // Update exit status for next command ==
-=======
 				cmd->path = locate_cmd(cmd->args[0]);
 				exit_code = exec_cmd(cmd, &env_list);
 				
             // Update exit status for next command
->>>>>>> ef1f7c81c7f0d44fe1a279f40f96fcc3b44b7523
             cmd->status_exit = exit_code;
             
 				if (exit_code != 0)
