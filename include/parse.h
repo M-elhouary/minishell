@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/10 00:06:11 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/10 16:00:01 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,14 @@ typedef enum e_token_type
 	ARGUMENT
 }	t_token_type;
 
+typedef enum e_redir_type
+{
+    REDIR_TYPE_IN,      // <
+    REDIR_TYPE_OUT,     // >
+    REDIR_TYPE_APPEND,  // >>
+    REDIR_TYPE_HEREDOC  // <<
+} t_redir_type;
+
 typedef struct s_env
 {
 	char			*key;
@@ -52,18 +60,27 @@ typedef struct s_token
 	struct s_token	*next;
 }	t_token;
 
+typedef struct s_redirection
+{
+    t_redir_type type;
+    char *file;
+    struct s_redirection *next;
+} t_redirection;
+
 typedef struct s_command
 {
-	int			status_exit;
-	int             ac;
-	char 			*path;
-	char			**args;
-	char			**infile;
-	char			**outfile;
-	int				append;
-	int				heredoc;
-	struct s_command	*next;
-}	t_command;
+    int status_exit;
+    int ac;
+    char *path;
+    char **args;
+    // Keep these for backward compatibility during transition
+    char **infile;
+    char **outfile;
+    int append;
+    int heredoc;
+    t_redirection *redirections;  // New field
+    struct s_command *next;
+} t_command;
 
 // Garbage Collector 
 typedef struct s_gc_node
@@ -141,5 +158,10 @@ int	set_env_value(t_env **env, char *key, char *value);
 int	unset_env_value(t_env **env, char *key);
 char	**env_to_array(t_env *env);
 void	free_env_array(char **envp);
+
+// Redirection functions
+t_redirection *create_redirection(t_redir_type type, char *file);
+void add_redirection(t_redirection **head, t_redirection *new_redir);
+void free_redirections(t_redirection *redirections);
 
 #endif
