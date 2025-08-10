@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/08 21:36:52 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/09 23:43:00 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 
 // Expand all $VAR in a string
-static char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd)
+char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd)
 {
 	char	*result;
 	int		i;
