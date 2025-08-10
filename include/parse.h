@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/09 16:45:54 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/10 00:06:11 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,8 @@ void	count_tokens(t_token *temp, int *arg_count, int *in_count, int *out_count);
 
 
 // herdoc
-void handl_herdoc(t_token *token);
+void handl_herdoc(t_token *token, t_env *env_list, t_command *cmd);
+
  
 
 // Utility functions
@@ -125,6 +126,7 @@ int		skip_spaces(const char *line, int *i);
 int		ft_strcmp(const char *s1, const char *s2);
 char	*ft_strcpy(char *dest, const char *src);
 char	*remove_quotes(char *str);
+char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd);
 
 // Garbage Collector functions
 void	gc_init(t_gc *gc);
