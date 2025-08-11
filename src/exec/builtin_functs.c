@@ -6,13 +6,13 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 03:56:15 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/03 23:25:28 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/11 08:41:15 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	echo_c(char **args)
+int	echo_c(char **args, int fd)
 {
 	int	i;
 	int	newline;
@@ -27,22 +27,22 @@ int	echo_c(char **args)
 	if (!args[i])
 	{
 		if (newline)
-			printf("\n");
+			write(fd, "\n", 1);
 		return (BUILTIN_SUCCESS);
 	}
 	while (args[i])
 	{
-		printf("%s", args[i]);
+		write(fd, args[i], ft_strlen(args[i]));
 		if (args[i + 1])
-			printf(" ");
+			write(fd, " ", 1);
 		i++;
 	}
 	if (newline)
-		printf("\n");
+		write(fd, "\n", 1);
 	return (BUILTIN_SUCCESS);
 }
 
-int	pwd_c(void)
+int	pwd_c(int fd)
 {
 	char	*cwd;
 	
@@ -52,69 +52,96 @@ int	pwd_c(void)
 		perror("pwd");
 		return (BUILTIN_ERROR);
 	}
-	printf("%s\n", cwd);
+	write(fd, cwd, ft_strlen(cwd));
+	write(fd, "\n", 1);
 	free(cwd);
 	return (BUILTIN_SUCCESS);
 }
 
-int	env_c(t_env *env)
+int	env_c(t_env *env, int fd)
 {
 	t_env	*current = env;
 
 	while (current)
 	{
-		printf("%s=%s\n", current->key, current->content);
+		write(fd, current->key, ft_strlen(current->key));
+		write(fd, "=", 1);
+		write(fd, current->content, ft_strlen(current->content));
+		write(fd, "\n", 1);
 		current = current->next;
 	}
 	return (BUILTIN_SUCCESS);
 }
 
-int	unset_c(char **args, t_env **env)
+int	unset_c(char **args, t_env **env, int fd)
 {
 	int	i;
+	int	j;
 	int	res;
 
 	res = BUILTIN_SUCCESS;
 	if (!args[1])
 	{
-		printf("unset: not enough arguments\n");
+		print("unset: not enough arguments\n", fd);
 		return (BUILTIN_ERROR);
 	}
-	i = 0;
+	i = 1; // Start from 1, not 0 (skip "unset" command itself)
 	while (args[i])
 	{
 		if (!ft_isalpha(args[i][0]) && args[i][0] != '_')
 		{
-			printf("unset: `%s': not a valid identifier\n", args[i]);
+			print("unset: `", fd);
+			print(args[i], fd);
+			print("': not a valid identifier\n", fd);
 			res = BUILTIN_ERROR;
 		}
 		else
-			unset_env_value(env, args[i]);
+		{
+			// Validate the rest of the identifier
+			j = 1;
+			while (args[i][j])
+			{
+				if (!ft_isalpha(args[i][j]) && args[i][j] != '_' &&
+					!(args[i][j] >= '0' && args[i][j] <= '9'))
+				{
+					print("unset: `", fd);
+					print(args[i], fd);
+					print("': not a valid identifier\n", fd);
+					res = BUILTIN_ERROR;
+					break;
+				}
+				j++;
+			}
+			if (args[i][j] == '\0') // Valid identifier
+				unset_env_value(env, args[i]);
+		}
 		i++;
 	}
 	return (res);
 }
 
-int	exit_c(char **args)
+int	exit_c(char **args, int fd)
 {
 	long	exit_code;
 	char	*endptr;
 
-	printf("exit\n");
+	print("exit\n", fd);
 	exit_code = 0;
 	if (args[1])
 	{
 		if (args[2])
 		{
-			printf("exit: too many arguments\n");
+			print("exit: too many arguments\n", fd);
 			return (BUILTIN_ERROR);
 		}
-	}
-	exit_code = atol_s(args[1], &endptr);
-	if (*endptr != '\0')
-	{
-		printf("minishell: exit: %s: numeric argument required\n", args[1]);
-		exit(2);
+		exit_code = atol_s(args[1], &endptr);
+		if (*endptr != '\0')
+		{
+			print("minishell: exit: ", fd);
+			print(args[1], fd);
+			print(": numeric argument required\n", fd);
+			exit(2);
+		}
 	}
 	exit(exit_code & 255);
 }

@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:25:53 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/03 23:25:31 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/11 08:25:27 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	err_(char *str)
 	return (BUILTIN_ERROR);
 }
 
-int	cd_c(char **args, t_env **env)
+int	cd_c(char **args, t_env **env, int fd)
 {
 	char	*path;
 	char	*oldpwd;
@@ -29,7 +29,8 @@ int	cd_c(char **args, t_env **env)
 		path = get_env_value("OLDPWD", *env);
 		if (!path)
 			return (err_("cd: OLDPWD not set"));
-		printf("%s\n", path);
+		print(path, fd);
+		print("\n", fd);
 	}
 	else if (!args[1])
 	{
@@ -47,7 +48,8 @@ int	cd_c(char **args, t_env **env)
 		oldpwd = NULL;
 	if (chdir(path) == -1)
 	{
-		printf("%s\n",path);
+		print(path, fd);
+		print("\n", fd);
 		perror("cd");
 		free(oldpwd);
 		return (BUILTIN_ERROR);

@@ -36,7 +36,9 @@ SRCS_EXEC = src/exec/utils.c \
 			src/exec/builin.c \
 			src/exec/cd.c \
 			src/exec/export.c \
-			src/exec/_env.c
+			src/exec/_env.c \
+			src/exec/print.c \
+			src/exec/pipe.c
 
 SRCS = $(SRCS_PARSE) $(SRCS_EXEC)
 OBJS = $(SRCS:.c=.o)

@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:00:44 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/03 23:31:03 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/10 20:20:07 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ int	check_cmd_path(char *path, char *cmd)
 		return (0);
 }
 
-int	exec_cmd(t_command *cmd, t_env **env)
+int	exec_cmd(t_command *cmd, t_env **env, int fd)
 {
 	pid_t		pid;
 	t_builtin	built_res;
@@ -131,7 +131,7 @@ int	exec_cmd(t_command *cmd, t_env **env)
 
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return (1);
-	built_res = exec_builtin(cmd, env);
+	built_res = exec_builtin(cmd, env, fd);
 	if (built_res != NOT_BUILTIN)
 		return (built_res);
 	if (check_cmd_path(cmd->path, cmd->args[0]))
