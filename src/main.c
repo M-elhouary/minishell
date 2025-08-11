@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/10 15:27:12 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/11 21:54:48 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int	main(int ac, char **av, char **env)
     char		*line;
     t_token		*tokens;
     t_command	*cmd;
-	t_command *new_cmd;
+	t_command	*tmp_cmd;
     t_env		*env_list;
     t_gc		gc;
     int			exit_code;
@@ -99,8 +99,9 @@ int	main(int ac, char **av, char **env)
             cmd->status_exit = 0;
             cmd->args = NULL;
 			cmd->path = NULL;
-            cmd->infile = NULL;
-            cmd->outfile = NULL;
+			cmd->redirections = NULL;
+            // cmd->infile = NULL;
+            // cmd->outfile = NULL;
             cmd->next = NULL;
         }
         
@@ -130,9 +131,9 @@ int	main(int ac, char **av, char **env)
         }
         handl_herdoc(tokens, env_list, cmd);
 		 // Only create new command if syntax is correct
-        new_cmd = parse_commands(tokens);
-        if (new_cmd)
-			{
+        tmp_cmd = parse_commands(tokens);
+        if (tmp_cmd)
+        {
             // Save the previous exit status in the new command
             int prev_status = cmd->status_exit;
             
@@ -140,13 +141,22 @@ int	main(int ac, char **av, char **env)
             free_commands(cmd);
             
             // Use new command and restore exit status
-            cmd = new_cmd;
+            cmd = tmp_cmd;
             cmd->status_exit = prev_status;
             
+			tmp_cmd = cmd;
+			while (tmp_cmd)
+			{
+				if (tmp_cmd->args && tmp_cmd->args[0])
+					tmp_cmd->path = locate_cmd(tmp_cmd->args[0]);
+				tmp_cmd = tmp_cmd->next;
+			}
+
             // Set path and execute
-				cmd->path = locate_cmd(cmd->args[0]);
-				exit_code = exec_cmd(cmd, &env_list);
-				
+            // cmd->path = locate_cmd(cmd->args[0]);
+            // exit_code = exec_cmd(cmd, &env_list, 1);
+			exit_code = exec_pipeline(cmd, &env_list);
+            
             // Update exit status for next command
             cmd->status_exit = exit_code;
             

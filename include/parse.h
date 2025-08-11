@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/10 20:09:22 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/11 12:24:45 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,17 +115,22 @@ int		handle_quotes(const char *line, int *i);
 char	*extract_word(char *line, int *i);
 int	has_unclosed_quote(const char *line);
 
-// Parsing functions
+// parse command
 t_command	*parse_commands(t_token *tokens);
 void		free_commands(t_command *commands);
 int			check_flags(t_token *temp, int *append_flag, int *heredoc_flag);
 void	count_tokens(t_token *temp, int *arg_count, int *in_count, int *out_count);
+t_command	*create_cmd_node(char **args, t_redirection *redirections);
+void	add_cmd_node(t_command **head, t_command *new);
+
 
 
 // herdoc
 void handl_herdoc(t_token *token, t_env *env_list, t_command *cmd);
+int is_delimiter_quoted(char *token_value);
+char *gen_file_name();
 
- 
+
 
 // Utility functions
 int	check_unclosed_quote(const char *line);

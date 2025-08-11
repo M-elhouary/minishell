@@ -6,46 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 00:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/10 19:15:19 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/11 21:33:12 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
-
-
-
-// creat new nod == new command
-t_command	*create_cmd_node(char **args, t_redirection *redirections)
-{
-	t_command	*new_cmd;
-
-	new_cmd = (t_command *)malloc(sizeof(t_command));
-	if (!new_cmd)
-		return (NULL);
-	new_cmd->args = args;
-	new_cmd->redirections = redirections;
-	new_cmd->next = NULL;
-	return (new_cmd);
-}
-// add new command to linkliste
-static void	add_cmd_node(t_command **head, t_command *new)
-{
-	t_command	*tmp;
-
-	if (!head || !new)
-		return ;
-	if (!*head)
-		*head = new;
-	else
-	{
-		tmp = *head;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = new;
-	}
-}
-
-
 
 // static int	allocate_arrays(char ***args, char ***infiles, char ***outfiles, int arg_count, int in_count, int out_count)
 // {
@@ -67,51 +32,58 @@ static void	add_cmd_node(t_command **head, t_command *new)
 // 	*out_count = 0;
 // }
 
+static void creat_node_redir(t_redir_type type, char *value, t_redirection **redirections)
+{
+    t_redirection *new_redir;
+    
+     new_redir = create_redirection(type, value);
+        add_redirection(redirections, new_redir);
+}
+
+
+
+
+static void help_fill_arrays(t_token *current, t_redirection **redirections)
+{
+        if (current->type == REDIR_IN)
+        {
+            current = current->next;
+            if (current)
+               creat_node_redir(REDIR_TYPE_IN, current->value, redirections);
+        }
+        else if (current->type == REDIR_OUT)
+        {
+            current = current->next;
+            if (current)
+                creat_node_redir(REDIR_TYPE_OUT, current->value, redirections);
+        }
+        else if (current->type == REDIR_APPEND)
+        {
+            current = current->next;
+            if (current)
+                creat_node_redir(REDIR_TYPE_APPEND, current->value, redirections);
+        }
+        else if (current->type == HEREDOC)
+        {
+            current = current->next;
+            if (current)
+                creat_node_redir(REDIR_TYPE_HEREDOC, current->value, redirections);
+        }
+}
+
 static t_token	*fill_arrays(t_token *current, char **args, t_redirection **redirections)
 {
     int arg_count = 0;
-    t_redirection *new_redir;
 
     while (current && current->type != PIPE)
     {
         if ((current->type == COMMAND || current->type == ARGUMENT)
             && !current->is_empty_expansion)
             args[arg_count++] = ft_strdup(current->value);
-        else if (current->type == REDIR_IN)
+        else
         {
-            current = current->next;
-            if (current)
-            {
-                new_redir = create_redirection(REDIR_TYPE_IN, current->value);
-                add_redirection(redirections, new_redir);
-            }
-        }
-        else if (current->type == REDIR_OUT)
-        {
-            current = current->next;
-            if (current)
-            {
-                new_redir = create_redirection(REDIR_TYPE_OUT, current->value);
-                add_redirection(redirections, new_redir);
-            }
-        }
-        else if (current->type == REDIR_APPEND)
-        {
-            current = current->next;
-            if (current)
-            {
-                new_redir = create_redirection(REDIR_TYPE_APPEND, current->value);
-                add_redirection(redirections, new_redir);
-            }
-        }
-        else if (current->type == HEREDOC)
-        {
-            current = current->next;
-            if (current)
-            {
-                new_redir = create_redirection(REDIR_TYPE_HEREDOC, current->value);
-                add_redirection(redirections, new_redir);
-            }
+            help_fill_arrays(current, redirections);
+                current = current->next;
         }
         if (current)
             current = current->next;

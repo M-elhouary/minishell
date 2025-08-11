@@ -6,13 +6,13 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:15:25 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/03 23:30:33 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/11 08:39:21 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	export_c(char **args, t_env **env)
+int	export_c(char **args, t_env **env, int fd)
 {
 	char	*equals;
 	char	*key;
@@ -27,7 +27,11 @@ int	export_c(char **args, t_env **env)
 		current = *env;
 		while (current)
 		{
-			printf("declare -x %s=\"%s\"\n", current->key, current->content);
+			print("declare -x ", fd);
+			print(current->key, fd);
+			print("=\"", fd);
+			print(current->content, fd);
+			print("\"\n", fd);
 			current = current->next;
 		}
 		return (BUILTIN_SUCCESS);		
@@ -43,9 +47,11 @@ int	export_c(char **args, t_env **env)
 		*equals = '\0';
 		key = args[i];
 		value = equals + 1;
-		if (!ft_isalpha(key[0]) && key [0] != '_')
+		if (!ft_isalpha(key[0]) && key[0] != '_')
 		{
-			printf("export: `%s': not a valid identifier\n", args[i]);
+			print("export: `", fd);
+			print(args[i], fd);
+			print("': not a valid identifier\n", fd);
 			*equals = '=';
 			return (BUILTIN_ERROR);
 		}
@@ -55,7 +61,9 @@ int	export_c(char **args, t_env **env)
 			if (!ft_isalpha(key[j]) && key[j] != '_' &&
 				!(key[j] >= '0' && key[j] <= '9'))
 			{
-				printf("export: `%s': not a valid identifier\n", args[i]);
+				print("export: `", fd);
+				print(args[i], fd);
+				print("': not a valid identifier\n", fd);
 				*equals = '=';
 				return (BUILTIN_ERROR);
 			}

@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/09 16:42:48 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/11 21:36:47 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ static int	handle_special_gc(t_token **tokens, char *line, int *i, t_gc *gc)
 	}
 	else if (!ft_strncmp(&line[*i], ">>", 2)) {
 		add_token(tokens, create_token_gc(gc_strdup(gc, ">>"), REDIR_APPEND, gc));
+		
 		(*i) += 2;
 	}
 	else if (!ft_strncmp(&line[*i], "<<", 2)) {
@@ -96,12 +97,10 @@ static int	handle_special_gc(t_token **tokens, char *line, int *i, t_gc *gc)
  */
 static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_gc *gc, t_command *cmd)
 {
-	char	*word;
 	char	**split_words;
 	t_token	*new;
-	int		j;
-	char	*expanded;
-	int		has_vars;
+	char	*expanded, *word;
+	int		has_vars, j;
 
 	// exatract word between first quote "'""mmm""'" ====> first word is ' second mmm theard '
  	word = extract_word(line, i);
@@ -170,6 +169,7 @@ t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc, t_command *cmd)
     
     while (line[i])
     {
+		
         // Skip spaces
         if (!skip_spaces(line, &i))
             break;

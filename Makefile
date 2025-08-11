@@ -20,11 +20,13 @@ SRCS_PARSE = src/main.c \
        src/parser/environment/env.c\
        src/parser/environment/func_help.c\
        src/parser/syntax_checker.c \
-	   src/parser/func_utils.c \
-	   src/parser/func_utils2.c \
+	   src/parser/utils/func_utils.c \
+	   src/parser/utils/func_utils2.c \
 	   src/parser/parse_command/parse_command.c \
 	   src/parser/parse_command/func_help.c\
-	   src/parser/herdoc.c\
+	   src/parser/parse_command/func_help2.c\
+	   src/parser/herdoc/herdoc.c\
+	   src/parser/herdoc/utils.c\
 	   src/parser/redirections.c\
 	   src/garbage_collector.c
 
@@ -36,7 +38,9 @@ SRCS_EXEC = src/exec/utils.c \
 			src/exec/builin.c \
 			src/exec/cd.c \
 			src/exec/export.c \
-			src/exec/_env.c
+			src/exec/_env.c \
+			src/exec/print.c \
+			src/exec/pipe.c
 
 SRCS = $(SRCS_PARSE) $(SRCS_EXEC)
 OBJS = $(SRCS:.c=.o)
