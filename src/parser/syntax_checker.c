@@ -1,14 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   syntax_error.c                                     :+:      :+:    :+:   */
+/*   syntax_checker.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/27 16:11:58 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/07/25 02:03:53 by mel-houa         ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2025/08/05 02:06:42 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 
@@ -82,15 +83,28 @@ static int	check_redirection(t_token *tokens)
 	return (1);
 }
 
-int	check_syntax_token(t_token *tokens)
+int	check_syntax_token(t_token *tokens, t_command *cmd)
 {
+	(void)cmd;
 	if (!check_pipe_start(tokens))
+	{
+		cmd->status_exit = 2;
 		return (0);
+	}
 	if (!check_consecutive_pipes(tokens))
+	{
+		cmd->status_exit = 2;
 		return (0);
+	}
 	if (!check_pipe_end(tokens))
+	{
+		cmd->status_exit = 2;
 		return (0);
+	}
 	if (!check_redirection(tokens))
+	{
+		cmd->status_exit = 2;
 		return (0);
+	}
 	return (1);
 }

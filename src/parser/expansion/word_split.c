@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-// Count the number of words in a string, separated by spaces
+// Count the number of words in a string separated by spaces
 static int	count_words_in_expanded(const char *str)
 {
 	int	count;
@@ -24,7 +24,7 @@ static int	count_words_in_expanded(const char *str)
 	return (count);
 }
 
-// Split a string into words (by spaces), return array of words
+// Split a string into words (by spaces)  return array of words
 static char	**split_expanded_word(const char *expanded)
 {
 	char	**words;
@@ -57,8 +57,8 @@ static char	**split_expanded_word(const char *expanded)
 	return (words);
 }
 
-// Expand variables in a word, then split the result into words
-char	**expand_and_split(const char *word, t_env *env)
+// Expand variables in a word then split the result into words
+char	**expand_and_split(const char *word, t_env *env, t_command *cmd)
 {
 	char	*expanded;
 	char	**split_words;
@@ -66,7 +66,7 @@ char	**expand_and_split(const char *word, t_env *env)
 
 	if (!has_unquoted_variables(word))
 	{
-		expanded = expand_variables(word, env);
+		expanded = expand_variables(word, env, cmd);
 		result = malloc(sizeof(char *) * 2);
 		if (!result)
 			return (free(expanded), NULL);
@@ -74,7 +74,7 @@ char	**expand_and_split(const char *word, t_env *env)
 		result[1] = NULL;
 		return (result);
 	}
-	expanded = expand_variables(word, env);
+	expanded = expand_variables(word, env, cmd);
 	if (!expanded || !*expanded)
 	{
 		free(expanded);
@@ -85,7 +85,7 @@ char	**expand_and_split(const char *word, t_env *env)
 	return (split_words);
 }
 
-// Like split_expanded_word, but uses garbage collector for memory
+// Like split_expanded_word
 static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 {
 	char	**words;
@@ -118,8 +118,8 @@ static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 	return (words);
 }
 
-// Expand variables in a word, split result, use garbage collector for memory
-char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc)
+// Expand variables in a word split result 
+char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc, t_command *cmd)
 {
 	char	*expanded;
 	char	**split_words;
@@ -127,7 +127,7 @@ char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc)
 
 	if (!has_unquoted_variables(word))
 	{
-		expanded = expand_variables(word, env);
+		expanded = expand_variables(word, env, cmd);
 		result = gc_malloc(gc, sizeof(char *) * 2);
 		if (!result)
 			return (free(expanded), NULL);
@@ -136,7 +136,7 @@ char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc)
 		free(expanded);
 		return (result);
 	}
-	expanded = expand_variables(word, env);
+	expanded = expand_variables(word, env, cmd);
 	if (!expanded || !*expanded)
 	{
 		free(expanded);

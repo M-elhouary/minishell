@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 16:04:05 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/01 23:30:42 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/07 22:58:21 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,14 @@
 
 void	print_error(char *error, char *detail)
 {
-	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	if (detail)
-	{
-		ft_putstr_fd(detail, STDERR_FILENO);
-		ft_putstr_fd(": ", STDERR_FILENO);
-	}
-	ft_putstr_fd(error, STDERR_FILENO);
-	ft_putstr_fd("\n", STDERR_FILENO);
+    ft_putstr_fd("minishell: ", STDERR_FILENO);
+    if (detail)
+    {
+        ft_putstr_fd(detail, STDERR_FILENO);
+        ft_putstr_fd(": ", STDERR_FILENO);
+    }
+    ft_putstr_fd(error, STDERR_FILENO);
+    ft_putstr_fd("\n", STDERR_FILENO);
 }
 
 char *ft_strndup(const char *s, size_t n)
@@ -75,4 +75,24 @@ char *ft_strcpy(char *dest, const char *src)
     }
     *dest = '\0';  // Add null terminator
     return start;
+}
+
+int has_unclosed_quote(const char *line)
+{
+    int i = 0;
+    char quote = 0;
+    
+    while (line[i])
+    {
+        // If not in a quote and found a quote character, enter quote mode
+        if (!quote && (line[i] == '\'' || line[i] == '"'))
+            quote = line[i];
+        // If in a quote and found matching quote character, exit quote mode
+        else if (quote && line[i] == quote)
+            quote = 0;
+        i++;
+    }
+    
+    // If still in a quote at end of line, there's an unclosed quote
+    return (quote != 0);
 }

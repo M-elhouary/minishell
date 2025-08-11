@@ -6,11 +6,12 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:12 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 01:30:16 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/08 20:59:15 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+
+#include "parse.h"
 
 char	*get_env_value(char *key, t_env *env)
 {
@@ -57,10 +58,6 @@ void	env_add_node(t_env **head, t_env *new)
 	}
 }
 
-
-
-
-// Helper function to process a single environment entry
 static void process_env_entry(char *env_entry, t_env **env_list)
 {
 	char *key = get_key(env_entry);

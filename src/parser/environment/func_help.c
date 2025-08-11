@@ -6,11 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 21:13:44 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/01 21:20:44 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/03 23:28:19 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "parse.h"
 
 char	*get_key(char *env_str)
 {

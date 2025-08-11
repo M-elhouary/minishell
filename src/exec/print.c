@@ -1,14 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   func_help2.c                                       :+:      :+:    :+:   */
+/*   print.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/01 20:02:34 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 16:46:31 by mel-houa         ###   ########.fr       */
+/*   Created: 2025/08/10 00:57:29 by houardi           #+#    #+#             */
+/*   Updated: 2025/08/10 01:06:17 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <minishell.h>
 
+void	print(char *s, int fd)
+{
+	write(fd, s, ft_strlen(s));
+}

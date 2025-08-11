@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/03 20:41:26 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/08 21:29:03 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ static int	handle_special_gc(t_token **tokens, char *line, int *i, t_gc *gc)
 	}
 	else if (!ft_strncmp(&line[*i], ">>", 2)) {
 		add_token(tokens, create_token_gc(gc_strdup(gc, ">>"), REDIR_APPEND, gc));
+		
 		(*i) += 2;
 	}
 	else if (!ft_strncmp(&line[*i], "<<", 2)) {
@@ -94,7 +95,7 @@ static int	handle_special_gc(t_token **tokens, char *line, int *i, t_gc *gc)
  * - Adds the resulting tokens as COMMAND or ARGUMENT
  * Returns 1 on success, 0 on error
  */
-static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_gc *gc)
+static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_gc *gc, t_command *cmd)
 {
 	char	*word;
 	char	**split_words;
@@ -103,11 +104,13 @@ static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_g
 	char	*expanded;
 	int		has_vars;
 
-	word = extract_word(line, i);
+	// exatract word between first quote "'""mmm""'" ====> first word is ' second mmm theard '
+ 	word = extract_word(line, i);
 	if (!word)
 		return (0);
+	// if word with quote or no if no qoute return 1 ? 0
 	has_vars = has_unquoted_variables(word);
-	expanded = expand_variables(word, env);
+	expanded = expand_variables(word, env, cmd);
 	if (has_vars && (!expanded || !*expanded))
 	{
 		// If variable expansion results in empty, add a special empty token
@@ -121,7 +124,7 @@ static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_g
 		return (1);
 	}
 	free(expanded);
-	split_words = expand_and_split_gc(word, env, gc);
+	split_words = expand_and_split_gc(word, env, gc, cmd);
 	free(word);
 	if (!split_words)
 		return (1);
@@ -151,27 +154,40 @@ static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_g
  * - Builds a linked list of tokens representing the parsed input
  * Returns the head of the token list, or NULL on error
  */
-t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc)
+t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc, t_command *cmd)
 {
-	int		i;
-	t_token	*tokens;
-
-	i = 0;
-	tokens = NULL;
-	while (line[i])
-	{
-		if (!skip_spaces(line, &i))
-			break ;
-		if (line[i] == '\'' || line[i] == '"')
-		{
-			// Handle quoted word
-			if (!process_word_gc(&tokens, line, &i, env, gc))
-				return (NULL);
-		}
-		else if (handle_special_gc(&tokens, line, &i, gc))
-			; // index increment handled in handle_special_gc
-		else if (!process_word_gc(&tokens, line, &i, env, gc))
-			return (NULL);
-	}
-	return (tokens);
+    int     i;
+    t_token *tokens;
+    
+    i = 0;
+    tokens = NULL;
+    
+    // Check for unclosed quotes before starting tokenization
+    if (has_unclosed_quote(line))
+    {
+        print_error("unclosed quote", NULL);
+        return (NULL);
+    }
+    
+    while (line[i])
+    {
+		
+        // Skip spaces
+        if (!skip_spaces(line, &i))
+            break;
+        
+        // Handle special characters (redirections, but NOT pipe)
+        else if (handle_special_gc(&tokens, line, &i, gc))
+            ; // index increment handled in handle_special_no_pipe_gc
+        
+        // Handle normal words and pipe
+        else if (line[i] == '|')
+        {
+            add_token(&tokens, create_token_gc(gc_strdup(gc, "|"), PIPE, gc));
+            i++;
+        }
+        else if (!process_word_gc(&tokens, line, &i, env, gc, cmd))
+            return (NULL);
+    }
+    return (tokens);
 }

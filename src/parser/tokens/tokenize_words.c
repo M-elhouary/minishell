@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:58 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/03 15:07:35 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/07 23:00:20 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,34 +38,54 @@ char	*remove_quotes(char *str)
 }
 
 
-static int	skip_quoted_section(const char *line, int *i, char quote)
-{
-	(*i)++; 
-	while (line[*i] && line[*i] != quote)
-		(*i)++;
-	if (!line[*i])
-		return (0); 
-	(*i)++; 
-	return (1);
-}
+// static int	skip_quoted_section(const char *line, int *i, char quote)
+// {
+// 	(*i)++; 
+// 	while (line[*i] && line[*i] != quote)
+// 		(*i)++;
+// 	if (!line[*i])
+// 		return (0); 
+// 	(*i)++; 
+// 	return (1);
+// }
 
-char	*extract_word(const char *line, int *i)
+char	*extract_word(char *line, int *i)
 {
-	int		start;
-	char	*word;
-
-	start = *i;
-	while (line[*i] && !is_metacharacter(line[*i]))
-	{
-		if (line[*i] == '\'' || line[*i] == '"')
-		{
-			// skip second quote
-			if (!skip_quoted_section(line, i, line[*i]))
-				break;
-		}
-		else
-			(*i)++;
-	}
-	word = ft_strndup(line + start, *i - start);
-	return (word);
+    int		j = 0;
+    char	*word;
+    char	quote = 0;
+    int		word_len = 0;
+    
+    // Calculate word length (including quotes and adjacent parts)
+    while (line[*i + word_len] && (!is_space(line[*i + word_len]) || quote))
+    {
+        // Track quote state
+        if (!quote && (line[*i + word_len] == '\'' || line[*i + word_len] == '"'))
+            quote = line[*i + word_len];
+        else if (quote && line[*i + word_len] == quote)
+            quote = 0;
+            
+        // Only stop at special characters if not in quotes
+        if (!quote && is_metacharacter(line[*i + word_len]) && 
+            word_len > 0)  // Don't stop if at beginning of word
+            break;
+            
+        word_len++;
+    }
+    
+    // Allocate and copy the word
+    word = malloc(word_len + 1);
+    if (!word)
+        return (NULL);
+        
+    j = 0;
+    while (j < word_len)
+    {
+        word[j] = line[*i];
+        (*i)++;
+        j++;
+    }
+    word[j] = '\0';
+    
+    return word;
 }
