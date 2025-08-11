@@ -7,28 +7,19 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/10 01:15:48 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/10 16:04:21 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
-// loop on token 
-// if type == HEREDOC
-// 1. fork
-// generate file name
-// 2. read from stdin until dilimiter
-// 3. write to file
-// 4. close file
-// exit child
-// 5. replace HEREDOC token with file name
-
-
-
 int is_delimiter_quoted(char *token_value)
 {
     int len;
+    
+    if (!token_value)
+        return (0);
+    
     len = ft_strlen(token_value);
     return (token_value[0] == '\'' || token_value[0] == '\"') && 
            token_value[len-1] == token_value[0];
@@ -37,51 +28,53 @@ int is_delimiter_quoted(char *token_value)
 char *gen_file_name()
 {
     char *name;
-    name = ft_itoa(getpid() + 12344);
-    return ft_strjoin("/tmp/herdoc_", name);
+    char *tmp;
+    
+    name = ft_itoa(getpid());
+    tmp = ft_strjoin("/tmp/heredoc_", name);
+    free(name);
+    return tmp;
 }
 
-char   *similation_herdoc(char *dilimiter, t_env *env_list, t_command *cmd)
+char *similation_herdoc(char *delimiter, t_env *env_list, t_command *cmd)
 {
-
-    if(!dilimiter)
+    if (!delimiter)
         return NULL;
     char *line;
     int fd;
     char *file_path;
     char *expanded;
+    int quoted;
     
+    quoted = is_delimiter_quoted(delimiter);
     file_path = gen_file_name();
-    fd =  open(file_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if(fd < 0)
-        return NULL;
+    fd = open(file_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd < 0)
+        return (free(file_path),free(delimiter), NULL);
     while (1)
     {
         line = readline("herdoc>");
-        if(!line || ft_strcmp(line, dilimiter) == 0)
+        if(!line || ft_strcmp(line, delimiter) == 0)
         {
-            free(line);
+            free(line);// why free line
             break;
         }
-        if (!is_delimiter_quoted(line))
+        // Only expand variables if delimiter wasn't quoted
+        if (!quoted)
         {
             expanded = expand_var_in_string(line, env_list, cmd);
-            write(fd, expanded, ft_strlen(expanded));
-            free(expanded);
+            free(line);
+            line = expanded;
         }
         else
-        {
-            write(fd, line, ft_strlen(line));
-            write(fd, "\n", 1);
-            free(line);
-        }
+            expanded = line;
+        // Write line to file with newline
+        write(fd, expanded, ft_strlen(expanded));
+        write(fd, "\n", 1);
+        free(expanded);
     }
-    close(fd);
-    return (exit(0), file_path);
-    // expand only unquoted del
-    // remove node herdoc replace by file holde content 
+    return (close(fd), free(delimiter), file_path);
 }
-
 
 void handl_herdoc(t_token *token, t_env *env_list, t_command *cmd)
 {
@@ -93,43 +86,57 @@ void handl_herdoc(t_token *token, t_env *env_list, t_command *cmd)
     tmp = token;
     if (!tmp)
         return;
+        
     while (tmp)
     {
         if (tmp->type == HEREDOC && tmp->next && tmp->next->type == ARGUMENT)
         {
-            // If HEREDOC token is followed by an argument, we handle it
             if (tmp->next->is_empty_expansion)
             {
-                // If the next token is empty expansion, we skip it
                 tmp = tmp->next;
+                if (tmp)
+                    tmp = tmp->next;
                 continue;
             }
-    
             pid = fork();
             if (pid < 0)
                 return;
             if (pid == 0)
             {
-                file_name = similation_herdoc(tmp->next->value, env_list, cmd);
+                // Set signal handling for child
+               // signal(SIGINT, SIG_DFL);
+                // Get heredoc content and save to file
+                file_name = similation_herdoc(ft_strdup(tmp->next->value), env_list, cmd);
                 if (!file_name)
-                    continue;
-                else
-                {
-                    free(tmp->value);
-                    tmp->value = file_name; 
-                    tmp->type = ARGUMENT;
-                    tmp = tmp->next;
-                 }
+                    exit(1);
+                exit(0);
             }
             else
             {
-                if (waitpid(pid, &status, 0) == -1)
+                int wait_result = waitpid(pid, &status, 0);
+                if (wait_result == -1)
+                {
                     perror("waitpid failed");
-
+                    return;
+                }
+                // If child exited normally
+                // ????/
+                if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+                {
+                    // Generate file name in parent (same as child would)
+                    file_name = gen_file_name();
+                    // Store heredoc file path
+                    tmp->next->value = ft_strdup(file_name);
+                    free(file_name);
+                }
+                else if (WIFSIGNALED(status))
+                {
+                    // Handle case where heredoc was interrupted
+                    return;
+                }
             }
-            
-            // replace HEREDOC token with file name
         }
-        tmp = tmp->next;
+        if (tmp)
+            tmp = tmp->next;
     }
 }

@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:42 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 16:46:21 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/10 15:47:23 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,7 @@ void	free_commands(t_command *commands)
 	{
 		next = current->next;
 		free_string_array(current->args);
-		free_string_array(current->infile);
-		free_string_array(current->outfile);
+		free_redirections(current->redirections);
 		free(current);
 		current = next;
 	}
