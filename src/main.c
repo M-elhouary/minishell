@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/11 08:22:21 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/11 10:40:37 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,16 +80,16 @@ int	main(int ac, char **av, char **env)
     t_gc		gc;
     int			exit_code;
 
-    (void)ac;
-    (void)av;
-    gc_init(&gc);
+	(void)ac;
+	(void)av;
+	gc_init(&gc);
     cmd = NULL;
-    env_list = my_env(env);
-    signal(SIGINT, sigint_);
-    signal(SIGQUIT, sigquit_);
+	env_list = my_env(env);
+	signal(SIGINT, sigint_);
+	signal(SIGQUIT, sigquit_);
     
-    while (1)
-    {
+	while (1)
+	{
         // Ensure cmd always exists for $? expansion
         if (!cmd)
         {
@@ -104,30 +104,31 @@ int	main(int ac, char **av, char **env)
             cmd->next = NULL;
         }
         
-        line = readline("minishell$ ");
-        if (!line)
+		line = readline("minishell$ ");
+		if (!line)
             break;
-        if (!*line)
-        {
+		if (!*line)
+		{
             free(line);
-            continue;
-        }
-        add_history(line);
+			continue;
+		}
+		add_history(line);
         
-        tokens = tokenize_gc(line, env_list, &gc, cmd);
-        if (!tokens)
-        {
+		tokens = tokenize_gc(line, env_list, &gc, cmd);
+		if (!tokens)
+		{
             free(line);
-            continue;
-        }
+			continue;
+		}
         
         // Check syntax and continue if error (status already set in check_syntax_token)
         if (!check_syntax_token(tokens, cmd))
-        {
+		{
             free(line);
             gc_free_all(&gc);
             continue;
         }
+        handl_herdoc(tokens, env_list, cmd);
 		 // Only create new command if syntax is correct
         tmp_cmd = parse_commands(tokens);
         if (tmp_cmd)
@@ -158,13 +159,13 @@ int	main(int ac, char **av, char **env)
             // Update exit status for next command
             cmd->status_exit = exit_code;
             
-            if (exit_code != 0)
-                printf("[Exit code: %d]\n", exit_code);
-        }
+				if (exit_code != 0)
+					printf("[Exit code: %d]\n", exit_code);
+		}
         
-        free(line);
-        gc_free_all(&gc);
-    }
+		free(line);
+		gc_free_all(&gc);
+	}
     
     // Final cleanup
     	if (cmd)

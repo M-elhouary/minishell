@@ -24,7 +24,10 @@ SRCS_PARSE = src/main.c \
 	   src/parser/func_utils2.c \
 	   src/parser/parse_command/parse_command.c \
 	   src/parser/parse_command/func_help.c\
+	   src/parser/herdoc.c\
+	   src/parser/redirections.c\
 	   src/garbage_collector.c
+
 
 SRCS_EXEC = src/exec/utils.c \
 			src/exec/locate_cmd.c \
