@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/11 12:24:45 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/12 00:15:38 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,13 @@ typedef struct s_gc
 	t_gc_node	*head;
 }	t_gc;
 
+typedef struct s_token_ctx
+{
+    t_token **tokens;
+    t_env *env;
+    t_gc *gc;
+    t_command *cmd;
+} t_token_glbst;
 
 
 // Environment functions 
@@ -114,6 +121,10 @@ int		free_token(t_token *token);
 int		handle_quotes(const char *line, int *i);
 char	*extract_word(char *line, int *i);
 int	has_unclosed_quote(const char *line);
+int handle_empty_expansion(t_token **tokens, t_gc *gc);
+int create_and_add_token(t_token **tokens, char *value,  t_token_type type, t_gc *gc);
+t_token	*create_token_gc(char *value, t_token_type type, t_gc *gc);
+void	add_token(t_token **head, t_token *new);
 
 // parse command
 t_command	*parse_commands(t_token *tokens);

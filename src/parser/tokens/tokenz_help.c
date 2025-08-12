@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 17:15:23 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 16:47:24 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/12 00:14:41 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,35 @@ int free_token(t_token *token)
 		free(tmp);
 	}
 	return (1);
+}
+
+// Create empty expansion token for variable that expands to nothing
+int handle_empty_expansion(t_token **tokens, t_gc *gc)
+{
+    t_token *new;
+
+    new = create_token_gc(gc_strdup(gc, ""), ARGUMENT, gc);
+    if (!new)
+        return (0);
+    new->is_empty_expansion = 1;
+    add_token(tokens, new);
+    return (1);
+}
+
+// Helper function to create and add a token in one step
+int create_and_add_token(t_token **tokens, char *value,  t_token_type type, t_gc *gc)
+{
+    t_token *new;
+    char *dup_value;
+
+    dup_value = gc_strdup(gc, value);
+    if (!dup_value)
+        return (0);
+        
+    new = create_token_gc(dup_value, type, gc);
+    if (!new)
+        return (0);
+        
+    add_token(tokens, new);
+    return (1);
 }
