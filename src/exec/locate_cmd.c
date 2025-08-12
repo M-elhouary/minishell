@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 00:32:24 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/03 23:30:22 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/12 01:24:32 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,46 +65,68 @@ void	free_split(char **arr, int size)
 	free(arr);
 }
 
-char	**split_path(char *path_env)
+static char	**allocate_paths_array(char *path_env)
 {
 	char	**paths;
-	char	*path_copy;
+	int		count;
+
+	count = ft_count(path_env) + 2;
+	paths = malloc(sizeof(char *) * count);
+	return (paths);
+}
+
+static int	add_path_segment(char **paths, char *start, int index)
+{
+	if (*start)
+	{
+		paths[index] = ft_strdup(start);
+		if (!paths[index])
+			return (-1);
+		return (index + 1);
+	}
+	return (index);
+}
+
+static char	**tokenize_path_string(char *path_copy, char **paths)
+{
 	char	*start;
 	char	*delim;
 	int		i;
 
-	if (!path_env || !*path_env)
-		return (NULL);
 	i = 0;
-	path_copy = ft_strdup(path_env);
-	if (!path_copy)
-		return (NULL);
-	paths = malloc(sizeof(char *) * (ft_count(path_env) + 2));
-	if (!paths)
-		return (NULL);
 	start = path_copy;
 	while ((delim = ft_strchr(start, ':')))
 	{
 		*delim = '\0';
-		if (*start)
-		{
-			paths[i] = ft_strdup(start);
-			if (!paths[i])
-				return (free_split(paths, i), free(path_copy), NULL);
-			i++;
-		}
+		i = add_path_segment(paths, start, i);
+		if (i == -1)
+			return (free_split(paths, i), NULL);
 		start = delim + 1;
 	}
-	if (*start)
-	{
-		paths[i] = ft_strdup(start);
-		if (!paths[i])
-			return (free_split(paths, i), free(path_copy), NULL);
-		i++;
-	}
+	i = add_path_segment(paths, start, i);
+	if (i == -1)
+		return (free_split(paths, i), NULL);
 	paths[i] = NULL;
-	free(path_copy);
 	return (paths);
+}
+
+char	**split_path(char *path_env)
+{
+	char	**paths;
+	char	*path_copy;
+	char	**result;
+
+	if (!path_env || !*path_env)
+		return (NULL);
+	path_copy = ft_strdup(path_env);
+	if (!path_copy)
+		return (NULL);
+	paths = allocate_paths_array(path_env);
+	if (!paths)
+		return (free(path_copy), NULL);
+	result = tokenize_path_string(path_copy, paths);
+	free(path_copy);
+	return (result);
 }
 
 char	*path_cmd(char *cmd)
@@ -142,7 +164,7 @@ char	*full_path(char **paths, char *cmd)
 	return (NULL);
 }
 
-char	*locate_cmd(char *cmd)
+char	*locate_cmd(char *cmd, t_env *env)
 {
 	char	*path_env;
 	char	**paths;
@@ -152,13 +174,19 @@ char	*locate_cmd(char *cmd)
 		return (NULL);
 	if (ft_strchr(cmd, '/'))
 		return (path_cmd(cmd));
-	path_env = getenv("PATH");
+	path_env = get_env_value("PATH", env);
 	if (!path_env || !*path_env)
-		return (NULL);
+	{
+		free(path_env);
+		// When PATH is unset, treat command as relative path
+		return (ft_strdup(cmd));
+	}
 	paths = split_path(path_env);
+	free(path_env);
 	if (!paths)
 		return (NULL);
 	res = full_path(paths, cmd);
+	// full_path already frees paths on success, only free on failure
 	if (!res)
 		free_paths(paths);
 	return (res);

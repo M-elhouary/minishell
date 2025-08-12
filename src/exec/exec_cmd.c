@@ -6,42 +6,11 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:00:44 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/10 20:20:07 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/12 01:22:20 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-t_command	*create_cmd(char **args)
-{
-	t_command	*cmd;
-	int		i;
-	
-	if (!args || !args[0])
-		return (NULL);
-	cmd = malloc(sizeof(t_command));
-	if (!cmd)
-		return (NULL);
-	i = 0;
-	while (args[i])
-		i++;
-	cmd->ac = i;
-	cmd->args = malloc(sizeof(char *) * (i + 1));
-	if (!cmd->args)
-	{
-		free(cmd);
-		return (NULL);
-	}
-	i = 0;
-	while (args[i])
-	{
-		cmd->args[i] = ft_strdup(args[i]);
-		i++;
-	}
-	cmd->args[i] = NULL;
-	cmd->path = locate_cmd(args[0]);
-	return (cmd);
-}
 
 int	exit_status(int status)
 {
@@ -85,6 +54,8 @@ void	exec_child(t_command *cmd, t_env **env)
 		exit(1);
 	}
 	execve(cmd->path, cmd->args, env_arr);
+	// Free env_arr in case execve fails
+	free_env_array(env_arr);
 	if (errno == ENOEXEC)
 	{
 		printf("minishell: %s: cannot execute binary file\n", cmd->args[0]);
@@ -128,12 +99,44 @@ int	exec_cmd(t_command *cmd, t_env **env, int fd)
 	pid_t		pid;
 	t_builtin	built_res;
 	int			validate_res;
+	int			original_stdin;
+	int			original_stdout;
 
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return (1);
-	built_res = exec_builtin(cmd, env, fd);
+	
+	// Handle redirections before checking for builtins
+	original_stdin = dup(STDIN_FILENO);
+	original_stdout = dup(STDOUT_FILENO);
+	
+	if (handle_redirections(cmd->redirections) != 0)
+	{
+		close(original_stdin);
+		close(original_stdout);
+		return (1);
+	}
+	
+	// Use the provided fd for output if it's not stdout
+	if (fd != STDOUT_FILENO)
+		dup2(fd, STDOUT_FILENO);
+	
+	built_res = exec_builtin(cmd, env, STDOUT_FILENO);
 	if (built_res != NOT_BUILTIN)
+	{
+		// Restore original file descriptors for builtins
+		dup2(original_stdin, STDIN_FILENO);
+		dup2(original_stdout, STDOUT_FILENO);
+		close(original_stdin);
+		close(original_stdout);
 		return (built_res);
+	}
+	
+	// Restore for external commands (they will handle redirections in child)
+	dup2(original_stdin, STDIN_FILENO);
+	dup2(original_stdout, STDOUT_FILENO);
+	close(original_stdin);
+	close(original_stdout);
+	
 	if (check_cmd_path(cmd->path, cmd->args[0]))
 		return (127);
 	validate_res = validate_cmd_path(cmd->path, cmd->args[0]);
@@ -146,7 +149,15 @@ int	exec_cmd(t_command *cmd, t_env **env, int fd)
 		return (1);
 	}
 	if (pid == 0)
+	{
+		// Handle redirections in child process
+		if (handle_redirections(cmd->redirections) != 0)
+			exit(1);
+		// Use the provided fd for output if it's not stdout
+		if (fd != STDOUT_FILENO)
+			dup2(fd, STDOUT_FILENO);
 		exec_child(cmd, env);
+	}
 	else
 		return (wait_child(pid));
 	return (0);
@@ -170,5 +181,8 @@ void	free_cmd(t_command *cmd)
 	}
 	if (cmd->path)
 		free(cmd->path);
+	// Add missing redirection cleanup
+	if (cmd->redirections)
+		free_redirections(cmd->redirections);
 	free(cmd);
 }

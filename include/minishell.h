@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/11 08:30:01 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/12 01:32:33 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,7 @@ typedef enum
 	BUILTIN_ERROR = 1
 }	t_builtin;
 
-char		*locate_cmd(char *cmd);
-t_command	*create_cmd(char **args);
+char		*locate_cmd(char *cmd, t_env *env);
 int			exec_cmd(t_command *cmd, t_env **env, int fd);
 void		free_cmd(t_command *cmd);
 long		atol_s(const char *str, char **endptr);
@@ -50,5 +49,7 @@ void	free_env_array(char **envp);
 void	print(char *s, int fd);
 int		exec_pipeline(t_command *cmd_list, t_env **env);
 int		exit_status(int status);
+
+int		handle_redirections(t_redirection *redirections);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 03:51:57 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/04 00:35:19 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/12 02:36:18 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,21 @@
 
 int	set_env_value(t_env **env, char *key, char *value)
 {
-	t_env *current = *env;
-	char *new_key, *new_value;
+	t_env	*current;
+	char	*new_key;
+	char	*new_value;
 
+	current = *env;
 	while (current)
 	{
 		if (ft_strcmp(current->key, key) == 0)
 		{
 			free(current->content);
 			current->content = ft_strdup(value);
-			return (current->content ? 0 : 1); //////////////////////////??????
+			return (!current->content);
 		}
 		current = current->next;
 	}
-    
 	new_key = ft_strdup(key);
 	new_value = ft_strdup(value);
 	if (!new_key || !new_value)

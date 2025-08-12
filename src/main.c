@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/11 10:40:37 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/12 01:04:59 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ int	main(int ac, char **av, char **env)
 			while (tmp_cmd)
 			{
 				if (tmp_cmd->args && tmp_cmd->args[0])
-					tmp_cmd->path = locate_cmd(tmp_cmd->args[0]);
+					tmp_cmd->path = locate_cmd(tmp_cmd->args[0], env_list);
 				tmp_cmd = tmp_cmd->next;
 			}
 

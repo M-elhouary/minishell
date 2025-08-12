@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 03:51:06 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/11 08:38:58 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/12 01:22:26 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,23 +91,16 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 
 	cmd_count = count_cmds(cmd_list);
 	
-	// Single command - just use exec_cmd
 	if (cmd_count == 1)
 		return (exec_cmd(cmd_list, env, STDOUT_FILENO));
-	
-	// Multiple commands - create pipes
 	if (!create_pipes(&pipes, cmd_count))
 		return (1);
-	
-	// Allocate pids array
 	pids = malloc(sizeof(pid_t) * cmd_count);
 	if (!pids)
 	{
 		cleanup_pipes(pipes, cmd_count);
 		return (1);
 	}
-	
-	// Fork each command
 	current = cmd_list;
 	i = 0;
 	while (current && i < cmd_count)
@@ -116,34 +109,24 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 		if (pids[i] == -1)
 		{
 			perror("fork");
-			break;
+			close_all_pipes(pipes, cmd_count);
+			cleanup_pipes(pipes, cmd_count);
+			free(pids);
+			return (1);
 		}
 		else if (pids[i] == 0)
 		{
-			// Child process - setup pipes and call exec_cmd
-			
-			// Redirect input from previous pipe
 			if (i > 0)
 				dup2(pipes[i - 1][0], STDIN_FILENO);
-			
-			// Redirect output to next pipe  
 			if (i < cmd_count - 1)
 				dup2(pipes[i][1], STDOUT_FILENO);
-			
-			// Close all pipe file descriptors
 			close_all_pipes(pipes, cmd_count);
-			
-			// Use exec_cmd - it will handle everything (builtins, external commands, etc.)
 			exit(exec_cmd(current, env, STDOUT_FILENO));
 		}
 		current = current->next;
 		i++;
 	}
-	
-	// Parent: close all pipes
 	close_all_pipes(pipes, cmd_count);
-	
-	// Wait for all children
 	last_exit = 0;
 	i = 0;
 	while (i < cmd_count)
@@ -154,10 +137,7 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 			last_exit = exit_status(status);
 		i++;
 	}
-	
-	// Cleanup
 	cleanup_pipes(pipes, cmd_count);
 	free(pids);
-	
 	return (last_exit);
 }
