@@ -15,11 +15,6 @@
 
 // signal
 
-
-
-
-
-
 void similation_herdoc(char *delimiter, int fd,  t_env *env_list, t_command *cmd)
 {
     char *expanded;

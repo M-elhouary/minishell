@@ -15,19 +15,20 @@ SRCS_PARSE = src/main.c \
        src/parser/tokens/tokenize_words.c \
        src/parser/tokens/tokenize_quotes.c \
 	   src/parser/tokens/tokenz_help.c \
+	   src/parser/tokens/tokenz_help2.c \
        src/parser/expansion/expand.c \
 	   src/parser/expansion/word_split.c\
        src/parser/environment/env.c\
        src/parser/environment/func_help.c\
-       src/parser/syntax_checker.c \
 	   src/parser/utils/func_utils.c \
 	   src/parser/utils/func_utils2.c \
 	   src/parser/parse_command/parse_command.c \
 	   src/parser/parse_command/func_help.c\
 	   src/parser/parse_command/func_help2.c\
+	   src/parser/parse_command/redirections.c\
 	   src/parser/herdoc/herdoc.c\
 	   src/parser/herdoc/utils.c\
-	   src/parser/redirections.c\
+       src/parser/syntax_checker.c \
 	   src/garbage_collector.c
 
 
