@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/13 18:41:41 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/13 18:47:35 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_g
 	char	*expanded, *word;
 	int		has_vars, j;
 	t_token *last = NULL;
+	if(*glbls)
 	
 	// exatract word between first quote "'""mmm""'" ====> first word is ' second mmm theard '
  	word = extract_word(line, i);
