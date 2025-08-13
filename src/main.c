@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/11 21:54:48 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/13 18:48:19 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,4 +173,4 @@ int	main(int ac, char **av, char **env)
     		free_commands(cmd);
 	gc_destroy(&gc);
     return (0);
-} // Initialize to prevent undefined behavior
+} 

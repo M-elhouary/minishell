@@ -6,13 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/13 18:47:35 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/13 18:51:25 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
 
 
 
@@ -61,7 +59,26 @@ static int handle_special_gc(t_token **tokens, char *line, int *i, t_gc *gc)
         return (0);
     return (1);
 }
+// Add all split words as tokens
+static int add_split_words(t_token **tokens, char **split_words, t_gc *gc)
+{
+    t_token *new;
+    int j;
 
+    j = 0;
+    while (split_words[j])
+    {
+        if (*tokens == NULL)
+            new = create_token_gc(split_words[j], COMMAND, gc);
+        else
+            new = create_token_gc(split_words[j], ARGUMENT, gc);
+        if (!new)
+            return (0);
+        add_token(tokens, new);
+        j++;
+    }
+    return (1);
+}
 
 
 /*
@@ -73,54 +90,7 @@ static int handle_special_gc(t_token **tokens, char *line, int *i, t_gc *gc)
  * - Adds the resulting tokens as COMMAND or ARGUMENT
  * Returns 1 on success, 0 on error
  */
-static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_gc *gc, t_command *cmd)
-{
-	char	**split_words;
-	t_token	*new;
-	char	*expanded, *word;
-	int		has_vars, j;
-	t_token *last = NULL;
-	if(*glbls)
-	
-	// exatract word between first quote "'""mmm""'" ====> first word is ' second mmm theard '
- 	word = extract_word(line, i);
-	if (!word)
-		return (0);
-	// if word with quote or no if no qoute return 1 ? 0
-	has_vars = has_unquoted_variables(word);
-	expanded = expand_variables(word, env, cmd);
-	if (has_vars && (!expanded || !*expanded))
-	{
-		// If variable expansion results in empty, add a special empty token
-		new = create_token_gc(gc_strdup(gc, ""), ARGUMENT, gc);
-		if (!new)
-			return (free(word), free(expanded), 0);
-		new->is_empty_expansion = 1;
-		add_token(tokens, new);
-		free(word);
-		free(expanded);
-		return (1);
-	}
-	free(expanded);
-	split_words = expand_and_split_gc(word, env, gc, cmd);
-	free(word);
-	if (!split_words)
-		return (1);
-	j = 0;
-	while (split_words[j])
-	{
-		// The first word is considered a COMMAND, others are ARGUMENTs
-		if (*tokens == NULL)
-			new = create_token_gc(split_words[j], COMMAND, gc);
-		else
-			new = create_token_gc(split_words[j], ARGUMENT, gc);
-		if (!new)
-			return (0);
-		add_token(tokens, new);
-		j++;
-	}
-	return (1);
-}
+
 
 // Process word and create tokens
 static int process_word_gc(char *line, int *i, t_token_glbst *glbst)
@@ -175,11 +145,9 @@ static int process_special(char *line, int *i, t_token_glbst *glbst)
     // Skip spaces
     if (!skip_spaces(line, i))
         return (0);
-    
     // Handle special characters
     if (handle_special_gc(glbst->tokens, line, i, glbst->gc))
         return (1);
-    
     // Handle pipe
     if (line[*i] == '|')
     {
@@ -188,7 +156,6 @@ static int process_special(char *line, int *i, t_token_glbst *glbst)
         (*i)++;
         return (1);
     }
-    
     // Handle regular word
     return (process_word_gc(line, i, glbst));
 }
@@ -213,13 +180,11 @@ t_token *tokenize_gc(char *line, t_env *env, t_gc *gc, t_command *cmd)
         print_error("unclosed quote", NULL);
         return (NULL);
     }
-    
     // Process input line
     while (line[i])
     {
         if (!process_special(line, &i, &glbst))
             break;
     }
-    
     return (*(glbst.tokens));
 }
