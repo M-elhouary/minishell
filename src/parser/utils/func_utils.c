@@ -6,15 +6,13 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 16:04:05 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/07 22:58:21 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:56:42 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 
 #include "minishell.h"
-
-
 
 
 void	print_error(char *error, char *detail)
@@ -95,4 +93,21 @@ int has_unclosed_quote(const char *line)
     
     // If still in a quote at end of line, there's an unclosed quote
     return (quote != 0);
+}
+
+int has_quotes(const char *str)
+{
+    int i = 0;
+    
+    if (!str)
+        return (0);
+    
+    while (str[i])
+    {
+        if (str[i] == '\'' || str[i] == '\"')
+            return (1);
+        i++;
+    }
+    
+    return (0);
 }

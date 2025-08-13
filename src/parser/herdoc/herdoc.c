@@ -1,4 +1,3 @@
-
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -7,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/10 16:04:21 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/13 18:12:43 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,36 +14,57 @@
 
 // signal
 
-
-
-
-
-
-void similation_herdoc(char *delimiter, int fd,  t_env *env_list, t_command *cmd)
+void similation_herdoc(char *delimiter, int fd, t_env *env_list, t_command *cmd)
 {
     char *expanded;
     char *line;
-
+    char *clean_delimiter;
+    int quotes_for_expansion = 0;  // Flag to check if we should expand variables
+    
+    // 1. Make a copy of the original delimiter
+    clean_delimiter = ft_strdup(delimiter);
+    if (!clean_delimiter)
+    {
+        close(fd);
+        free(delimiter);
+        return;
+    }
+    
+    // 2. Check if delimiter has quotes (for variable expansion control)
+    quotes_for_expansion = has_quotes(delimiter);
+    
+    // 3. Always remove all quotes for comparison purposes
+    char *no_quotes = remove_quotes(clean_delimiter);
+    //free(clean_delimiter);
+    clean_delimiter = no_quotes;
+    
     while (1)
     {
         line = readline("herdoc>");
-        if(!line || ft_strcmp(line, delimiter) == 0)
+        if (!line)
+            break;
+        
+        // Compare user input with delimiter (without quotes)
+        if (ft_strcmp(line, clean_delimiter) == 0)
         {
-            free(line);// why free line
+            free(line);
             break;
         }
-        if (!is_delimiter_quoted(delimiter))
+        // Only expand variables if original delimiter had no quotes
+        if (!quotes_for_expansion)
         {
             expanded = expand_var_in_string(line, env_list, cmd);
             free(line);
-            line = expanded;
         }
         else
             expanded = line;
+            
         write(fd, expanded, ft_strlen(expanded));
         write(fd, "\n", 1);
         free(expanded);
     }
+    
+    free(clean_delimiter);
     close(fd);
     free(delimiter);
 }
