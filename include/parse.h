@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/11 12:24:45 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/12 19:25:57 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ typedef struct s_token
 	char			*value;
 	t_token_type	type;
 	int				is_empty_expansion;
+    int             prev_herdoc;
 	struct s_token	*next;
 }	t_token;
 

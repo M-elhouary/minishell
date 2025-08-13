@@ -25,9 +25,9 @@ SRCS_PARSE = src/main.c \
 	   src/parser/parse_command/parse_command.c \
 	   src/parser/parse_command/func_help.c\
 	   src/parser/parse_command/func_help2.c\
+	   src/parser/parse_command/redirections.c\
 	   src/parser/herdoc/herdoc.c\
 	   src/parser/herdoc/utils.c\
-	   src/parser/redirections.c\
 	   src/garbage_collector.c
 
 
