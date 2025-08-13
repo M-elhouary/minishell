@@ -6,15 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 00:13:38 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/12 00:14:55 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:09:09 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
-
-
 
 // Create a new token, allocating memory using the garbage collector
 t_token	*create_token_gc(char *value, t_token_type type, t_gc *gc)

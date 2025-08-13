@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/12 00:12:20 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/13 01:00:12 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,10 +91,31 @@ static int process_word_gc(char *line, int *i, t_token_glbst *glbst)
     char **split_words;
     char *expanded, *word;
     int has_vars;
+    t_token *last = NULL;
 
+    if (*glbst->tokens)
+    {
+        last = *glbst->tokens;
+        while (last->next)
+            last = last->next;
+    }
     word = extract_word(line, i);
     if (!word)
         return (0);
+    
+    if(last && last->type == HEREDOC)
+    {
+        split_words = gc_malloc(glbst->gc, sizeof(char *) * 2);
+        if (!split_words)
+        {
+            free(word);
+            return (0);
+        }
+        split_words[0] = gc_strdup(glbst->gc, word);
+        split_words[1] = NULL;
+        free(word);
+        return (add_split_words(glbst->tokens, split_words, glbst->gc));
+    }
     has_vars = has_unquoted_variables(word);
     expanded = expand_variables(word, glbst->env, glbst->cmd);
     if (has_vars && (!expanded || !*expanded))

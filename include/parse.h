@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/12 00:15:38 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:54:49 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,7 @@ char *gen_file_name();
 
 // Utility functions
 int	check_unclosed_quote(const char *line);
+int has_quotes(const char *str);
 char	*remove_syntactic_quotes(char *str);
 char	*ft_strjoin_free(char *s1, char *s2);
 int		is_metacharacter(char c);

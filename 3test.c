@@ -3,6 +3,9 @@
 #include <fcntl.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdlib.h>
 
 // int main()
 // {
@@ -164,3 +167,37 @@
 //     return 0;
 // }
 
+
+
+char	*remove_quotes(char *str)
+{
+	char	*new;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	if (!str)
+		return (NULL);
+	new = malloc(strlen(str) + 1);
+	if (!new)
+		return (NULL);
+	while (str[i])
+	{
+		if (str[i] != '\'' && str[i] != '\"')
+			new[j++] = str[i];
+		i++;
+	}
+	new[j] = '\0';
+	free(str);
+	return (new);
+}
+int main()
+{
+    char *str = "This is a 'test' string with \"quotes\"";
+    char *result = remove_quotes(str);
+    printf("Original: %s\n", str);
+    printf("Without quotes: %s\n", result);
+    free(result);
+    return 0;
+}

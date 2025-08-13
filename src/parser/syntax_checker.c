@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/08/11 12:05:23 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/13 01:00:02 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ static int	check_redirection(t_token *tokens)
 	}
 	return (1);
 }
+
 
 int	check_syntax_token(t_token *tokens, t_command *cmd)
 {
