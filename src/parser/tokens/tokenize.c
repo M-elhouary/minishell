@@ -6,13 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/13 01:00:12 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/13 18:48:07 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
 
 
 
@@ -138,11 +136,9 @@ static int process_special(char *line, int *i, t_token_glbst *glbst)
     // Skip spaces
     if (!skip_spaces(line, i))
         return (0);
-    
     // Handle special characters
     if (handle_special_gc(glbst->tokens, line, i, glbst->gc))
         return (1);
-    
     // Handle pipe
     if (line[*i] == '|')
     {
@@ -151,7 +147,6 @@ static int process_special(char *line, int *i, t_token_glbst *glbst)
         (*i)++;
         return (1);
     }
-    
     // Handle regular word
     return (process_word_gc(line, i, glbst));
 }
@@ -176,13 +171,11 @@ t_token *tokenize_gc(char *line, t_env *env, t_gc *gc, t_command *cmd)
         print_error("unclosed quote", NULL);
         return (NULL);
     }
-    
     // Process input line
     while (line[i])
     {
         if (!process_special(line, &i, &glbst))
             break;
     }
-    
     return (*(glbst.tokens));
 }
