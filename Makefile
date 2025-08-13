@@ -18,6 +18,7 @@ SRCS_PARSE = src/main.c \
 	   src/parser/tokens/tokenz_help2.c \
        src/parser/expansion/expand.c \
 	   src/parser/expansion/word_split.c\
+	   src/parser/expansion/utils.c \
        src/parser/environment/env.c\
        src/parser/environment/func_help.c\
 	   src/parser/utils/func_utils.c \

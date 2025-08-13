@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:53 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 17:07:33 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/14 00:34:50 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,28 +33,29 @@ int	handle_quotes(const char *line, int *i)
 	return (1);
 }
 
-// This function extracts a quoted string, handling unclosed quotes by taking the rest of the line as the argument.
+// This function extracts a quoted string,
+	handling unclosed quotes by taking the rest of the line as the argument.
 char	*extract_quoted(const char *line, int *i)
 {
-    char	quote;
-    int		start;
-    int		len;
+	char quote;
+	int start;
+	int len;
 
-    quote = line[*i];
-    start = *i;
-    (*i)++;
-    len = 0;
-    while (line[*i] && line[*i] != quote)
-    {
-        (*i)++;
-        len++;
-    }
-    if (!line[*i])
-    {
-        // Unclosed quote: return from start to end (including opening quote)
-        return (ft_substr(line, start, *i - start));
-    }
-    // Closed quote: return inside quotes
-    (*i)++; // skip closing quote
-    return (ft_substr(line, start + 1, len));
+	quote = line[*i];
+	start = *i;
+	(*i)++;
+	len = 0;
+	while (line[*i] && line[*i] != quote)
+	{
+		(*i)++;
+		len++;
+	}
+	if (!line[*i])
+	{
+		// Unclosed quote: return from start to end (including opening quote)
+		return (ft_substr(line, start, *i - start));
+	}
+	// Closed quote: return inside quotes
+	(*i)++; // skip closing quote
+	return (ft_substr(line, start + 1, len));
 }

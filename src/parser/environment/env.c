@@ -3,13 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:12 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/08 20:59:15 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/14 00:16:31 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "parse.h"
 
@@ -17,7 +16,6 @@ char	*get_env_value(char *key, t_env *env)
 {
 	if (!key || !*key)
 		return (ft_strdup("$"));
-	
 	while (env)
 	{
 		if (ft_strcmp(env->key, key) == 0)
@@ -26,7 +24,6 @@ char	*get_env_value(char *key, t_env *env)
 	}
 	return (ft_strdup(""));
 }
-
 
 t_env	*env_new_node(char *key, char *content)
 {
@@ -58,23 +55,29 @@ void	env_add_node(t_env **head, t_env *new)
 	}
 }
 
-static void process_env_entry(char *env_entry, t_env **env_list)
+static void	process_env_entry(char *env_entry, t_env **env_list)
 {
-	char *key = get_key(env_entry);
-	char *content = get_content(env_entry);
+	char	*key;
+	char	*content;
+
+	key = get_key(env_entry);
+	content = get_content(env_entry);
 	if (!key || !content)
 	{
 		free(key);
 		free(content);
-		return;
+		return ;
 	}
 	env_add_node(env_list, env_new_node(key, content));
 }
 
-t_env *my_env(char **env)
+t_env	*my_env(char **env)
 {
-	t_env *env_list = NULL;
-	int i = 0;
+	t_env	*env_list;
+	int		i;
+
+	env_list = NULL;
+	i = 0;
 	while (env && env[i])
 	{
 		process_env_entry(env[i], &env_list);
@@ -82,4 +85,3 @@ t_env *my_env(char **env)
 	}
 	return (env_list);
 }
-

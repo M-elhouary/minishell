@@ -6,12 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/08/13 18:53:22 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/14 00:36:30 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 static int	check_pipe_start(t_token *tokens)
 {
@@ -66,12 +65,14 @@ static int	check_redirection(t_token *tokens)
 		{
 			if (!tmp->next)
 			{
-				print_error("syntax error near unexpected token `newline'", NULL);
+				print_error("syntax error near unexpected token `newline'",
+					NULL);
 				return (0);
 			}
 			if (is_redirection(tmp->next->type))
 			{
-				print_error("syntax error near unexpected token", tmp->next->value);
+				print_error("syntax error near unexpected token",
+					tmp->next->value);
 				return (0);
 			}
 		}
@@ -79,7 +80,6 @@ static int	check_redirection(t_token *tokens)
 	}
 	return (1);
 }
-
 
 int	check_syntax_token(t_token *tokens, t_command *cmd)
 {
