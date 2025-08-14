@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/14 00:33:39 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/14 02:42:50 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,36 +35,51 @@ static int	prepare_delimiter(char **clean_delimiter, char *delimiter,
 }
 
 void	similation_herdoc(char *delimiter, int fd, t_env *env_list,
-		t_command *cmd)
+        t_command *cmd)
 {
-	int	quotes_for_expansion;
-
-	char *line, *clean_delimiter;
-	if (!prepare_delimiter(&clean_delimiter, delimiter, &quotes_for_expansion))
-	{
-		close(fd);
-		free(delimiter);
-		return ;
-	}
-	signal(SIGINT, SIG_DFL); // Reset signal handling for child process
-	while (1)
-	{
-		line = readline(">");
-		if (!line || ft_strcmp(line, clean_delimiter) == 0)
-		{
-			free(line);
-			break ;
-		}
-		if (!quotes_for_expansion)
-			process_herdoc_line(line, fd, env_list, cmd);
-		else
-		{
-			write(fd, line, ft_strlen(line));
-			write(fd, "\n", 1);
-			free(line);
-		}
-	}
-	free_and_close(clean_delimiter, fd, delimiter);
+    int quotes_for_expansion;
+    char *line, *clean_delimiter;
+    
+    /* Save current execution state */
+    int old_exec_state = get_execution_state();
+    
+    if (!prepare_delimiter(&clean_delimiter, delimiter, &quotes_for_expansion))
+    {
+        close(fd);
+        free(delimiter);
+        return;
+    }
+    
+    /* Setup special signal handling for heredoc */
+    signal(SIGINT, SIG_DFL);   /* Default SIGINT for heredoc */
+    signal(SIGQUIT, SIG_IGN);  /* Ignore SIGQUIT in heredoc */
+    
+    while (1)
+    {
+        line = readline(">");
+        if (!line || ft_strcmp(line, clean_delimiter) == 0)
+        {
+            free(line);
+            break ;
+        }
+        if (!quotes_for_expansion)
+            process_herdoc_line(line, fd, env_list, cmd);
+        else
+        {
+            write(fd, line, ft_strlen(line));
+            write(fd, "\n", 1);
+            free(line);
+        }
+    }
+    /* Restore previous signal handlers */
+    set_execution_state(old_exec_state);
+    if (get_execution_state() == 0)
+    {
+        signal(SIGINT, sigint_handler);
+        signal(SIGQUIT, sigquit_handler);
+    }
+    
+    free_and_close(clean_delimiter, fd, delimiter);
 }
 
 /* Process a heredoc token */

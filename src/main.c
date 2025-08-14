@@ -6,24 +6,57 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/14 00:37:06 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/14 02:40:44 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	sigint_(int sig)
+int g_in_execution = 0;
+
+int get_execution_state(void)
 {
-	(void)sig;
-	printf("\n");
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
+    return g_in_execution;
 }
 
-void	sigquit_(int sig)
+void set_execution_state(int state)
 {
-	(void)sig;
+    g_in_execution = state;
+}
+
+void	sigint_handler(int sig)
+{
+    (void)sig;
+    
+    if (get_execution_state() == 0)
+    {
+        /* Interactive mode (shell prompt) */
+        write(STDOUT_FILENO, "\n", 1);
+        rl_on_new_line();
+        rl_replace_line("", 0);
+        rl_redisplay();
+    }
+    else
+    {
+        /* Command execution mode */
+        write(STDOUT_FILENO, "\n", 1);
+    }
+}
+
+void	sigquit_handler(int sig)
+{
+    (void)sig;
+    
+    if (g_in_execution == 0)
+    {
+        /* Interactive mode (shell prompt) - do nothing */
+        rl_redisplay();
+    }
+    else
+    {
+        /* Command execution mode */
+        write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
+    }
 }
 int	main(int ac, char **av, char **env)
 {
@@ -40,8 +73,8 @@ int	main(int ac, char **av, char **env)
 	gc_init(&gc);
 	cmd = NULL;
 	env_list = my_env(env);
-	signal(SIGINT, sigint_);
-	signal(SIGQUIT, sigquit_);
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, sigquit_handler);
 
 	while (1)
 	{
