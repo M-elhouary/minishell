@@ -6,12 +6,13 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:12 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/14 00:16:31 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/15 22:09:10 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 
+// add commants to the environment list
 char	*get_env_value(char *key, t_env *env)
 {
 	if (!key || !*key)
