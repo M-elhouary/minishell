@@ -95,6 +95,9 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 		return (1);
 	}
 	
+	/* Set execution mode */
+	g_in_execution = 1;
+	
 	// Fork each command
 	current = cmd_list;
 	i = 0;
@@ -131,17 +134,11 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 	// Parent: close all pipes
 	close_all_pipes(pipes, cmd_count);
 	
-	// Wait for all children
-	last_exit = 0;
-	i = 0;
-	while (i < cmd_count)
-	{
-		if (waitpid(pids[i], &status, 0) == -1)
-			perror("waitpid");
-		else if (i == cmd_count - 1)  // Last command's exit status
-			last_exit = exit_status(status);
-		i++;
-	}
+	/* Wait for all processes and get exit status */
+	last_exit = wait_for_processes(pids, cmd_count);
+	
+	/* Return to interactive mode */
+	g_in_execution = 0;
 	
 	// Cleanup
 	cleanup_pipes(pipes, cmd_count);

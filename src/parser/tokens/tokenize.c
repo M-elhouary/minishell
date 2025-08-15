@@ -6,18 +6,18 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/14 00:35:06 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/15 02:34:21 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// Helper function to handle double-character operators
 
 // Handle special shell characters
 static int	handle_special_gc(t_token **tokens, char *line, int *i, t_gc *gc)
 {
 	// First check for double-character operators
+	// like '>>', '<<' herdoc, and append
 	if (handle_double_char_op(tokens, line, i, gc))
 		return (1);
 	// Then check single-character operators
@@ -73,13 +73,19 @@ static int	process_word_gc(char *line, int *i, t_token_glbst *glbst)
 	t_token	*last;
 
 	char *expanded, *word;
+	// get the last token to check if we are in a heredoc context
 	last = get_last_token(glbst);
 	split_words = NULL;
+	// Extract the word from the line 
+	// used for make word  not have quotes and spaces and matchracters
 	word = extract_word(line, i);
 	if (!word)
 		return (0);
+	//case special characters >>  dilimiter
 	if (last && last->type == HEREDOC)
 		return (herdoc_token(split_words, word, glbst));
+	// Check for unquoted variables in the word
+	//
 	has_vars = has_unquoted_variables(word);
 	expanded = expand_variables(word, glbst->env, glbst->cmd);
 	if (has_vars && (!expanded || !*expanded))
@@ -97,19 +103,12 @@ static int	process_word_gc(char *line, int *i, t_token_glbst *glbst)
 static int	process_special(char *line, int *i, t_token_glbst *glbst)
 {
 	// Skip spaces
+	// why skip_spaces is used here? // to ignore leading spaces before processing tokens
 	if (!skip_spaces(line, i))
 		return (0);
 	// Handle special characters
 	if (handle_special_gc(glbst->tokens, line, i, glbst->gc))
 		return (1);
-	// Handle pipe
-	if (line[*i] == '|')
-	{
-		add_token(glbst->tokens, create_token_gc(gc_strdup(glbst->gc, "|"),
-				PIPE, glbst->gc));
-		(*i)++;
-		return (1);
-	}
 	// Handle regular word
 	return (process_word_gc(line, i, glbst));
 }
@@ -117,6 +116,7 @@ static int	process_special(char *line, int *i, t_token_glbst *glbst)
 // Main tokenization function
 t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc, t_command *cmd)
 {
+	// this is global to store tokens, env, gc, and cmd
 	t_token_glbst glbst;
 	int i;
 
