@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/14 02:40:44 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/15 00:46:29 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ int	main(int ac, char **av, char **env)
 			cmd->next = NULL;
 		}
 
-		line = readline("minishell$ ");
+		line = readline("minishell$ "); // how readline works
 		if (!line)
 			break ;
 		if (!*line)
@@ -99,12 +99,11 @@ int	main(int ac, char **av, char **env)
 			free(line);
 			continue ;
 		}
-		add_history(line);
-
+		add_history(line); // why and how work this function
 		tokens = tokenize_gc(line, env_list, &gc, cmd);
 		if (!tokens)
 		{
-			free(line);
+			free(line);                               
 			continue ;
 		}
 

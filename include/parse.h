@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/14 00:31:54 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/15 00:48:33 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,8 @@ typedef struct s_gc_node
 	struct s_gc_node	*next;
 }	t_gc_node;
 
+
+// why used this struct?
 typedef struct s_gc
 {
 	t_gc_node	*head;

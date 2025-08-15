@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/14 02:42:50 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/15 02:47:15 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,6 @@ int	wait_for_child(pid_t pid, t_token *tmp, char *file_name, int fd)
 	return (0);
 }
 
-/* Main heredoc handler function */
 void	handl_herdoc(t_token *token, t_env *env_list, t_command *cmd)
 {
 	t_token	*tmp;
