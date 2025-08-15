@@ -1,0 +1,2 @@
+sfsd
+__FLT_HAS_INFINITY__
