@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/15 00:48:33 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/15 21:35:11 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,5 +190,11 @@ void	free_env_array(char **envp);
 t_redirection *create_redirection(t_redir_type type, char *file);
 void add_redirection(t_redirection **head, t_redirection *new_redir);
 void free_redirections(t_redirection *redirections);
+
+//signals
+int get_execution_state(void);
+void set_execution_state(int state);
+void sigint_handler(int signum);
+void sigquit_handler(int signum);
 
 #endif
