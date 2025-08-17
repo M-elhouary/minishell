@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/12 01:32:33 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/17 03:44:11 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <signal.h>
 #include <linux/limits.h>
 #include <sys/stat.h>
+#include <limits.h>
 #include "parse.h"
 
 typedef enum
@@ -26,6 +27,16 @@ typedef enum
 	BUILTIN_SUCCESS = 0,
 	BUILTIN_ERROR = 1
 }	t_builtin;
+
+
+typedef struct s_pipe_state
+{
+	int	prev_read_fd;
+	int	current_pipe[2];
+	int	cmd_index;
+	int	total_cmds;
+	int	pipe_created;
+}	t_pipe_state;
 
 char		*locate_cmd(char *cmd, t_env *env);
 int			exec_cmd(t_command *cmd, t_env **env, int fd);
@@ -51,5 +62,10 @@ int		exec_pipeline(t_command *cmd_list, t_env **env);
 int		exit_status(int status);
 
 int		handle_redirections(t_redirection *redirections);
+void	handle_pipe_execution(t_command *cmd_list, t_env **env);
+int		execute_pipeline_sequential(t_command *cmd_list, t_env **env);
+int		count_commands_in_pipeline(t_command *cmd_list);
+
+int	handle_redirections(t_redirection *redirections);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 16:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/10 15:59:36 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/10 19:12:54 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,12 @@ t_redirection *create_redirection(t_redir_type type, char *file)
         return (NULL);
     
     new_redir->type = type;
-    new_redir->file = ft_strdup(file);
+    new_redir->file = ft_strdup(file); // ???
     if (!new_redir->file)
     {
         free(new_redir);
         return (NULL);
     }
-    
     new_redir->next = NULL;
     return (new_redir);
 }
@@ -38,17 +37,14 @@ void add_redirection(t_redirection **head, t_redirection *new_redir)
     
     if (!head || !new_redir)
         return;
-    
     if (!*head)
     {
         *head = new_redir;
         return;
     }
-    
     temp = *head;
     while (temp->next)
         temp = temp->next;
-    
     temp->next = new_redir;
 }
 

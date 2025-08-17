@@ -6,56 +6,11 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/12 01:04:59 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/17 06:12:43 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "minishell.h"
-
-
-// static void print_args(char **args) {
-// 	int i = 0;
-// 	if (args) {
-// 		printf("Arguments:\n");
-// 		while (args[i]) {
-// 			printf("  args[%d]: %s\n", i, args[i]);
-// 			i++;
-// 		}
-// 	} else {
-// 		printf("Arguments: (none)\n");
-// 	}
-// }
-
-// static void print_files(const char *label, char **files) {
-// 	int i = 0;
-// 	if (files) {
-// 		printf("%s:\n", label);
-// 		while (files[i]) {
-// 			printf("  %s[%d]: '%s'\n", label, i, files[i]);
-// 			i++;
-// 		}
-// 	}
-// }
-
-// void print_commands(t_command *cmd)
-// {
-// 	int cmd_num = 1;
-// 	while (cmd)
-// 	{
-// 		printf("=== Command %d ===\n", cmd_num);
-// 		print_args(cmd->args);
-// 		print_files("Input files", cmd->infile);
-// 		print_files("Output files", cmd->outfile);
-// 		printf("Flags:\n");
-// 		printf("  append: %d\n", cmd->append);
-// 		printf("  heredoc: %d\n", cmd->heredoc);
-// 		printf("------------------\n");
-// 		cmd = cmd->next;
-// 		cmd_num++;
-// 	}
-// }
-
 
 void	sigint_(int sig)
 {
@@ -99,8 +54,9 @@ int	main(int ac, char **av, char **env)
             cmd->status_exit = 0;
             cmd->args = NULL;
 			cmd->path = NULL;
-            cmd->infile = NULL;
-            cmd->outfile = NULL;
+			cmd->redirections = NULL;
+            // cmd->infile = NULL;
+            // cmd->outfile = NULL;
             cmd->next = NULL;
         }
         
@@ -129,8 +85,11 @@ int	main(int ac, char **av, char **env)
             continue;
         }
         handl_herdoc(tokens, env_list, cmd);
+		//printf("%s\n", cmd->args[0]);
 		 // Only create new command if syntax is correct
         tmp_cmd = parse_commands(tokens);
+		// printf("%s\n",tmp_cmd->args[0]);
+		// printf("%d\n", tmp_cmd->status_exit);
         if (tmp_cmd)
         {
             // Save the previous exit status in the new command
@@ -154,13 +113,14 @@ int	main(int ac, char **av, char **env)
             // Set path and execute
             // cmd->path = locate_cmd(cmd->args[0]);
             // exit_code = exec_cmd(cmd, &env_list, 1);
+			// printf("%s\n",cmd->redirections->file);
 			exit_code = exec_pipeline(cmd, &env_list);
             
             // Update exit status for next command
             cmd->status_exit = exit_code;
             
-				if (exit_code != 0)
-					printf("[Exit code: %d]\n", exit_code);
+				// if (exit_code != 0)
+				// 	printf("[Exit code: %d]\n", exit_code);
 		}
         
 		free(line);

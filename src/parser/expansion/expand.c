@@ -3,16 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/09 23:43:00 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/12 05:27:03 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "minishell.h"
 
+
+// echo "$HOME/$USER"
+//  echo ~
+
+
+// minishell$ cat  << "$US"E"R"
+// herdoc>LKJKLJ
+// herdoc>$USER
+// herdoc>$US
+// herdoc>ER
+// LKJKLJ
+// houardi
 
 
 // Expand all $VAR in a string

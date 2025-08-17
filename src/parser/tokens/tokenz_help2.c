@@ -1,36 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   func_help2.c                                       :+:      :+:    :+:   */
+/*   tokenz_help2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/01 20:02:34 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/11 12:24:55 by mel-houa         ###   ########.fr       */
+/*   Created: 2025/08/12 00:13:38 by mel-houa          #+#    #+#             */
+/*   Updated: 2025/08/12 00:14:55 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// creat new nod == new command
-t_command	*create_cmd_node(char **args, t_redirection *redirections)
-{
-	t_command	*new_cmd;
 
-	new_cmd = (t_command *)malloc(sizeof(t_command));
-	if (!new_cmd)
+
+
+
+// Create a new token, allocating memory using the garbage collector
+t_token	*create_token_gc(char *value, t_token_type type, t_gc *gc)
+{
+	t_token	*new;
+
+	new = gc_malloc(gc, sizeof(t_token));
+	if (!new)
 		return (NULL);
-	new_cmd->args = args;
-	new_cmd->redirections = redirections;
-	new_cmd->next = NULL;
-	return (new_cmd);
+	new->value = value;
+	new->type = type;
+	new->is_empty_expansion = 0;
+	new->next = NULL;
+	return (new);
 }
-// add new command to linkliste
-void	add_cmd_node(t_command **head, t_command *new)
-{
-	t_command	*tmp;
 
-	if (!head || !new)
+
+// Add a token to the end of the token linked list
+void	add_token(t_token **head, t_token *new)
+{
+	t_token	*tmp;
+
+	if (!new)
 		return ;
 	if (!*head)
 		*head = new;

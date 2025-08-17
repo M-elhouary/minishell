@@ -3,191 +3,165 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/11 10:41:04 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/12 00:12:20 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-// Include the main minishell header for required types and function declarations
 #include "minishell.h"
 
 
 
 
-// Create a new token, allocating memory using the garbage collector
-static t_token	*create_token_gc(char *value, t_token_type type, t_gc *gc)
-{
-	t_token	*new;
 
-	new = gc_malloc(gc, sizeof(t_token));
-	if (!new)
-		return (NULL);
-	new->value = value;
-	new->type = type;
-	new->is_empty_expansion = 0;
-	new->next = NULL;
-	return (new);
+// Helper function to handle double-character operators
+static int handle_double_char_op(t_token **tokens, char *line, int *i, t_gc *gc)
+{
+    if (!ft_strncmp(&line[*i], ">>", 2))
+    {
+        create_and_add_token(tokens, ">>", REDIR_APPEND, gc);
+        (*i) += 2;
+        return (1);
+    }
+    else if (!ft_strncmp(&line[*i], "<<", 2))
+    {
+        create_and_add_token(tokens, "<<", HEREDOC, gc);
+        (*i) += 2;
+        return (1);
+    }
+    return (0);
 }
 
-
-// Add a token to the end of the token linked list
-static void	add_token(t_token **head, t_token *new)
+// Handle special shell characters
+static int handle_special_gc(t_token **tokens, char *line, int *i, t_gc *gc)
 {
-	t_token	*tmp;
-
-	if (!new)
-		return ;
-	if (!*head)
-		*head = new;
-	else
-	{
-		tmp = *head;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = new;
-	}
-}
-
-
-
-
-// Handle special shell characters (|, >, >>, <, <<) and add them as tokens
-// Returns 1 if a special token was found and handled, 0 otherwise
-static int	handle_special_gc(t_token **tokens, char *line, int *i, t_gc *gc)
-{
-	if (line[*i] == '|') {
-		add_token(tokens, create_token_gc(gc_strdup(gc, "|"), PIPE, gc));
-		(*i) += 1;
-	}
-	else if (!ft_strncmp(&line[*i], ">>", 2)) {
-		add_token(tokens, create_token_gc(gc_strdup(gc, ">>"), REDIR_APPEND, gc));
-		
-		(*i) += 2;
-	}
-	else if (!ft_strncmp(&line[*i], "<<", 2)) {
-		add_token(tokens, create_token_gc(gc_strdup(gc, "<<"), HEREDOC, gc));
-		(*i) += 2;
-	}
-	else if (line[*i] == '>') {
-		add_token(tokens, create_token_gc(gc_strdup(gc, ">"), REDIR_OUT, gc));
-		(*i) += 1;
-	}
-	else if (line[*i] == '<') {
-		add_token(tokens, create_token_gc(gc_strdup(gc, "<"), REDIR_IN, gc));
-		(*i) += 1;
-	}
-	else
-		return (0);
-	return (1);
+    // First check for double-character operators
+    if (handle_double_char_op(tokens, line, i, gc))
+        return (1);
+    
+    // Then check single-character operators
+    if (line[*i] == '|')
+    {
+        create_and_add_token(tokens, "|", PIPE, gc);
+        (*i)++;
+    }
+    else if (line[*i] == '>')
+    {
+        create_and_add_token(tokens, ">", REDIR_OUT, gc);
+        (*i)++;
+    }
+    else if (line[*i] == '<')
+    {
+        create_and_add_token(tokens, "<", REDIR_IN, gc);
+        (*i)++;
+    }
+    else
+        return (0);
+    return (1);
 }
 
 
 
-/*
- * Process a word from the input line:
- * - Extracts the word (handles quotes)
- * - Expands variables if present
- * - Handles empty expansions (e.g., $UNSET_VAR)
- * - Splits the word if necessary (e.g., after expansion)
- * - Adds the resulting tokens as COMMAND or ARGUMENT
- * Returns 1 on success, 0 on error
- */
-static int	process_word_gc(t_token **tokens, char *line, int *i, t_env *env, t_gc *gc, t_command *cmd)
+// Add all split words as tokens
+static int add_split_words(t_token **tokens, char **split_words, t_gc *gc)
 {
-	char	*word;
-	char	**split_words;
-	t_token	*new;
-	int		j;
-	char	*expanded;
-	int		has_vars;
+    t_token *new;
+    int j;
 
-	// exatract word between first quote "'""mmm""'" ====> first word is ' second mmm theard '
- 	word = extract_word(line, i);
-	if (!word)
-		return (0);
-	// if word with quote or no if no qoute return 1 ? 0
-	has_vars = has_unquoted_variables(word);
-	expanded = expand_variables(word, env, cmd);
-	if (has_vars && (!expanded || !*expanded))
-	{
-		// If variable expansion results in empty, add a special empty token
-		new = create_token_gc(gc_strdup(gc, ""), ARGUMENT, gc);
-		if (!new)
-			return (free(word), free(expanded), 0);
-		new->is_empty_expansion = 1;
-		add_token(tokens, new);
-		free(word);
-		free(expanded);
-		return (1);
-	}
-	free(expanded);
-	split_words = expand_and_split_gc(word, env, gc, cmd);
-	free(word);
-	if (!split_words)
-		return (1);
-	j = 0;
-	while (split_words[j])
-	{
-		// The first word is considered a COMMAND, others are ARGUMENTs
-		if (*tokens == NULL)
-			new = create_token_gc(split_words[j], COMMAND, gc);
-		else
-			new = create_token_gc(split_words[j], ARGUMENT, gc);
-		if (!new)
-			return (0);
-		add_token(tokens, new);
-		j++;
-	}
-	return (1);
+    j = 0;
+    while (split_words[j])
+    {
+        if (*tokens == NULL)
+            new = create_token_gc(split_words[j], COMMAND, gc);
+        else
+            new = create_token_gc(split_words[j], ARGUMENT, gc);
+        if (!new)
+            return (0);
+        add_token(tokens, new);
+        j++;
+    }
+    return (1);
+}
+
+// Process word and create tokens
+static int process_word_gc(char *line, int *i, t_token_glbst *glbst)
+{
+    char **split_words;
+    char *expanded, *word;
+    int has_vars;
+
+    word = extract_word(line, i);
+    if (!word)
+        return (0);
+    has_vars = has_unquoted_variables(word);
+    expanded = expand_variables(word, glbst->env, glbst->cmd);
+    if (has_vars && (!expanded || !*expanded))
+    {
+        free(word);
+        free(expanded);
+        return (handle_empty_expansion(glbst->tokens, glbst->gc));
+    }
+    free(expanded);
+    split_words = expand_and_split_gc(word, glbst->env, glbst->gc, glbst->cmd);
+    free(word);
+    if (!split_words)
+        return (1);
+    return (add_split_words(glbst->tokens, split_words, glbst->gc));
+}
+
+// Process special characters in tokenization
+static int process_special(char *line, int *i, t_token_glbst *glbst)
+{
+    // Skip spaces
+    if (!skip_spaces(line, i))
+        return (0);
+    
+    // Handle special characters
+    if (handle_special_gc(glbst->tokens, line, i, glbst->gc))
+        return (1);
+    
+    // Handle pipe
+    if (line[*i] == '|')
+    {
+        add_token(glbst->tokens, create_token_gc(
+            gc_strdup(glbst->gc, "|"), PIPE, glbst->gc));
+        (*i)++;
+        return (1);
+    }
+    
+    // Handle regular word
+    return (process_word_gc(line, i, glbst));
 }
 
 
 
-/*
- * Main tokenization function:
- * - Iterates through the input line
- * - Skips spaces
- * - Handles quoted words, special shell characters, and normal words
- * - Builds a linked list of tokens representing the parsed input
- * Returns the head of the token list, or NULL on error
- */
-t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc, t_command *cmd)
+// Main tokenization function
+t_token *tokenize_gc(char *line, t_env *env, t_gc *gc, t_command *cmd)
 {
-    int     i;
-    t_token *tokens;
+    t_token_glbst glbst;
+    int i;
     
     i = 0;
-    tokens = NULL;
+    glbst.tokens = &(t_token *){NULL};
+    glbst.env = env;
+    glbst.gc = gc;
+    glbst.cmd = cmd;
     
-    // Check for unclosed quotes before starting tokenization
+    // Check for unclosed quotes
     if (has_unclosed_quote(line))
     {
         print_error("unclosed quote", NULL);
         return (NULL);
     }
     
+    // Process input line
     while (line[i])
     {
-		
-        // Skip spaces
-        if (!skip_spaces(line, &i))
+        if (!process_special(line, &i, &glbst))
             break;
-        
-        // Handle special characters (redirections, but NOT pipe)
-        else if (handle_special_gc(&tokens, line, &i, gc))
-            ; // index increment handled in handle_special_no_pipe_gc
-        
-        // Handle normal words and pipe
-        else if (line[i] == '|')
-        {
-            add_token(&tokens, create_token_gc(gc_strdup(gc, "|"), PIPE, gc));
-            i++;
-        }
-        else if (!process_word_gc(&tokens, line, &i, env, gc, cmd))
-            return (NULL);
     }
-    return (tokens);
+    
+    return (*(glbst.tokens));
 }

@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 10:10:47 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/12 01:20:33 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/16 07:06:26 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	handle_heredoc_redirection(t_redirection *redir)
 		return (-1);
 	}
 	close(fd);
-	unlink(redir->file); // Clean up temporary heredoc file
+	unlink(redir->file);
 	return (0);
 }
 

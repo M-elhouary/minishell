@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/10 16:00:01 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/12 00:15:38 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,10 @@ typedef struct s_command
     char *path;
     char **args;
     // Keep these for backward compatibility during transition
-    char **infile;
-    char **outfile;
-    int append;
-    int heredoc;
+    // char **infile;
+    // char **outfile;
+    // int append;
+    // int heredoc;
     t_redirection *redirections;  // New field
     struct s_command *next;
 } t_command;
@@ -94,6 +94,13 @@ typedef struct s_gc
 	t_gc_node	*head;
 }	t_gc;
 
+typedef struct s_token_ctx
+{
+    t_token **tokens;
+    t_env *env;
+    t_gc *gc;
+    t_command *cmd;
+} t_token_glbst;
 
 
 // Environment functions 
@@ -114,18 +121,27 @@ int		free_token(t_token *token);
 int		handle_quotes(const char *line, int *i);
 char	*extract_word(char *line, int *i);
 int	has_unclosed_quote(const char *line);
+int handle_empty_expansion(t_token **tokens, t_gc *gc);
+int create_and_add_token(t_token **tokens, char *value,  t_token_type type, t_gc *gc);
+t_token	*create_token_gc(char *value, t_token_type type, t_gc *gc);
+void	add_token(t_token **head, t_token *new);
 
-// Parsing functions
+// parse command
 t_command	*parse_commands(t_token *tokens);
 void		free_commands(t_command *commands);
 int			check_flags(t_token *temp, int *append_flag, int *heredoc_flag);
 void	count_tokens(t_token *temp, int *arg_count, int *in_count, int *out_count);
+t_command	*create_cmd_node(char **args, t_redirection *redirections);
+void	add_cmd_node(t_command **head, t_command *new);
+
 
 
 // herdoc
 void handl_herdoc(t_token *token, t_env *env_list, t_command *cmd);
+int is_delimiter_quoted(char *token_value);
+char *gen_file_name();
 
- 
+
 
 // Utility functions
 int	check_unclosed_quote(const char *line);

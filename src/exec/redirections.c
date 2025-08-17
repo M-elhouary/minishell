@@ -6,12 +6,16 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 01:19:45 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/12 01:28:52 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/17 03:50:22 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+
+
+
+// > out | ls
 static int	handle_input_redirection(char *file)
 {
 	int	fd;
@@ -62,6 +66,7 @@ static int	handle_heredoc_redirection(char *file)
 	int	fd;
 
 	fd = open(file, O_RDONLY);
+	// printf("%d\n", fd);
 	if (fd < 0)
 	{
 		perror(file);
@@ -69,7 +74,6 @@ static int	handle_heredoc_redirection(char *file)
 	}
 	dup2(fd, STDIN_FILENO);
 	close(fd);
-	unlink(file); // Clean up heredoc temp file
 	return (0);
 }
 
