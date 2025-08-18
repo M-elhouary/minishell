@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 03:51:06 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/17 05:06:09 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/18 00:58:34 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,7 @@ int	*allocate_pipeline_resources(int cmd_count, pid_t **pids)
 	*pids = malloc(sizeof(pid_t) * cmd_count);
 	if (!*pids)
 		return (NULL);
-	return (malloc(1)); // Dummy return, pipes allocated separately
+	return (malloc(4)); // Dummy return, pipes allocated separately
 }
 
 void	cleanup_pipeline_resources(pid_t *pids, int **pipes, int cmd_count)
