@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/17 02:55:07 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/18 20:25:25 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ static int	process_heredoc_token(t_token *tmp, t_env *env_list, t_command *cmd,
 		return (free(file_name), 0);
 	pid = fork();
 	if (pid < 0)
+	
 		return (close(fd), free(file_name), 0);
 	if (pid == 0)
 	{
@@ -102,6 +103,7 @@ static int	process_heredoc_token(t_token *tmp, t_env *env_list, t_command *cmd,
 	// this mean child process was interrupted or failed
 	else if (WIFSIGNALED(status))
 		return (free(file_name), 0);
+		
 	return (free(file_name), 0);
 }
 
