@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 03:56:15 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/11 08:41:15 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/17 05:23:26 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,19 @@ int	echo_c(char **args, int fd)
 
 	i = 1;
 	newline = 1;
-	while (args[i] && ft_strcmp(args[i], "-n") == 0)
+	int j = 1;
+	while (args[i] && args[i][j - 1] == '-' && args[i][j] && args[i][j] != '-')
 	{
+		while (args[i][j])
+		{
+			if (args[i][j] == 'n')
+				j++;
+			else
+				break;
+		}
+		if (args[i][j] != 'n' && args[i][j])
+			break;
+		j = 1;
 		newline = 0;
 		i++;
 	}
@@ -85,7 +96,7 @@ int	unset_c(char **args, t_env **env, int fd)
 		print("unset: not enough arguments\n", fd);
 		return (BUILTIN_ERROR);
 	}
-	i = 1; // Start from 1, not 0 (skip "unset" command itself)
+	i = 1;
 	while (args[i])
 	{
 		if (!ft_isalpha(args[i][0]) && args[i][0] != '_')
@@ -97,7 +108,6 @@ int	unset_c(char **args, t_env **env, int fd)
 		}
 		else
 		{
-			// Validate the rest of the identifier
 			j = 1;
 			while (args[i][j])
 			{
@@ -112,7 +122,7 @@ int	unset_c(char **args, t_env **env, int fd)
 				}
 				j++;
 			}
-			if (args[i][j] == '\0') // Valid identifier
+			if (args[i][j] == '\0')
 				unset_env_value(env, args[i]);
 		}
 		i++;
@@ -135,7 +145,7 @@ int	exit_c(char **args, int fd)
 			return (BUILTIN_ERROR);
 		}
 		exit_code = atol_s(args[1], &endptr);
-		if (*endptr != '\0')
+		if (*endptr != '\0' || args[1][0] == '\0')
 		{
 			print("minishell: exit: ", fd);
 			print(args[1], fd);
@@ -143,5 +153,5 @@ int	exit_c(char **args, int fd)
 			exit(2);
 		}
 	}
-	exit(exit_code & 255);
+	exit((unsigned char)exit_code);
 }

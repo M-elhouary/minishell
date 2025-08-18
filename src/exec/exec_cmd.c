@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:00:44 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/17 03:04:55 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/18 19:17:27 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,17 @@ t_command	*create_cmd(char **args)
 
 int	exit_status(int status)
 {
+	int sig;
+	
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	else if (WIFSIGNALED(status))
-		return (128 + WTERMSIG(status));
+	{
+		sig = WTERMSIG(status);
+		if (sig == SIGPIPE)
+			return 0;
+		return (128 + sig);
+	}
 	return (status);
 }
 
@@ -85,6 +92,7 @@ void	exec_child(t_command *cmd, t_env **env)
 		exit(1);
 	}
 	execve(cmd->path, cmd->args, env_arr);
+	free_env_array(env_arr);
 	if (errno == ENOEXEC)
 	{
 		printf("minishell: %s: cannot execute binary file\n", cmd->args[0]);
@@ -128,17 +136,49 @@ int	check_cmd_path(char *path, char *cmd)
 		return (0);
 }
 
-int	exec_cmd(t_command *cmd, t_env **env, int fd)
+static int	setup_redirections_and_fd(t_command *cmd, int fd, int *original_stdin, int *original_stdout)
 {
-	pid_t		pid;
-	t_builtin	built_res;
-	int			validate_res;
-
-	if (!cmd || !cmd->args || !cmd->args[0])
+	*original_stdin = dup(STDIN_FILENO);
+	*original_stdout = dup(STDOUT_FILENO);
+	
+	if (handle_redirections(cmd->redirections) != 0)
+	{
+		close(*original_stdin);
+		close(*original_stdout);
 		return (1);
-	built_res = exec_builtin(cmd, env, fd);
+	}
+	if (fd != STDOUT_FILENO)
+		dup2(fd, STDOUT_FILENO);
+	
+	return (0);
+}
+
+static void	restore_file_descriptors(int original_stdin, int original_stdout)
+{
+	dup2(original_stdin, STDIN_FILENO);
+	dup2(original_stdout, STDOUT_FILENO);
+	close(original_stdin);
+	close(original_stdout);
+}
+
+static int	handle_builtin_execution(t_command *cmd, t_env **env, int original_stdin, int original_stdout)
+{
+	t_builtin	built_res;
+	
+	built_res = exec_builtin(cmd, env, STDOUT_FILENO);
 	if (built_res != NOT_BUILTIN)
+	{
+		restore_file_descriptors(original_stdin, original_stdout);
 		return (built_res);
+	}
+	return (NOT_BUILTIN);
+}
+
+static int	handle_external_command(t_command *cmd, t_env **env, int fd)
+{
+	pid_t	pid;
+	int		validate_res;
+	
 	if (check_cmd_path(cmd->path, cmd->args[0]))
 		return (127);
 	validate_res = validate_cmd_path(cmd->path, cmd->args[0]);
@@ -149,10 +189,33 @@ int	exec_cmd(t_command *cmd, t_env **env, int fd)
 	if (pid == -1)
 		return (perror("fork"), 1);
 	if (pid == 0)
+	{
+		if (handle_redirections(cmd->redirections) != 0)
+			exit(1);
+		if (fd != STDOUT_FILENO)
+			dup2(fd, STDOUT_FILENO);
 		exec_child(cmd, env);
-	else
-		return (wait_child(pid));
-	return (0);
+	}
+	return (wait_child(pid));
+}
+
+int	exec_cmd(t_command *cmd, t_env **env, int fd)
+{
+	int		original_stdin;
+	int		original_stdout;
+	int		builtin_result;
+
+	if ((!cmd || !cmd->args || !cmd->args[0]) && !cmd->redirections)
+		return (1);
+	if (setup_redirections_and_fd(cmd, fd, &original_stdin, &original_stdout) != 0)
+		return (1);
+	else if(!cmd->args[0])
+	 	return (restore_file_descriptors(original_stdin, original_stdout), 0);
+	builtin_result = handle_builtin_execution(cmd, env, original_stdin, original_stdout);
+	if (builtin_result != NOT_BUILTIN)
+		return (builtin_result);
+	restore_file_descriptors(original_stdin, original_stdout);
+	return (handle_external_command(cmd, env, fd));
 }
 
 void	free_cmd(t_command *cmd)
@@ -173,5 +236,7 @@ void	free_cmd(t_command *cmd)
 	}
 	if (cmd->path)
 		free(cmd->path);
+	if (cmd->redirections)
+		free_redirections(cmd->redirections);
 	free(cmd);
 }
