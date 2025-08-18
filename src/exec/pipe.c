@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 03:51:06 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/11 08:38:58 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/17 02:03:48 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,7 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 	i = 0;
 	while (current && i < cmd_count)
 	{
+		signal(SIGINT, SIG_IGN); // parsing edit
 		pids[i] = fork();
 		if (pids[i] == -1)
 		{
@@ -146,18 +147,80 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 	// Wait for all children
 	last_exit = 0;
 	i = 0;
+	//signal(SIGINT, SIG_IGN); IGNORE THE PARENT SIGNALES
 	while (i < cmd_count)
 	{
 		if (waitpid(pids[i], &status, 0) == -1)
 			perror("waitpid");
 		else if (i == cmd_count - 1)  // Last command's exit status
-			last_exit = exit_status(status);
+			last_exit = exit_status(status);		
+		else if (WIFSIGNALED(status))
+			{
+				printf("hskfhk");
+				if (WTERMSIG(status) == SIGINT)
+				{
+					write(2, "\n", 1);
+					return (last_exit = 130);
+				}
+				if (WTERMSIG(status) == SIGQUIT)
+				{
+					write(2, "Quit (Core dump)\n", 17);
+					return (last_exit = 131);
+				}
+			}
+		// here check for the type of the signale 
+		// if it is sig int or sig quit 
+		// and set the exit status to the prober exit code
+
+		//
 		i++;
+
+		
 	}
-	
-	// Cleanup
+	// if(WIFEXITED(last_exit))
+	// 	cmd_list->status_exit = WEXITSTATUS(last_exit);
+	// else if (WIFSIGNALED(last_exit))
+	// {
+	// 	cmd_list->status_exit  = 128 + WTERMSIG(last_exit);
+	// 	if (WTERMSIG(last_exit) == SIGINT)
+	// 		write(1, "hhhhhhhhhh\n", 10);
+	// 	else if (WTERMSIG(last_exit))
+	// 		write(1, "Core Dump\n", 10);
+	// }
+	// // Cleanup
 	cleanup_pipes(pipes, cmd_count);
 	free(pids);
 	
 	return (last_exit);
 }
+// declare -x _="/goinfre/mel-houa/cur42/minishell/./minishell" MATBA3HAX ALA7YA
+
+// minishell$ export  hhhhh
+// minishell$ export 
+// bla=bla
+// hhhhh
+// [Exit code: 1] PRINTI TAHADI ALAHYA
+
+
+// [Exit code: 127] WALAHYA PRINTI HADI F STDERROR NOT OUT
+
+
+
+
+// minishell$ << "$USER"
+// >$USER
+// [Exit code: 1]
+
+// minishell$ << o
+// >o
+// 0
+// [Exit code: 1] if exit code is 0 why changing it when you do nothing ala7ya matb9ax t7arf
+
+
+// minishell$ << o | ls
+// >o
+// 1
+// 1
+// include  libft  Makefile  minishell  README.md  src  test_cases.txt
+// hadi dyali ana wyak fiha
+

@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/15 21:43:57 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/18 19:10:57 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ void	add_cmd_node(t_command **head, t_command *new);
 // herdoc
 void handl_herdoc(t_token *token, t_env *env_list, t_command *cmd);
 int is_delimiter_quoted(char *token_value);
-char *gen_file_name(int index, char *s);
+char	*gen_file_name(char *s, int random_nb);
 void	free_and_close(char *clean_delimiter, int fd, char *delimiter);
 void	similation_herdoc(char *delimiter, int fd, t_env *env_list,t_command *cmd);
 

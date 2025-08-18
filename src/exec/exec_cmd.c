@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:00:44 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/14 02:22:31 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/17 03:04:55 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,7 @@ t_command	*create_cmd(char **args)
 	cmd->ac = i;
 	cmd->args = malloc(sizeof(char *) * (i + 1));
 	if (!cmd->args)
-	{
-		free(cmd);
-		return (NULL);
-	}
+		return (free(cmd), NULL);
 	i = 0;
 	while (args[i])
 	{
@@ -109,7 +106,12 @@ int	wait_child(pid_t pid)
 		perror("waitpid");
 		return (1);
 	}
-	return (exit_status(status));
+	if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == SIGINT)
+			write(1, "\n", 1);
+	}
+	return (exit_status(status));	
 }
 
 int	check_cmd_path(char *path, char *cmd)
@@ -142,12 +144,10 @@ int	exec_cmd(t_command *cmd, t_env **env, int fd)
 	validate_res = validate_cmd_path(cmd->path, cmd->args[0]);
 	if (validate_res != 0)
 		return (validate_res);
+	signal(SIGINT, SIG_IGN);///new prompt
 	pid = fork();
 	if (pid == -1)
-	{
-		perror("fork");
-		return (1);
-	}
+		return (perror("fork"), 1);
 	if (pid == 0)
 		exec_child(cmd, env);
 	else

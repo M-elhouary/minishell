@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/15 02:34:21 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/17 21:12:06 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,15 @@ static int	handle_special_gc(t_token **tokens, char *line, int *i, t_gc *gc)
 }
 // Add all split words as tokens
 
-/*
- * Process a word from the input line:
- * - Extracts the word (handles quotes)
- * - Expands variables if present
- * - Handles empty expansions (e.g., $UNSET_VAR)
- * - Splits the word if necessary (e.g., after expansion)
- * - Adds the resulting tokens as COMMAND or ARGUMENT
- * Returns 1 on success, 0 on error
- */
+// 
+//   Process a word from the input line:
+//    Extracts the word (handles quotes)
+//    Expands variables if present
+//    Handles empty expansions (e.g., $UNSET_VAR)
+//    Splits the word if necessary (e.g., after expansion)
+//    Adds the resulting tokens as COMMAND or ARGUMENT
+//   Returns 1 on success, 0 on error
+//  
 
 int	herdoc_token(char **split_words, char *word, t_token_glbst *glbst)
 {
@@ -85,7 +85,6 @@ static int	process_word_gc(char *line, int *i, t_token_glbst *glbst)
 	if (last && last->type == HEREDOC)
 		return (herdoc_token(split_words, word, glbst));
 	// Check for unquoted variables in the word
-	//
 	has_vars = has_unquoted_variables(word);
 	expanded = expand_variables(word, glbst->env, glbst->cmd);
 	if (has_vars && (!expanded || !*expanded))
@@ -125,7 +124,6 @@ t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc, t_command *cmd)
 	glbst.env = env;
 	glbst.gc = gc;
 	glbst.cmd = cmd;
-
 	// Check for unclosed quotes
 	if (has_unclosed_quote(line))
 	{

@@ -6,58 +6,13 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/15 21:40:36 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/16 00:36:03 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int g_in_execution = 0;
 
-int get_execution_state(void)
-{
-    return g_in_execution;
-}
-
-void set_execution_state(int state)
-{
-    g_in_execution = state;
-}
-
-void	sigint_handler(int sig)
-{
-    (void)sig;
-    
-    if (get_execution_state() == 0)
-    {
-        /* Interactive mode (shell prompt) */
-        write(STDOUT_FILENO, "\n", 1);
-        rl_on_new_line();
-        rl_replace_line("", 0);
-        rl_redisplay();
-    }
-    else
-    {
-        /* Command execution mode */
-        write(STDOUT_FILENO, "\n", 1);
-    }
-}
-
-void	sigquit_handler(int sig)
-{
-    (void)sig;
-    
-    if (g_in_execution == 0)
-    {
-        /* Interactive mode (shell prompt) - do nothing */
-        rl_redisplay();
-    }
-    else
-    {
-        /* Command execution mode */
-        write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
-    }
-}
 int	main(int ac, char **av, char **env)
 {
 	char *line;
@@ -73,13 +28,12 @@ int	main(int ac, char **av, char **env)
 	gc_init(&gc);
 	cmd = NULL;
 	env_list = my_env(env);
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, sigquit_handler);
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, sigquit_handler);
+	
 
 	while (1)
 	{
+		signal(SIGINT, sigint_handler);
+		signal(SIGQUIT, SIG_IGN);
 		// Ensure cmd always exists for $? expansion
 		if (!cmd)
 		{
@@ -94,7 +48,6 @@ int	main(int ac, char **av, char **env)
 		}
 
 		line = readline("minishell$ "); // how readline works
-		line = readline("minishell$ "); // how readline works
 		if (!line)
 			break ;
 		if (!*line)
@@ -103,11 +56,9 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		}
 		add_history(line); // why and how work this function
-		add_history(line); // why and how work this function
 		tokens = tokenize_gc(line, env_list, &gc, cmd);
 		if (!tokens)
 		{
-			free(line);                               
 			free(line);                               
 			continue ;
 		}
@@ -120,8 +71,10 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		}
 		handl_herdoc(tokens, env_list, cmd);
+		// printf("%d\n", cmd->status_exit);
 		// Only create new command if syntax is correct
 		tmp_cmd = parse_commands(tokens);
+		// printf("%d\n", cmd->status_exit);
 		if (tmp_cmd)
 		{
 			// Save the previous exit status in the new command
@@ -150,8 +103,8 @@ int	main(int ac, char **av, char **env)
 			// Update exit status for next command
 			cmd->status_exit = exit_code;
 
-			if (exit_code != 0)
-				printf("[Exit code: %d]\n", exit_code);
+			// if (exit_code != 0)
+			// 	printf("[Exit code: %d]\n", exit_code);
 		}
 
 		free(line);

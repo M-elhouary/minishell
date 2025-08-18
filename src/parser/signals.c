@@ -6,27 +6,35 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 02:19:33 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/15 21:53:48 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/18 19:05:00 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/14 02:19:33 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/15 21:33:48 by mel-houa         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+//minishell$ ^C
+//minishell$ echo $?
+//0 ==> 130
 
-#include "minishell.h"
 
-int g_in_execution = 0;
+// minishell$ cat  | cat 
+// 130
+// 130
+// ^C
+// minishell$ minishell$ [Exit code: 130] one prompt 
+
+
+// minishell$ cat | rev
+// 130
+// 130
+// ^C
+// minishell$ 
+// minishell$ minishell$ 
+
+
+int g_in_execution;
+
+// g_in_execution = 0;
 
 int get_execution_state(void)
 {
