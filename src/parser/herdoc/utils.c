@@ -6,34 +6,48 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:03:01 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/11 12:03:26 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/14 00:33:47 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "minishell.h"
 
-
-
-int is_delimiter_quoted(char *token_value)
+char	*random_char(int index, char *s)
 {
-    int len;
-    
-    if (!token_value)
-        return (0);
-    
-    len = ft_strlen(token_value);
-    return (token_value[0] == '\'' || token_value[0] == '\"') && 
-           token_value[len-1] == token_value[0];
+	char	*tmp;
+	char	*charset;
+
+	charset = ft_strdup("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+	tmp = ft_strjoin(charset + index, s);
+	free(charset);
+	return (tmp);
+}
+int	is_delimiter_quoted(char *token_value)
+{
+	int	len;
+
+	if (!token_value)
+		return (0);
+	len = ft_strlen(token_value);
+	return ((token_value[0] == '\'' || token_value[0] == '\"')
+			&& token_value[len - 1] == token_value[0]);
 }
 
-char *gen_file_name()
+char	*gen_file_name(int index, char *s)
 {
-    char *name;
-    char *tmp;
-    
-    name = ft_itoa(getpid());
-    tmp = ft_strjoin("/tmp/heredoc_", name);
-    free(name);
-    return tmp;
+	char	*name;
+	char	*tmp;
+
+	name = random_char(index, s);
+	tmp = ft_strjoin("/tmp/heredoc_", name);
+	free(name);
+	return (tmp);
+}
+
+/* Helper function to free resources and close fd */
+void	free_and_close(char *clean_delimiter, int fd, char *delimiter)
+{
+	free(clean_delimiter);
+	close(fd);
+	free(delimiter);
 }

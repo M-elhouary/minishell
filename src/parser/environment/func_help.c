@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 21:13:44 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/03 23:28:19 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/14 00:16:46 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ char	*get_key(char *env_str)
 
 char	*get_content(char *env_str)
 {
-	int		i;
-	char	*content;
+	int i;
+	char *content;
 
 	i = 0;
 	while (env_str[i] && env_str[i] != '=') // increment to name = content

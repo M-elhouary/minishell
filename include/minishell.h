@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/17 03:44:11 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/18 01:24:39 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,13 @@ int		exec_pipeline(t_command *cmd_list, t_env **env);
 int		exit_status(int status);
 
 int		handle_redirections(t_redirection *redirections);
-void	handle_pipe_execution(t_command *cmd_list, t_env **env);
-int		execute_pipeline_sequential(t_command *cmd_list, t_env **env);
-int		count_commands_in_pipeline(t_command *cmd_list);
 
-int	handle_redirections(t_redirection *redirections);
+/* Execution state management */
+int get_execution_state(void);
+void set_execution_state(int state);
+
+/* Signal handling functions */
+void sigint_handler(int sig);
+void sigquit_handler(int sig);
 
 #endif

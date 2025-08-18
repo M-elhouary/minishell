@@ -6,17 +6,13 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 03:51:06 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/18 00:58:34 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/18 01:24:40 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-// PATH: permission
-// cat | cat | cat;
-//	exit staus heredoc
-
 #include "minishell.h"
 
+/* Count commands in pipeline */
 int	count_cmds(t_command *cmd)
 {
 	int	count;
@@ -86,12 +82,14 @@ void	cleanup_pipes(int **pipes, int cmd_count)
 
 int	setup_child_pipes(int **pipes, int cmd_count, int i, int prev_pipe_read)
 {
+	int j;
+	
 	(void)prev_pipe_read;
 	if (i > 0)
 		dup2(pipes[i - 1][0], STDIN_FILENO);
 	if (i < cmd_count - 1)
 		dup2(pipes[i][1], STDOUT_FILENO);
-	int j = 0;
+	j = 0;
 	while (j < cmd_count - 1)
 	{
 		close(pipes[j][0]);
@@ -103,7 +101,8 @@ int	setup_child_pipes(int **pipes, int cmd_count, int i, int prev_pipe_read)
 
 void	handle_child_process(t_command *current_cmd, int **pipes, int cmd_count, int i, t_env **env)
 {
-	char	**env_arr;
+	char		**env_arr;
+	t_builtin	builtin_result;
 	
 	setup_child_pipes(pipes, cmd_count, i, -1);
 	if (current_cmd->redirections)
@@ -115,28 +114,19 @@ void	handle_child_process(t_command *current_cmd, int **pipes, int cmd_count, in
 	{
 		if (ft_strchr(current_cmd->args[0], '/'))
 		{
-			// char *str;
-
-			// str = ft_strjoin("minishell: ", current_cmd->args[0]);
-			// str = ft_strjoin(str, ": No such file or directory\n");
-			// print(str, 2);
 			print("minishell: ", 2);
 			print(current_cmd->args[0], 2);
 			print(": No such file or directory\n", 2);
 		}
 		else
 		{
-			// char *str;
-			// str = ft_strjoin("minishell: ", current_cmd->args[0]);
-			// str = ft_strjoin(str, ": command not found\n");
-			// print(str, 2);
 			print("minishell: ", 2);
 			print(current_cmd->args[0], 2);
 			print(": command not found\n", 2);
 		}
 		exit(127);
 	}
-	t_builtin builtin_result = exec_builtin(current_cmd, env, STDOUT_FILENO);
+	builtin_result = exec_builtin(current_cmd, env, STDOUT_FILENO);
 	if (builtin_result != NOT_BUILTIN)
 		exit(builtin_result);
 	env_arr = env_to_array(*env);
@@ -178,24 +168,17 @@ int	wait_for_children(pid_t *pids, int cmd_count)
 		waitpid(pids[i], &status, 0);
 		if (i == cmd_count - 1)
 			last_cmd_exit = exit_status(status);
-		// For all other commands, we don't care about their exit status
 		i++;
 	}
 	
 	return (last_cmd_exit);
 }
 
-int	*allocate_pipeline_resources(int cmd_count, pid_t **pids)
-{
-	*pids = malloc(sizeof(pid_t) * cmd_count);
-	if (!*pids)
-		return (NULL);
-	return (malloc(4)); // Dummy return, pipes allocated separately
-}
-
 void	cleanup_pipeline_resources(pid_t *pids, int **pipes, int cmd_count)
 {
-	int i = 0;
+	int i;
+	
+	i = 0;
 	while (i < cmd_count - 1)
 	{
 		free(pipes[i]);
@@ -257,7 +240,6 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 	int			i;
 
 	cmd_count = count_cmds(cmd_list);
-	// printf("%d\n", cmd_count);
 	if (cmd_count == 1)
 		return (exec_cmd(cmd_list, env, STDOUT_FILENO));
 
