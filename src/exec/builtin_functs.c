@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 03:56:15 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/17 05:23:26 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/18 04:15:47 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ int	exit_c(char **args, int fd)
 	long	exit_code;
 	char	*endptr;
 
-	print("exit\n", fd);
+	print("exit\n", 2);
 	exit_code = 0;
 	if (args[1])
 	{

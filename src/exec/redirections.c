@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 01:19:45 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/17 03:50:22 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/18 01:23:34 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 
 // > out | ls
-static int	handle_input_redirection(char *file)
+int	handle_input_redirection(char *file)
 {
 	int	fd;
 
@@ -31,7 +31,7 @@ static int	handle_input_redirection(char *file)
 	return (0);
 }
 
-static int	handle_output_redirection(char *file)
+int	handle_output_redirection(char *file)
 {
 	int	fd;
 
@@ -46,7 +46,7 @@ static int	handle_output_redirection(char *file)
 	return (0);
 }
 
-static int	handle_append_redirection(char *file)
+int	handle_append_redirection(char *file)
 {
 	int	fd;
 
@@ -61,7 +61,7 @@ static int	handle_append_redirection(char *file)
 	return (0);
 }
 
-static int	handle_heredoc_redirection(char *file)
+int	handle_heredoc_redirection(char *file)
 {
 	int	fd;
 
@@ -77,7 +77,7 @@ static int	handle_heredoc_redirection(char *file)
 	return (0);
 }
 
-static int	process_single_redirection(t_redirection *redir)
+int	process_single_redirection(t_redirection *redir)
 {
 	if (redir->type == REDIR_TYPE_IN)
 		return (handle_input_redirection(redir->file));

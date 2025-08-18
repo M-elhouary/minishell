@@ -15,6 +15,14 @@
 
 // signal
 
+// minishell$ cat << a << b
+// herdoc>dfsd
+// herdoc>a
+// herdoc>dsfvsdf
+// herdoc>b
+// dsfvsdf
+// c
+
 void similation_herdoc(char *delimiter, int fd,  t_env *env_list, t_command *cmd)
 {
     char *expanded;

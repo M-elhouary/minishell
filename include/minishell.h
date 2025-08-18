@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/17 03:44:11 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/18 01:40:28 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_pipe_state
 
 char		*locate_cmd(char *cmd, t_env *env);
 int			exec_cmd(t_command *cmd, t_env **env, int fd);
+int			exec_cmd_ex(t_command *cmd, t_env **env, int fd, int in_child);
 void		free_cmd(t_command *cmd);
 long		atol_s(const char *str, char **endptr);
 

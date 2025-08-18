@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 03:51:06 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/17 05:06:09 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/18 03:47:02 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 // PATH: permission
 // cat | cat | cat;
 //	exit staus heredoc
+// .
+// ..
 
 #include "minishell.h"
 
@@ -103,52 +105,17 @@ int	setup_child_pipes(int **pipes, int cmd_count, int i, int prev_pipe_read)
 
 void	handle_child_process(t_command *current_cmd, int **pipes, int cmd_count, int i, t_env **env)
 {
-	char	**env_arr;
-	
-	setup_child_pipes(pipes, cmd_count, i, -1);
-	if (current_cmd->redirections)
-	{
-		if (handle_redirections(current_cmd->redirections) != 0)
-			exit(1);
-	}
-	if (!current_cmd->path)
-	{
-		if (ft_strchr(current_cmd->args[0], '/'))
-		{
-			// char *str;
+	// In child: default signal behavior so Ctrl-C/\ quit affect the pipeline
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 
-			// str = ft_strjoin("minishell: ", current_cmd->args[0]);
-			// str = ft_strjoin(str, ": No such file or directory\n");
-			// print(str, 2);
-			print("minishell: ", 2);
-			print(current_cmd->args[0], 2);
-			print(": No such file or directory\n", 2);
-		}
-		else
-		{
-			// char *str;
-			// str = ft_strjoin("minishell: ", current_cmd->args[0]);
-			// str = ft_strjoin(str, ": command not found\n");
-			// print(str, 2);
-			print("minishell: ", 2);
-			print(current_cmd->args[0], 2);
-			print(": command not found\n", 2);
-		}
-		exit(127);
-	}
-	t_builtin builtin_result = exec_builtin(current_cmd, env, STDOUT_FILENO);
-	if (builtin_result != NOT_BUILTIN)
-		exit(builtin_result);
-	env_arr = env_to_array(*env);
-	if (!env_arr)
-	{
-		print("env error\n", 2);
-		exit(1);
-	}
-	execve(current_cmd->path, current_cmd->args, env_arr);
-	free_env_array(env_arr);
-	perror("execve");
-	exit(127);
+	// Set up stdin/stdout for this child from the pipeline
+	setup_child_pipes(pipes, cmd_count, i, -1);
+
+	// Delegate execution (builtins, redirs, external) to exec_cmd_ex in child mode
+	// Pass STDOUT_FILENO since stdout is already wired to the pipe
+	int status = exec_cmd_ex(current_cmd, env, STDOUT_FILENO, 1);
+	exit(status);
 }
 
 int	create_child_process(t_command *current_cmd, int **pipes, int cmd_count, int i, t_env **env, pid_t *pids)
@@ -170,18 +137,24 @@ int	wait_for_children(pid_t *pids, int cmd_count)
 	int	i;
 	int	status;
 	int	last_cmd_exit;
+	int	interrupted_by_sigint;
 
 	last_cmd_exit = 0;
+	interrupted_by_sigint = 0;
 	i = 0;
 	while (i < cmd_count)
 	{
 		waitpid(pids[i], &status, 0);
+		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+			interrupted_by_sigint = 1;
 		if (i == cmd_count - 1)
 			last_cmd_exit = exit_status(status);
 		// For all other commands, we don't care about their exit status
 		i++;
 	}
-	
+	// If pipeline was interrupted by Ctrl-C, print a newline so next prompt is on a new line
+	if (interrupted_by_sigint)
+		print("\n", 1);
 	return (last_cmd_exit);
 }
 
@@ -255,11 +228,17 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 	int			exit_status;
 	int			processes_created;
 	int			i;
+	void		(*old_int)(int);
+	void		(*old_quit)(int);
 
 	cmd_count = count_cmds(cmd_list);
 	// printf("%d\n", cmd_count);
 	if (cmd_count == 1)
 		return (exec_cmd(cmd_list, env, STDOUT_FILENO));
+
+	// Parent: temporarily ignore SIGINT/SIGQUIT while running foreground pipeline
+	old_int = signal(SIGINT, SIG_IGN);
+	old_quit = signal(SIGQUIT, SIG_IGN);
 
 	pids = malloc(sizeof(pid_t) * cmd_count);
 	pipes = malloc(sizeof(int *) * (cmd_count - 1));
@@ -267,6 +246,9 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 	{
 		free(pids);
 		free(pipes);
+		// Restore parent signal handlers before returning
+		signal(SIGINT, old_int);
+		signal(SIGQUIT, old_quit);
 		return (1);
 	}
 	
@@ -281,6 +263,9 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 				free(pipes[i]);
 			free(pipes);
 			free(pids);
+			// Restore parent signal handlers before returning
+			signal(SIGINT, old_int);
+			signal(SIGQUIT, old_quit);
 			return (1);
 		}
 		i++;
@@ -290,11 +275,18 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 	if (processes_created == -1)
 	{
 		cleanup_pipeline_resources(pids, pipes, cmd_count);
+		// Restore handlers before returning
+		signal(SIGINT, old_int);
+		signal(SIGQUIT, old_quit);
 		return (1);
 	}
 	
 	exit_status = wait_for_children(pids, processes_created);
 	cleanup_pipeline_resources(pids, pipes, cmd_count);
+
+	// Restore parent's original signal handlers
+	signal(SIGINT, old_int);
+	signal(SIGQUIT, old_quit);
 	
 	return (exit_status);
 }
