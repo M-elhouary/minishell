@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/15 21:33:45 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/17 03:22:26 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,15 @@ int	main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
+	// Initialize garbage collector
 	gc_init(&gc);
 	cmd = NULL;
 	env_list = my_env(env);
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, sigquit_handler);
-
+	
 	while (1)
 	{
+		signal(SIGINT, sigint_handler);
+		signal(SIGQUIT, SIG_IGN); // Ignore SIGQUIT in main loop
 		// Ensure cmd always exists for $? expansion
 		if (!cmd)
 		{
@@ -72,6 +73,7 @@ int	main(int ac, char **av, char **env)
 		handl_herdoc(tokens, env_list, cmd);
 		// Only create new command if syntax is correct
 		tmp_cmd = parse_commands(tokens);
+		printf("%s\n", tmp_cmd->args[0]);
 		if (tmp_cmd)
 		{
 			// Save the previous exit status in the new command
@@ -100,8 +102,8 @@ int	main(int ac, char **av, char **env)
 			// Update exit status for next command
 			cmd->status_exit = exit_code;
 
-			if (exit_code != 0)
-				printf("[Exit code: %d]\n", exit_code);
+			// if (exit_code != 0)
+			// 	printf("[Exit code: %d]\n", exit_code);
 		}
 
 		free(line);

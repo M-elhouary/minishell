@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:03:01 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/14 00:33:47 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/16 21:48:48 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,14 @@ void	free_and_close(char *clean_delimiter, int fd, char *delimiter)
 	free(clean_delimiter);
 	close(fd);
 	free(delimiter);
+}
+
+
+int	prepare_delimiter(char **clean_delimiter, char *delimiter, int *quotes_flag)
+{
+	*quotes_flag = has_quotes(delimiter);
+	*clean_delimiter = remove_quotes(ft_strdup(delimiter));
+	if (!*clean_delimiter)
+		return (0);
+	return (1);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 03:51:06 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/11 08:38:58 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/17 03:01:52 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,22 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 			perror("waitpid");
 		else if (i == cmd_count - 1)  // Last command's exit status
 			last_exit = exit_status(status);
+		else if (WIFSIGNALED(status))
+		{
+			if(WTERMSIG(status) == SIGINT)
+			{
+				
+				write(STDERR_FILENO, "\n", 1);
+				return (last_exit = 130);
+			}
+				
+			if (WTERMSIG(status) == SIGQUIT)
+			{
+				
+				write(STDERR_FILENO, "Quit (core dumped)\n", 19);
+				return (last_exit = 131);
+			}
+		}
 		i++;
 	}
 	

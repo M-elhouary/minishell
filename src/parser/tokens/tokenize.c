@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/15 02:34:21 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/17 06:07:46 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,13 +81,15 @@ static int	process_word_gc(char *line, int *i, t_token_glbst *glbst)
 	word = extract_word(line, i);
 	if (!word)
 		return (0);
-	//case special characters >>  dilimiter
+	//case special characters  >>  dilimiter
 	if (last && last->type == HEREDOC)
 		return (herdoc_token(split_words, word, glbst));
 	// Check for unquoted variables in the word
-	//
 	has_vars = has_unquoted_variables(word);
+	// Expand variables in the word
+	// if there are unquoted variables, expand them
 	expanded = expand_variables(word, glbst->env, glbst->cmd);
+	// has_vars and expanded only check if the expansion resulted in an empty string
 	if (has_vars && (!expanded || !*expanded))
 		return (free(word), free(expanded),
 			handle_empty_expansion(glbst->tokens, glbst->gc));
