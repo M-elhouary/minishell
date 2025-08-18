@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:52:49 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/04 00:15:35 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/14 06:41:13 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,20 @@ long	atol_s(const char *str, char **endptr)
 	}
 	while (str[i] != '\0' && str[i] >= '0' && str[i] <= '9')
 	{
+		if (sign == 1)
+		{
+			if (res > (LONG_MAX - (str[i] - 48)) / 10)
+				break;
+		}
+		else
+		{
+			if (res > (-(LONG_MIN + (str[i] - 48))) / 10)
+				break;
+		}
 		res = res * 10 + (str[i] - 48);
 		i++;
 	}
-	if (endptr)
-		*endptr = (char *)(str + i);
+	*endptr = (char *)(str + i);
 	return (res * sign);
 }
 

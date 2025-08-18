@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/14 02:40:12 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/18 01:24:39 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <signal.h>
 #include <linux/limits.h>
 #include <sys/stat.h>
+#include <limits.h>
 #include "parse.h"
 
 typedef enum
@@ -27,8 +28,17 @@ typedef enum
 	BUILTIN_ERROR = 1
 }	t_builtin;
 
-char		*locate_cmd(char *cmd);
-t_command	*create_cmd(char **args);
+
+typedef struct s_pipe_state
+{
+	int	prev_read_fd;
+	int	current_pipe[2];
+	int	cmd_index;
+	int	total_cmds;
+	int	pipe_created;
+}	t_pipe_state;
+
+char		*locate_cmd(char *cmd, t_env *env);
 int			exec_cmd(t_command *cmd, t_env **env, int fd);
 void		free_cmd(t_command *cmd);
 long		atol_s(const char *str, char **endptr);
@@ -50,6 +60,8 @@ void	free_env_array(char **envp);
 void	print(char *s, int fd);
 int		exec_pipeline(t_command *cmd_list, t_env **env);
 int		exit_status(int status);
+
+int		handle_redirections(t_redirection *redirections);
 
 /* Execution state management */
 int get_execution_state(void);
