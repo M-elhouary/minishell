@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/19 03:01:26 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 04:38:33 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,11 +71,11 @@ int	main(int ac, char **av, char **env)
 			gc_free_all(&gc);
 			continue ;
 		}
-		handl_herdoc(tokens, env_list, cmd);
-		// printf("%d\n", cmd->status_exit);
+		if(handl_herdoc(tokens, env_list, cmd))
+			continue;
 		// Only create new command if syntax is correct
 		tmp_cmd = parse_commands(tokens);
-		// printf("%d\n", cmd->status_exit);
+		//  printf("%d\n", cmd->status_exit);
 		if (tmp_cmd)
 		{
 			// Save the previous exit status in the new command
@@ -103,6 +103,7 @@ int	main(int ac, char **av, char **env)
 
 			// Update exit status for next command
 			cmd->status_exit = exit_code;
+		//  printf("exec  %d\n", cmd->status_exit);
 
 			// if (exit_code != 0)
 			// 	printf("[Exit code: %d]\n", exit_code);
