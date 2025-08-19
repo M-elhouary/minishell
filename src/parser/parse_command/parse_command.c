@@ -6,30 +6,12 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 00:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/14 00:34:18 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/17 04:08:49 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 
-// static int	allocate_arrays(char ***args, char ***infiles, char ***outfiles,
-//		int arg_count, int in_count, int out_count)
-// {
-// 	*args = malloc((arg_count + 1) * sizeof(char *));
-// 	*infiles = malloc((in_count + 1) * sizeof(char *));
-// 	*outfiles = malloc((out_count + 1) * sizeof(char *));
-// 	if (!*args || !*infiles || !*outfiles)
-// 		return (0);
-// 	return (1);
-// }
-
-// static void init_index_array(int	*arg_count, int	*in_count, int	*out_count)
-// {
-
-// 	*arg_count = 0;
-// 	*in_count = 0;
-// 	*out_count = 0;
-// }
 
 static void	creat_node_redir(t_redir_type type, char *value,
 		t_redirection **redirections)

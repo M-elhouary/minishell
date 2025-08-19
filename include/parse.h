@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/18 19:10:57 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 02:24:01 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@
 #include <fcntl.h>
 # include "libft.h"
 
-
+// This file contains the definitions and structures used
+// for parsing commands in the minishell project.
 typedef enum e_token_type
 {
 	COMMAND,
@@ -37,6 +38,7 @@ typedef enum e_token_type
 	ARGUMENT
 }	t_token_type;
 
+// typedef struct s_token_glbst t_token_glbst;
 typedef enum e_redir_type
 {
     REDIR_TYPE_IN,      // <
@@ -45,6 +47,7 @@ typedef enum e_redir_type
     REDIR_TYPE_HEREDOC  // <<
 } t_redir_type;
 
+// environment structure
 typedef struct s_env
 {
 	char			*key;
@@ -52,6 +55,7 @@ typedef struct s_env
 	struct s_env	*next;
 }	t_env;
 
+// Token structure
 typedef struct s_token
 {
 	char			*value;
@@ -61,6 +65,7 @@ typedef struct s_token
 	struct s_token	*next;
 }	t_token;
 
+// Redirection structure
 typedef struct s_redirection
 {
     t_redir_type type;
@@ -68,6 +73,7 @@ typedef struct s_redirection
     struct s_redirection *next;
 } t_redirection;
 
+// Command structure
 typedef struct s_command
 {
     int status_exit;
@@ -87,11 +93,14 @@ typedef struct s_gc_node
 
 
 // why used this struct?
+// To manage memory allocation and deallocation for the minishell project.
 typedef struct s_gc
 {
 	t_gc_node	*head;
 }	t_gc;
 
+//hold all other structures
+// used to pass multiple parameters to functions
 typedef struct s_token_ctx
 {
     t_token **tokens;
@@ -133,14 +142,13 @@ t_command	*create_cmd_node(char **args, t_redirection *redirections);
 void	add_cmd_node(t_command **head, t_command *new);
 
 
-
 // herdoc
 void handl_herdoc(t_token *token, t_env *env_list, t_command *cmd);
 int is_delimiter_quoted(char *token_value);
 char	*gen_file_name(char *s, int random_nb);
 void	free_and_close(char *clean_delimiter, int fd, char *delimiter);
 void	similation_herdoc(char *delimiter, int fd, t_env *env_list,t_command *cmd);
-
+int	prepare_delimiter(char **clean_delimiter, char *delimiter, int *quotes_flag);
 
 // expansion
 char *handle_exit_status(char **result, int *i, t_command *cmd);
@@ -149,13 +157,6 @@ char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc, t_command *cm
 char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd);
 int		has_unquoted_variables(const char *str);
 char *handle_variable(char **result, const char *str, int *i, t_env *env);
-
-
-
-
-
-
-
 
 
 // Utility functions

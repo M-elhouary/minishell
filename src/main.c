@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/18 19:18:49 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 02:23:19 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int	main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
+	// Initialize garbage collector
 	gc_init(&gc);
 	cmd = NULL;
 	env_list = my_env(env);
@@ -103,6 +104,8 @@ int	main(int ac, char **av, char **env)
 			// Update exit status for next command
 			cmd->status_exit = exit_code;
 
+			// if (exit_code != 0)
+			// 	printf("[Exit code: %d]\n", exit_code);
 			// if (exit_code != 0)
 			// 	printf("[Exit code: %d]\n", exit_code);
 		}

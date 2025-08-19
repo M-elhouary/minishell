@@ -6,11 +6,13 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/18 19:18:28 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 02:24:47 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+// if del on qotes not expanded
 
 static void	process_herdoc_line(char *line, int fd, t_env *env_list,
 		t_command *cmd)
@@ -24,18 +26,8 @@ static void	process_herdoc_line(char *line, int fd, t_env *env_list,
 	free(expanded);
 }
 
-static int	prepare_delimiter(char **clean_delimiter, char *delimiter,
-		int *quotes_flag)
-{
-	*quotes_flag = has_quotes(delimiter);
-	*clean_delimiter = remove_quotes(ft_strdup(delimiter));
-	if (!*clean_delimiter)
-		return (0);
-	return (1);
-}
-
 void	similation_herdoc(char *delimiter, int fd, t_env *env_list,
-        t_command *cmd)
+		t_command *cmd)
 {
     int quotes_for_expansion;
     char *line, *clean_delimiter;
@@ -88,7 +80,7 @@ static int	process_heredoc_token(t_token *tmp, t_env *env_list, t_command *cmd)
 {
 	char	*file_name;
 	static int random_nb;
-	pid_t	pid;
+	int	pid;
 
 	int wait_result, status, fd;
 	pid = fork();
@@ -109,36 +101,17 @@ static int	process_heredoc_token(t_token *tmp, t_env *env_list, t_command *cmd)
 	}
 	close(fd); // Close fd in parent process immediately
 	wait_result = waitpid(pid, &status, 0);
+	//this mean failed to wait for child process
 	if (wait_result == -1)
 		return (free(file_name), 0);
+	//this mean child process exited successfully
 	if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
 		return (tmp->next->value = ft_strdup(file_name), free(file_name), 1);
+	// this mean child process was interrupted or failed
 	else if (WIFSIGNALED(status))
 		return (free(file_name), 0);
+		
 	return (free(file_name), 0);
-}
-
-/* Wait for heredoc child process */
-int	wait_for_child(pid_t pid, t_token *tmp, char *file_name, int fd)
-{
-	int	status;
-	int	wait_result;
-
-	close(fd);
-	wait_result = waitpid(pid, &status, 0);
-	if (wait_result == -1)
-	{
-		free(file_name);
-		return (0);
-	}
-	if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
-	{
-		tmp->next->value = ft_strdup(file_name);
-		free(file_name);
-		return (1);
-	}
-	free(file_name);
-	return (0);
 }
 
 void	handl_herdoc(t_token *token, t_env *env_list, t_command *cmd)
