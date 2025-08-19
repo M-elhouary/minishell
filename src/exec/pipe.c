@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 03:51:06 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/19 04:50:38 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/19 05:08:38 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,3 +284,34 @@ int	exec_pipeline(t_command *cmd_list, t_env **env)
 
 	return (exit_status_code);
 }
+// declare -x _="/goinfre/mel-houa/cur42/minishell/./minishell" MATBA3HAX ALA7YA
+
+// minishell$ export  hhhhh
+// minishell$ export 
+// bla=bla
+// hhhhh
+// [Exit code: 1] PRINTI TAHADI ALAHYA
+
+
+// [Exit code: 127] WALAHYA PRINTI HADI F STDERROR NOT OUT
+
+
+
+
+// minishell$ << "$USER"
+// >$USER
+// [Exit code: 1]
+
+// minishell$ << o
+// >o
+// 0
+// [Exit code: 1] if exit code is 0 why changing it when you do nothing ala7ya matb9ax t7arf
+
+
+// minishell$ << o | ls
+// >o
+// 1
+// 1
+// include  libft  Makefile  minishell  README.md  src  test_cases.txt
+// hadi dyali ana wyak fiha
+

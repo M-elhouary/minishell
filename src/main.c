@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/19 05:00:54 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/19 05:08:58 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ int	main(int ac, char **av, char **env)
 	cmd = NULL;
 	env_list = my_env(env);
 	
+
 	while (1)
 	{
 		signal(SIGINT, sigint_interactive);
@@ -90,9 +91,10 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		}
 		handl_herdoc(tokens, env_list, cmd);
+		// printf("%d\n", cmd->status_exit);
 		// Only create new command if syntax is correct
 		tmp_cmd = parse_commands(tokens);
-		// printf("%s\n", tmp_cmd->args[0]);
+		// printf("%d\n", cmd->status_exit);
 		if (tmp_cmd)
 		{
 			// Save the previous exit status in the new command
@@ -121,6 +123,8 @@ int	main(int ac, char **av, char **env)
 			// Update exit status for next command
 			cmd->status_exit = exit_code;
 
+			// if (exit_code != 0)
+			// 	printf("[Exit code: %d]\n", exit_code);
 			// if (exit_code != 0)
 			// 	printf("[Exit code: %d]\n", exit_code);
 		}

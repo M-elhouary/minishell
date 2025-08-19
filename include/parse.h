@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/19 03:03:52 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/19 05:09:10 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ void	add_cmd_node(t_command **head, t_command *new);
 // herdoc
 void handl_herdoc(t_token *token, t_env *env_list, t_command *cmd);
 int is_delimiter_quoted(char *token_value);
-char *gen_file_name(int index, char *s);
+char	*gen_file_name(char *s, int random_nb);
 void	free_and_close(char *clean_delimiter, int fd, char *delimiter);
 void	similation_herdoc(char *delimiter, int fd, t_env *env_list,t_command *cmd);
 int	prepare_delimiter(char **clean_delimiter, char *delimiter, int *quotes_flag);
@@ -196,7 +196,8 @@ void free_redirections(t_redirection *redirections);
 //signals
 int get_execution_state(void);
 void set_execution_state(int state);
-void sigint_handler(int signum);
+void	sigint_parent_handler(int sig);
+void	sigint_child_handler(int sig);
 void sigquit_handler(int signum);
 
 #endif

@@ -6,13 +6,35 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 02:19:33 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/15 21:33:48 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 03:14:20 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int g_in_execution = 0;
+//minishell$ ^C
+//minishell$ echo $?
+//0 ==> 130
+
+
+// minishell$ cat  | cat 
+// 130
+// 130
+// ^C
+// minishell$ minishell$ [Exit code: 130] one prompt 
+
+
+// minishell$ cat | rev
+// 130
+// 130
+// ^C
+// minishell$ 
+// minishell$ minishell$ 
+
+
+int g_in_execution;
+
+// g_in_execution = 0;
 
 int get_execution_state(void)
 {
@@ -24,7 +46,16 @@ void set_execution_state(int state)
     g_in_execution = state;
 }
 
-void	sigint_handler(int sig)
+void	sigint_child_handler(int sig)
+{
+    (void)sig;
+
+    write(STDOUT_FILENO, "\n", 1);
+    exit(130);
+}
+
+
+void	sigint_parent_handler(int sig)
 {
     (void)sig;
     
