@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 03:57:01 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/10 20:19:19 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/19 01:59:18 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,6 @@ t_builtin	exec_builtin(t_command *cmd, t_env **env, int fd)
 	else if (ft_strcmp(cmd->args[0], "env") == 0)
 		return (env_c(*env, fd));
 	else if (ft_strcmp(cmd->args[0], "exit") == 0)
-		return (exit_c(cmd->args, fd));
+		return (exit_c(cmd->args, fd, cmd->status_exit));
 	return (NOT_BUILTIN);
 }
