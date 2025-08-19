@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/19 02:24:01 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 03:01:04 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,7 +195,8 @@ void free_redirections(t_redirection *redirections);
 //signals
 int get_execution_state(void);
 void set_execution_state(int state);
-void sigint_handler(int signum);
+void	sigint_parent_handler(int sig);
+void	sigint_child_handler(int sig);
 void sigquit_handler(int signum);
 
 #endif

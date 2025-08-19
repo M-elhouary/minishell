@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/19 02:38:26 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 03:01:26 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	main(int ac, char **av, char **env)
 
 	while (1)
 	{
-		signal(SIGINT, sigint_handler);
+		signal(SIGINT, sigint_parent_handler);
 		signal(SIGQUIT, SIG_IGN);
 		// Ensure cmd always exists for $? expansion
 		if (!cmd)

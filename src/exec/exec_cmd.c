@@ -6,40 +6,12 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:00:44 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/19 02:43:43 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 02:52:01 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-t_command	*create_cmd(char **args)
-{
-	t_command	*cmd;
-	int		i;
-	
-	if (!args || !args[0])
-		return (NULL);
-	cmd = malloc(sizeof(t_command));
-	if (!cmd)
-		return (NULL);
-	i = 0;
-	while (args[i])
-		i++;
-	cmd->ac = i;
-	cmd->args = malloc(sizeof(char *) * (i + 1));
-	if (!cmd->args)
-		return (free(cmd), NULL);
-	i = 0;
-	while (args[i])
-	{
-		cmd->args[i] = ft_strdup(args[i]);
-		i++;
-	}
-	cmd->args[i] = NULL;
-	cmd->path = locate_cmd(args[0], NULL);
-	return (cmd);
-}
-
+//correct code 
 int	exit_status(int status)
 {
 	int sig;
@@ -55,7 +27,7 @@ int	exit_status(int status)
 	}
 	return (status);
 }
-
+// yes 
 int	validate_cmd_path(char *path, char *cmd)
 {
 	struct stat st;

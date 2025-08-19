@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/19 02:37:07 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 03:15:05 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,23 +31,17 @@ void	similation_herdoc(char *delimiter, int fd, t_env *env_list,
 {
     int quotes_for_expansion;
     char *line, *clean_delimiter;
-	static int random_nb;
-    
-    /* Save current execution state */
-    int old_exec_state = get_execution_state();
-    
+	signal(SIGINT, sigint_child_handler);
+	signal(SIGQUIT, sigquit_handler);
     if (!prepare_delimiter(&clean_delimiter, delimiter, &quotes_for_expansion))
     {
         close(fd);
         free(delimiter);
         return;
     }
-    /* Setup special signal handling for heredoc */
-    signal(SIGINT, SIG_DFL);   /* Default SIGINT for heredoc */
-    signal(SIGQUIT, SIG_IGN);  /* Ignore SIGQUIT in heredoc */
+	
     while (1)
     {
-		random_nb =  12;
         line = readline(">");
         if (!line || ft_strcmp(line, clean_delimiter) == 0)
         {
@@ -62,14 +56,6 @@ void	similation_herdoc(char *delimiter, int fd, t_env *env_list,
             write(fd, "\n", 1);
             free(line);
         }
-		random_nb++;
-    }
-    /* Restore previous signal handlers */
-    set_execution_state(old_exec_state);
-    if (get_execution_state() == 0)
-    {
-        signal(SIGINT, sigint_handler);
-        signal(SIGQUIT, sigquit_handler);
     }
     
     free_and_close(clean_delimiter, fd, delimiter);
@@ -83,6 +69,7 @@ static int	process_heredoc_token(t_token *tmp, t_env *env_list, t_command *cmd)
 	int	pid;
 
 	int wait_result, status, fd;
+	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid < 0)
 		return (0);
@@ -105,12 +92,11 @@ static int	process_heredoc_token(t_token *tmp, t_env *env_list, t_command *cmd)
 	if (wait_result == -1)
 		return (free(file_name), 0);
 	//this mean child process exited successfully
-	if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+	if (WEXITSTATUS(status))
+	{
+		cmd->status_exit = WIFEXITED(status);
 		return (tmp->next->value = ft_strdup(file_name), free(file_name), 1);
-	// this mean child process was interrupted or failed
-	else if (WIFSIGNALED(status))
-		return (free(file_name), 0);
-		
+	}
 	return (free(file_name), 0);
 }
 
