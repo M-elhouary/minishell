@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:00:44 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/19 02:37:23 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 02:43:43 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ t_command	*create_cmd(char **args)
 		i++;
 	}
 	cmd->args[i] = NULL;
-	cmd->path = locate_cmd(args[0]);
+	cmd->path = locate_cmd(args[0], NULL);
 	return (cmd);
 }
 
