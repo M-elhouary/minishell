@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:00:44 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/18 01:16:09 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 00:46:08 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,17 @@ int	validate_cmd_path(char *path, char *cmd)
 	
 	if (access(path, F_OK) != 0)
 	{
-		printf("minishell: %s: No such file or directory\n", cmd);
+		fprintf(stderr, "minishell: %s: No such file or directory\n", cmd);
 		return (127);
 	}
 	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
 	{
-		printf("minishell: %s: Is a directory\n", cmd);
+		fprintf(stderr, "minishell: %s: Is a directory\n", cmd);
 		return (126);
 	}
 	if (access(path, X_OK) != 0)
 	{
-		printf("minishell: %s: Permission denied\n", cmd);
+		fprintf(stderr, "minishell: %s: Permission denied\n", cmd);
 		return (126);
 	}
 	return (0);
@@ -60,14 +60,14 @@ void	exec_child(t_command *cmd, t_env **env)
 	env_arr = env_to_array(*env);
 	if (!env_arr)
 	{
-		printf("env err\n");
+		fprintf(stderr, "env err\n");
 		exit(1);
 	}
 	execve(cmd->path, cmd->args, env_arr);
 	free_env_array(env_arr);
 	if (errno == ENOEXEC)
 	{
-		printf("minishell: %s: cannot execute binary file\n", cmd->args[0]);
+		fprintf(stderr, "minishell: %s: cannot execute binary file\n", cmd->args[0]);
 		exit (126);
 	}
 	else
@@ -94,9 +94,9 @@ int	check_cmd_path(char *path, char *cmd)
 	if (!path)
 	{
 		if (ft_strchr(cmd, '/'))
-			printf("minishell: %s: No such file or directory\n", cmd);
+			fprintf(stderr, "minishell: %s: No such file or directory\n", cmd);
 		else
-			printf("minishell: %s: command not found\n", cmd);
+			fprintf(stderr, "minishell: %s: command not found\n", cmd);
 		return (127);
 	}
 	else
@@ -141,50 +141,90 @@ static int	handle_builtin_execution(t_command *cmd, t_env **env, int original_st
 	return (NOT_BUILTIN);
 }
 
-static int	handle_external_command(t_command *cmd, t_env **env, int fd)
+static int	handle_external_command_mode(t_command *cmd, t_env **env, int fd, int in_child)
 {
-	pid_t	pid;
-	int		validate_res;
-	
-	if (check_cmd_path(cmd->path, cmd->args[0]))
-		return (127);
-	validate_res = validate_cmd_path(cmd->path, cmd->args[0]);
-	if (validate_res != 0)
-		return (validate_res);
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-		return (1);
-	}
-	if (pid == 0)
-	{
-		if (handle_redirections(cmd->redirections) != 0)
-			exit(1);
-		if (fd != STDOUT_FILENO)
-			dup2(fd, STDOUT_FILENO);
-		exec_child(cmd, env);
-	}
-	return (wait_child(pid));
+    pid_t   pid;
+    int     validate_res;
+
+    if (check_cmd_path(cmd->path, cmd->args[0]))
+        return (127);
+    validate_res = validate_cmd_path(cmd->path, cmd->args[0]);
+    if (validate_res != 0)
+        return (validate_res);
+    if (in_child)
+    {
+        if (handle_redirections(cmd->redirections) != 0)
+            return (1);
+        if (fd != STDOUT_FILENO)
+            dup2(fd, STDOUT_FILENO);
+        exec_child(cmd, env);
+    }
+    pid = fork();
+    if (pid == -1)
+    {
+        perror("fork");
+        return (1);
+    }
+    if (pid == 0)
+    {
+        if (handle_redirections(cmd->redirections) != 0)
+            exit(1);
+        if (fd != STDOUT_FILENO)
+            dup2(fd, STDOUT_FILENO);
+        exec_child(cmd, env);
+    }
+    return (wait_child(pid));
 }
 
-int	exec_cmd(t_command *cmd, t_env **env, int fd)
+int exec_cmd_ex(t_command *cmd, t_env **env, int fd, int in_child)
 {
-	int		original_stdin;
-	int		original_stdout;
-	int		builtin_result;
+    int original_stdin;
+    int original_stdout;
+    int builtin_result;
 
-	if ((!cmd || !cmd->args || !cmd->args[0]) && !cmd->redirections)
-		return (1);
-	if (setup_redirections_and_fd(cmd, fd, &original_stdin, &original_stdout) != 0)
-		return (1);
-	else if(!cmd->args[0])
-	 	return (restore_file_descriptors(original_stdin, original_stdout), 0);
-	builtin_result = handle_builtin_execution(cmd, env, original_stdin, original_stdout);
-	if (builtin_result != NOT_BUILTIN)
-		return (builtin_result);
-	restore_file_descriptors(original_stdin, original_stdout);
-	return (handle_external_command(cmd, env, fd));
+    if ((!cmd || !cmd->args || !cmd->args[0]) && !cmd->redirections)
+        return (1);
+    if (!in_child)
+    {
+        if (setup_redirections_and_fd(cmd, fd, &original_stdin, &original_stdout) != 0)
+            return (1);
+    }
+    else
+    {
+        // In child mode, caller already set up stdin/stdout (pipes). Only process redirs here.
+        if (handle_redirections(cmd->redirections) != 0)
+            return (1);
+        if (fd != STDOUT_FILENO)
+            dup2(fd, STDOUT_FILENO);
+    }
+    if (!cmd->args[0])
+    {
+        if (!in_child)
+            restore_file_descriptors(original_stdin, original_stdout);
+        return (0);
+    }
+
+    if (!in_child)
+    {
+        builtin_result = handle_builtin_execution(cmd, env, original_stdin, original_stdout);
+        if (builtin_result != NOT_BUILTIN)
+            return (builtin_result);
+        restore_file_descriptors(original_stdin, original_stdout);
+    }
+    else
+    {
+        // In child, run builtin directly without saving/restoring parent fds
+        t_builtin built_res = exec_builtin(cmd, env, STDOUT_FILENO);
+        if (built_res != NOT_BUILTIN)
+            return (built_res);
+    }
+
+    return handle_external_command_mode(cmd, env, fd, in_child);
+}
+
+int exec_cmd(t_command *cmd, t_env **env, int fd)
+{
+    return exec_cmd_ex(cmd, env, fd, 0);
 }
 
 void	free_cmd(t_command *cmd)

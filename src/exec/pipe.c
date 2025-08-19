@@ -3,12 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 03:51:06 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/18 20:29:31 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 02:27:27 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
+// PATH: permission
+// cat | cat | cat;
+//	exit staus heredoc
+// .
+// ..
+
+// minishell$ cat << "$US"E"R"
+// > ^C
+// "$US"E"R": No such file or directory
+
+// minishell$ exit | ls
+// exit
+// 1   456  fil8  file8    libft     minishell  src
+// 45  78   file  include  Makefile  README.md
 
 #include "minishell.h"
 
@@ -24,34 +40,6 @@ int	count_cmds(t_command *cmd)
 		cmd = cmd->next;
 	}
 	return (count);
-}
-
-int	create_pipes(int ***pipes, int cmd_count)
-{
-	int	i;
-	
-	*pipes = malloc(sizeof(int *) * (cmd_count - 1));
-	if (!*pipes)
-		return (0);
-	i = 0;
-	while (i < cmd_count - 1)
-	{
-		(*pipes)[i] = malloc(sizeof(int) * 2);
-		if (!(*pipes)[i] || pipe((*pipes)[i]) == -1)
-		{
-			perror("pipe");
-			while (--i >= 0)
-			{
-				close((*pipes)[i][0]);
-				close((*pipes)[i][1]);
-				free((*pipes)[i]);
-			}
-			free(*pipes);
-			return (0);
-		}
-		i++;
-	}
-	return (1);
 }
 
 void	close_all_pipes(int **pipes, int cmd_count)
@@ -80,68 +68,42 @@ void	cleanup_pipes(int **pipes, int cmd_count)
 	free(pipes);
 }
 
-int	setup_child_pipes(int **pipes, int cmd_count, int i, int prev_pipe_read)
+// Set up child's stdin/stdout using only the previous read end and the current pipe
+int	setup_child_pipes(int i, int is_last, int prev_read_fd, int curr_pipe[2])
 {
-	int j;
-	
-	(void)prev_pipe_read;
-	if (i > 0)
-		dup2(pipes[i - 1][0], STDIN_FILENO);
-	if (i < cmd_count - 1)
-		dup2(pipes[i][1], STDOUT_FILENO);
-	j = 0;
-	while (j < cmd_count - 1)
+	// If not the first command, hook up stdin to previous read end
+	if (i > 0 && prev_read_fd != -1)
+		dup2(prev_read_fd, STDIN_FILENO);
+	// If not the last command, hook up stdout to current pipe's write end
+	if (!is_last)
+		dup2(curr_pipe[1], STDOUT_FILENO);
+	// Close now-unneeded fds in the child
+	if (prev_read_fd != -1)
+		close(prev_read_fd);
+	if (!is_last)
 	{
-		close(pipes[j][0]);
-		close(pipes[j][1]);
-		j++;
+		close(curr_pipe[0]);
+		close(curr_pipe[1]);
 	}
 	return (0);
 }
 
-void	handle_child_process(t_command *current_cmd, int **pipes, int cmd_count, int i, t_env **env)
+void	handle_child_process(t_command *current_cmd, int i, int is_last, int prev_read_fd, int curr_pipe[2], t_env **env)
 {
-	char		**env_arr;
-	t_builtin	builtin_result;
-	
-	setup_child_pipes(pipes, cmd_count, i, -1);
-	if (current_cmd->redirections)
-	{
-		if (handle_redirections(current_cmd->redirections) != 0)
-			exit(1);
-	}
-	if (!current_cmd->path)
-	{
-		if (ft_strchr(current_cmd->args[0], '/'))
-		{
-			print("minishell: ", 2);
-			print(current_cmd->args[0], 2);
-			print(": No such file or directory\n", 2);
-		}
-		else
-		{
-			print("minishell: ", 2);
-			print(current_cmd->args[0], 2);
-			print(": command not found\n", 2);
-		}
-		exit(127);
-	}
-	builtin_result = exec_builtin(current_cmd, env, STDOUT_FILENO);
-	if (builtin_result != NOT_BUILTIN)
-		exit(builtin_result);
-	env_arr = env_to_array(*env);
-	if (!env_arr)
-	{
-		print("env error\n", 2);
-		exit(1);
-	}
-	execve(current_cmd->path, current_cmd->args, env_arr);
-	free_env_array(env_arr);
-	perror("execve");
-	exit(127);
+	// In child: default signal behavior so Ctrl-C/\ quit affect the pipeline
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+
+	// Set up stdin/stdout for this child from the pipeline
+	setup_child_pipes(i, is_last, prev_read_fd, curr_pipe);
+
+	// Delegate execution (builtins, redirs, external) to exec_cmd_ex in child mode
+	// Pass STDOUT_FILENO since stdout is already wired to the pipe
+	int status = exec_cmd_ex(current_cmd, env, STDOUT_FILENO, 1);
+	exit(status);
 }
 
-int	create_child_process(t_command *current_cmd, int **pipes, int cmd_count, int i, t_env **env, pid_t *pids)
+int	create_child_process(t_command *current_cmd, int i, int is_last, int prev_read_fd, int curr_pipe[2], t_env **env, pid_t *pids)
 {
 	pids[i] = fork();
 	if (pids[i] == -1)
@@ -150,8 +112,7 @@ int	create_child_process(t_command *current_cmd, int **pipes, int cmd_count, int
 		return (-1);
 	}
 	if (pids[i] == 0)
-		handle_child_process(current_cmd, pipes, cmd_count, i, env);
-	
+		handle_child_process(current_cmd, i, is_last, prev_read_fd, curr_pipe, env);
 	return (0);
 }
 
@@ -160,123 +121,154 @@ int	wait_for_children(pid_t *pids, int cmd_count)
 	int	i;
 	int	status;
 	int	last_cmd_exit;
+	int	interrupted_by_sigint;
 
 	last_cmd_exit = 0;
+	interrupted_by_sigint = 0;
 	i = 0;
 	while (i < cmd_count)
 	{
 		waitpid(pids[i], &status, 0);
+		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+			interrupted_by_sigint = 1;
 		if (i == cmd_count - 1)
 			last_cmd_exit = exit_status(status);
 		i++;
 	}
-	
+	// If pipeline was interrupted by Ctrl-C, print a newline so next prompt is on a new line
+	if (interrupted_by_sigint)
+		print("\n", 1);
 	return (last_cmd_exit);
 }
 
 void	cleanup_pipeline_resources(pid_t *pids, int **pipes, int cmd_count)
 {
 	int i;
-	
-	i = 0;
-	while (i < cmd_count - 1)
+
+	// Free pipes array only if provided
+	if (pipes)
 	{
-		free(pipes[i]);
-		i++;
+		i = 0;
+		while (i < cmd_count - 1)
+		{
+			if (pipes[i])
+				free(pipes[i]);
+			i++;
+		}
+		free(pipes);
 	}
-	free(pipes);
-	free(pids);
+	if (pids)
+		free(pids);
 }
 
-int	execute_pipeline_loop(t_command *cmd_list, t_env **env, pid_t *pids, int **pipes, int cmd_count)
+// Execute the pipeline creating at most one pipe at a time
+int	execute_pipeline_loop(t_command *cmd_list, t_env **env, pid_t *pids, int cmd_count)
 {
 	t_command	*current_cmd;
 	int			i;
+	int			prev_read_fd;
+	int			curr_pipe[2];
+	int			is_last;
 
 	current_cmd = cmd_list;
 	i = 0;
-	
-	// Create all pipes first
-	while (i < cmd_count - 1)
-	{
-		if (pipe(pipes[i]) == -1)
-		{
-			perror("pipe");
-			return (-1);
-		}
-		i++;
-	}
-	
-	// Fork all processes
-	current_cmd = cmd_list;
-	i = 0;
+	prev_read_fd = -1;
 	while (current_cmd && i < cmd_count)
 	{
-		if (create_child_process(current_cmd, pipes, cmd_count, i, env, pids) == -1)
+		is_last = (i == cmd_count - 1);
+		if (!is_last)
+		{
+			if (pipe(curr_pipe) == -1)
+			{
+				perror("pipe");
+				if (prev_read_fd != -1)
+					close(prev_read_fd);
+				return (-1);
+			}
+		}
+		else
+		{
+			curr_pipe[0] = -1;
+			curr_pipe[1] = -1;
+		}
+
+		if (create_child_process(current_cmd, i, is_last, prev_read_fd, curr_pipe, env, pids) == -1)
+		{
+			// On fork failure, close any open fds and stop
+			if (!is_last)
+			{
+				close(curr_pipe[0]);
+				close(curr_pipe[1]);
+			}
+			if (prev_read_fd != -1)
+				close(prev_read_fd);
 			return (-1);
+		}
+
+		// Parent: close fds no longer needed
+		if (prev_read_fd != -1)
+			close(prev_read_fd);
+		if (!is_last)
+		{
+			close(curr_pipe[1]); // keep only the read end for next cmd
+			prev_read_fd = curr_pipe[0];
+		}
+		else
+		{
+			prev_read_fd = -1;
+		}
+
 		current_cmd = current_cmd->next;
 		i++;
 	}
-	
-	// Close all pipes in parent
-	i = 0;
-	while (i < cmd_count - 1)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
-		i++;
-	}
-	
-	return (i); // Return number of processes created
+	// After forking all, close any remaining read end in parent
+	if (prev_read_fd != -1)
+		close(prev_read_fd);
+	return (i); // number of processes created
 }
 
 int	exec_pipeline(t_command *cmd_list, t_env **env)
 {
 	pid_t		*pids;
-	int			**pipes;
 	int			cmd_count;
-	int			exit_status;
+	int			exit_status_code;
 	int			processes_created;
-	int			i;
+	void		(*old_int)(int);
+	void		(*old_quit)(int);
 
 	cmd_count = count_cmds(cmd_list);
 	if (cmd_count == 1)
 		return (exec_cmd(cmd_list, env, STDOUT_FILENO));
 
+	// Parent: temporarily ignore SIGINT/SIGQUIT while running foreground pipeline
+	old_int = signal(SIGINT, SIG_IGN);
+	old_quit = signal(SIGQUIT, SIG_IGN);
+
 	pids = malloc(sizeof(pid_t) * cmd_count);
-	pipes = malloc(sizeof(int *) * (cmd_count - 1));
-	if (!pids || !pipes)
+	if (!pids)
 	{
-		free(pids);
-		free(pipes);
+		// Restore parent signal handlers before returning
+		signal(SIGINT, old_int);
+		signal(SIGQUIT, old_quit);
 		return (1);
 	}
-	
-	// Allocate individual pipes
-	i = 0;
-	while (i < cmd_count - 1)
-	{
-		pipes[i] = malloc(sizeof(int) * 2);
-		if (!pipes[i])
-		{
-			while (--i >= 0)
-				free(pipes[i]);
-			free(pipes);
-			free(pids);
-			return (1);
-		}
-		i++;
-	}
-	
-	processes_created = execute_pipeline_loop(cmd_list, env, pids, pipes, cmd_count);
+
+	processes_created = execute_pipeline_loop(cmd_list, env, pids, cmd_count);
 	if (processes_created == -1)
 	{
-		cleanup_pipeline_resources(pids, pipes, cmd_count);
+		cleanup_pipeline_resources(pids, NULL, cmd_count);
+		// Restore handlers before returning
+		signal(SIGINT, old_int);
+		signal(SIGQUIT, old_quit);
 		return (1);
 	}
-	
-	exit_status = wait_for_children(pids, processes_created);
-	cleanup_pipeline_resources(pids, pipes, cmd_count);
-	
-	return (exit_status);
+
+	exit_status_code = wait_for_children(pids, processes_created);
+	cleanup_pipeline_resources(pids, NULL, cmd_count);
+
+	// Restore parent's original signal handlers
+	signal(SIGINT, old_int);
+	signal(SIGQUIT, old_quit);
+
+	return (exit_status_code);
 }

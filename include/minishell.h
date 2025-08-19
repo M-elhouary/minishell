@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/18 01:24:39 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 01:59:45 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_pipe_state
 
 char		*locate_cmd(char *cmd, t_env *env);
 int			exec_cmd(t_command *cmd, t_env **env, int fd);
+int			exec_cmd_ex(t_command *cmd, t_env **env, int fd, int in_child);
 void		free_cmd(t_command *cmd);
 long		atol_s(const char *str, char **endptr);
 
@@ -49,7 +50,7 @@ int	cd_c(char **args, t_env **env, int fd);
 int	env_c(t_env *env, int fd);
 int	export_c(char **args, t_env **env, int fd);
 int	unset_c(char **args, t_env **env, int fd);
-int	exit_c(char **args, int fd);
+int	exit_c(char **args, int fd, int exit_status);
 t_builtin	exec_builtin(t_command *cmd, t_env **env, int fd);
 
 char	*ft_strcat(char *dst, char *src);

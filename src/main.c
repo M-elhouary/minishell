@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/18 20:31:05 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 00:49:30 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int	main(int ac, char **av, char **env)
 		handl_herdoc(tokens, env_list, cmd);
 		// Only create new command if syntax is correct
 		tmp_cmd = parse_commands(tokens);
-		printf("%s\n", tmp_cmd->args[0]);
+		// printf("%s\n", tmp_cmd->args[0]);
 		if (tmp_cmd)
 		{
 			// Save the previous exit status in the new command
