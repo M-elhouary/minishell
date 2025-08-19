@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/16 22:42:44 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 03:03:52 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ typedef struct s_command
     int ac;
     char *path;
     char **args;
+	int		print_exit;
     t_redirection *redirections;  // New field
     struct s_command *next;
 } t_command;

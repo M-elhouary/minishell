@@ -6,12 +6,27 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/19 00:49:30 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/19 05:00:54 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+void	sigint_interactive(int sig)
+{
+    (void)sig;
+    write(STDOUT_FILENO, "\n", 1);
+    rl_on_new_line();
+    rl_replace_line("", 0);
+    rl_redisplay();
+}
+
+void	sigquit_interactive(int sig)
+{
+    (void)sig;
+    rl_on_new_line();
+    rl_redisplay();
+}
 
 int	main(int ac, char **av, char **env)
 {
@@ -32,8 +47,10 @@ int	main(int ac, char **av, char **env)
 	
 	while (1)
 	{
-		signal(SIGINT, sigint_handler);
-		signal(SIGQUIT, SIG_IGN); // Ignore SIGQUIT in main loop
+		signal(SIGINT, sigint_interactive);
+        signal(SIGQUIT, sigquit_interactive);
+		// signal(SIGINT, sigint_handler);
+		// signal(SIGQUIT, SIG_IGN); // Ignore SIGQUIT in main loop
 		// Ensure cmd always exists for $? expansion
 		if (!cmd)
 		{
@@ -44,7 +61,9 @@ int	main(int ac, char **av, char **env)
 			cmd->args = NULL;
 			cmd->path = NULL;
 			cmd->redirections = NULL;
+			cmd->print_exit = 0;
 			cmd->next = NULL;
+	
 		}
 
 		line = readline("minishell$ "); // how readline works
