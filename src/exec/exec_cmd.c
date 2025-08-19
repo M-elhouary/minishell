@@ -6,12 +6,12 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:00:44 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/19 00:46:08 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/19 02:50:22 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
+//correct code 
 int	exit_status(int status)
 {
 	int sig;
@@ -27,7 +27,7 @@ int	exit_status(int status)
 	}
 	return (status);
 }
-
+// yes 
 int	validate_cmd_path(char *path, char *cmd)
 {
 	struct stat st;
