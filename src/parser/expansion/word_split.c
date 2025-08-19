@@ -29,9 +29,9 @@ static char	**split_expanded_word(const char *expanded)
 {
 	char	**words;
 	int		word_count;
-	int		i, j;
 	int		start;
 
+	int i, j;
 	word_count = count_words_in_expanded(expanded);
 	if (word_count == 0)
 		return (NULL);
@@ -90,9 +90,9 @@ static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 {
 	char	**words;
 	int		word_count;
-	int		i, j;
 	int		start;
 
+	int i, j;
 	word_count = count_words_in_expanded(expanded);
 	if (word_count == 0)
 		return (NULL);
@@ -118,8 +118,9 @@ static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 	return (words);
 }
 
-// Expand variables in a word split result 
-char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc, t_command *cmd)
+// Expand variables in a word split result ??
+char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc,
+		t_command *cmd)
 {
 	char	*expanded;
 	char	**split_words;
@@ -128,7 +129,7 @@ char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc, t_command *cm
 	if (!has_unquoted_variables(word))
 	{
 		expanded = expand_variables(word, env, cmd);
-		result = gc_malloc(gc, sizeof(char *) * 2);
+		result = gc_malloc(gc, sizeof(char *) * 2); //
 		if (!result)
 			return (free(expanded), NULL);
 		result[0] = gc_strdup(gc, expanded);

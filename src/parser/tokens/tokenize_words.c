@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:58 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/07 23:00:20 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/15 02:21:03 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,6 @@ char	*remove_quotes(char *str)
 	return (new);
 }
 
-
-// static int	skip_quoted_section(const char *line, int *i, char quote)
-// {
-// 	(*i)++; 
-// 	while (line[*i] && line[*i] != quote)
-// 		(*i)++;
-// 	if (!line[*i])
-// 		return (0); 
-// 	(*i)++; 
-// 	return (1);
-// }
 
 char	*extract_word(char *line, int *i)
 {

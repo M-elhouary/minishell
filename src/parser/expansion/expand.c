@@ -3,68 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/12 05:27:03 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/18 20:30:44 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "minishell.h"
 
-
-// echo "$HOME/$USER"
-//  echo ~
-
-
-// minishell$ cat  << "$US"E"R"
-// herdoc>LKJKLJ
-// herdoc>$USER
-// herdoc>$US
-// herdoc>ER
-// LKJKLJ
-// houardi
-
-
-// Expand all $VAR in a string
+// Main function refactored to use helpers
 char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd)
 {
-	char	*result;
-	int		i;
-	char	*tmp;
-	char	*var_value;
-	int		start;
+	int	i;
 
-	result = ft_strdup("");//
+	char *result, *tmp;
+	//empty string to start with for func ft_strjoin_free use 
+	//
+	result = ft_strdup(""); 
+	
 	i = 0;
 	while (str[i])
 	{
-		 if (str[i] == '$' && str[i + 1] == '?')
-        {
-            char *exit_str = ft_itoa(cmd->status_exit);
-            tmp = ft_strjoin_free(result, exit_str);
-            result = tmp;
-            i += 2; // Skip both $ and ?
-            continue;
-        }
-		 if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
-		{
-			
-			i++;
-				start = i;
-				while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-					i++;
-				tmp = ft_strndup(str + start, i - start);
-				var_value = get_env_value(tmp, env);
-
-			if (var_value && *var_value)
-				result = ft_strjoin_free(result, ft_strdup(var_value));
-			else
-				result = ft_strjoin_free(result, ft_strdup(""));//
-			free(tmp);
-			free(var_value);
-		}
+		if (str[i] == '$' && str[i + 1] == '?')
+			result = handle_exit_status(&result, &i, cmd);
+		else if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
+			result = handle_variable(&result, str, &i, env);
 		else
 		{
 			tmp = ft_strndup(str + i, 1);
@@ -103,7 +67,8 @@ static char	*process_quoted(const char *str, int *i, t_env *env, t_command *cmd)
 }
 
 // Handle unquoted substrings and  expanding variables
-static char	*process_unquoted(const char *str, int *i, t_env *env, t_command *cmd)
+static char	*process_unquoted(const char *str, int *i, t_env *env,
+		t_command *cmd)
 {
 	int		start;
 	char	*expnd;
@@ -118,65 +83,41 @@ static char	*process_unquoted(const char *str, int *i, t_env *env, t_command *cm
 	return (result);
 }
 
-//function to check if string contains unquoted variables
-// Check if a string contains unquoted variables ($VAR)
-int	has_unquoted_variables(const char *str)
-{
-	int	i;
-	int	in_quotes;
-	char quote_char;
-
-	i = 0;
-	in_quotes = 0;
-	quote_char = 0;
-	while (str[i])
-	{
-		if (!in_quotes && (str[i] == '\'' || str[i] == '"'))
-		{
-			in_quotes = 1;
-			quote_char = str[i];
-		}
-		else if (in_quotes && str[i] == quote_char)
-		{
-			in_quotes = 0;
-			quote_char = 0;
-		}
-		else if (!in_quotes && str[i] == '$' && (ft_isalnum(str[i+1]) || str[i+1] == '_'))
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-
 //  to process the main loop of expand_variables
 //  for expand_variables processes the main loop
-static char *expand_variables_loop(const char *str, t_env *env, int *i_ptr, t_command *cmd) 
+static char	*expand_variables_loop(const char *str, t_env *env, int *i_ptr,
+		t_command *cmd)
 {
-	char *result = ft_strdup("");
-	char *expnd;
-	int i = *i_ptr;
-	while (str[i]) {
-		if (str[i] == '\'' || str[i] == '"') {
+	char	*result;
+	char	*expnd;
+	int		i;
+
+	result = ft_strdup("");
+	i = *i_ptr;
+	while (str[i])
+	{
+		if (str[i] == '\'' || str[i] == '"')
+		{
 			expnd = process_quoted(str, &i, env, cmd);
 			result = ft_strjoin_free(result, expnd);
 		}
-		 else {
+		else
+		{
 			expnd = process_unquoted(str, &i, env, cmd);
 			result = ft_strjoin_free(result, expnd);
 		}
 	}
 	*i_ptr = i;
-	return result;
+	return (result);
 }
 
 // Expand all variables in a string, handling quotes
-char *expand_variables(const char *str, t_env *env, t_command *cmd)
+char	*expand_variables(const char *str, t_env *env, t_command *cmd)
 {
 	char *result;
 	int i = 0;
 	if (!str)
-		return (ft_strdup(""));
+		return (ft_strdup("")); // why allocate memory for empty string?
 	result = expand_variables_loop(str, env, &i, cmd);
-	return result;
+	return (result);
 }

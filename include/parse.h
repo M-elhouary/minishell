@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/12 00:15:38 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/16 22:42:44 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@
 #include <fcntl.h>
 # include "libft.h"
 
-
+// This file contains the definitions and structures used
+// for parsing commands in the minishell project.
 typedef enum e_token_type
 {
 	COMMAND,
@@ -37,6 +38,7 @@ typedef enum e_token_type
 	ARGUMENT
 }	t_token_type;
 
+// typedef struct s_token_glbst t_token_glbst;
 typedef enum e_redir_type
 {
     REDIR_TYPE_IN,      // <
@@ -45,6 +47,7 @@ typedef enum e_redir_type
     REDIR_TYPE_HEREDOC  // <<
 } t_redir_type;
 
+// environment structure
 typedef struct s_env
 {
 	char			*key;
@@ -52,14 +55,17 @@ typedef struct s_env
 	struct s_env	*next;
 }	t_env;
 
+// Token structure
 typedef struct s_token
 {
 	char			*value;
 	t_token_type	type;
 	int				is_empty_expansion;
+    int             prev_herdoc;
 	struct s_token	*next;
 }	t_token;
 
+// Redirection structure
 typedef struct s_redirection
 {
     t_redir_type type;
@@ -67,17 +73,13 @@ typedef struct s_redirection
     struct s_redirection *next;
 } t_redirection;
 
+// Command structure
 typedef struct s_command
 {
     int status_exit;
     int ac;
     char *path;
     char **args;
-    // Keep these for backward compatibility during transition
-    // char **infile;
-    // char **outfile;
-    // int append;
-    // int heredoc;
     t_redirection *redirections;  // New field
     struct s_command *next;
 } t_command;
@@ -89,11 +91,16 @@ typedef struct s_gc_node
 	struct s_gc_node	*next;
 }	t_gc_node;
 
+
+// why used this struct?
+// To manage memory allocation and deallocation for the minishell project.
 typedef struct s_gc
 {
 	t_gc_node	*head;
 }	t_gc;
 
+//hold all other structures
+// used to pass multiple parameters to functions
 typedef struct s_token_ctx
 {
     t_token **tokens;
@@ -112,9 +119,6 @@ char	*get_env_value(char *key, t_env *env);
 // Token functions 
 t_env	*env_new_node(char *key, char *content);
 void	env_add_node(t_env **head, t_env *new);
-
-
-// Token functions 
 t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc, t_command *cmd);
 int		check_syntax_token(t_token *token, t_command *cmd);
 int		free_token(t_token *token);
@@ -125,6 +129,9 @@ int handle_empty_expansion(t_token **tokens, t_gc *gc);
 int create_and_add_token(t_token **tokens, char *value,  t_token_type type, t_gc *gc);
 t_token	*create_token_gc(char *value, t_token_type type, t_gc *gc);
 void	add_token(t_token **head, t_token *new);
+t_token  *get_last_token(t_token_glbst *glbst);
+int add_split_words(t_token **tokens, char **split_words, t_gc *gc);
+int handle_double_char_op(t_token **tokens, char *line, int *i, t_gc *gc);
 
 // parse command
 t_command	*parse_commands(t_token *tokens);
@@ -135,16 +142,25 @@ t_command	*create_cmd_node(char **args, t_redirection *redirections);
 void	add_cmd_node(t_command **head, t_command *new);
 
 
-
 // herdoc
 void handl_herdoc(t_token *token, t_env *env_list, t_command *cmd);
 int is_delimiter_quoted(char *token_value);
-char *gen_file_name();
+char *gen_file_name(int index, char *s);
+void	free_and_close(char *clean_delimiter, int fd, char *delimiter);
+void	similation_herdoc(char *delimiter, int fd, t_env *env_list,t_command *cmd);
+int	prepare_delimiter(char **clean_delimiter, char *delimiter, int *quotes_flag);
 
+// expansion
+char *handle_exit_status(char **result, int *i, t_command *cmd);
+char	*expand_variables(const char *str, t_env *env, t_command *cmd);
+char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc, t_command *cmd);
+char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd);
+int		has_unquoted_variables(const char *str);
+char *handle_variable(char **result, const char *str, int *i, t_env *env);
 
 
 // Utility functions
-int	check_unclosed_quote(const char *line);
+int     has_quotes(const char *str);
 char	*remove_syntactic_quotes(char *str);
 char	*ft_strjoin_free(char *s1, char *s2);
 int		is_metacharacter(char c);
@@ -152,14 +168,10 @@ int		is_redirection(t_token_type type);
 void	print_error(char *error, char *detail);
 int		is_space(char c);
 char	*ft_strndup(const char *s, size_t n);
-char	*expand_variables(const char *str, t_env *env, t_command *cmd);
-char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc, t_command *cmd);
-int		has_unquoted_variables(const char *str);
 int		skip_spaces(const char *line, int *i);
 int		ft_strcmp(const char *s1, const char *s2);
 char	*ft_strcpy(char *dest, const char *src);
 char	*remove_quotes(char *str);
-char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd);
 
 // Garbage Collector functions
 void	gc_init(t_gc *gc);
@@ -179,5 +191,11 @@ void	free_env_array(char **envp);
 t_redirection *create_redirection(t_redir_type type, char *file);
 void add_redirection(t_redirection **head, t_redirection *new_redir);
 void free_redirections(t_redirection *redirections);
+
+//signals
+int get_execution_state(void);
+void set_execution_state(int state);
+void sigint_handler(int signum);
+void sigquit_handler(int signum);
 
 #endif

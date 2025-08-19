@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:00:44 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/18 02:21:24 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/19 00:46:08 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,9 @@ void	exec_child(t_command *cmd, t_env **env)
 {
 	char	**env_arr;
 
+	/* Reset signals to default in child processes */
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	env_arr = env_to_array(*env);
 	if (!env_arr)
 	{

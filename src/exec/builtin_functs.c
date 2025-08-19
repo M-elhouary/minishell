@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 03:56:15 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/18 04:15:47 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/19 02:00:15 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,13 +130,13 @@ int	unset_c(char **args, t_env **env, int fd)
 	return (res);
 }
 
-int	exit_c(char **args, int fd)
+int	exit_c(char **args, int fd, int exit_status)
 {
 	long	exit_code;
 	char	*endptr;
 
 	print("exit\n", 2);
-	exit_code = 0;
+	exit_code = exit_status;
 	if (args[1])
 	{
 		if (args[2])
@@ -155,3 +155,13 @@ int	exit_c(char **args, int fd)
 	}
 	exit((unsigned char)exit_code);
 }
+
+
+// ➜  minish git:(exec) ✗ ./minishell 
+// minishell$ lll
+// minishell: lll: command not found
+// minishell$ exit
+// exit
+// ➜  minish git:(exec) ✗ echo $?
+// 0 
+// it should not be 0 but it should be the last exit status in this case 127
