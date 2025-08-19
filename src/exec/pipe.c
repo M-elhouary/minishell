@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 03:51:06 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/19 02:27:27 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/19 02:43:56 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 // exit
 // 1   456  fil8  file8    libft     minishell  src
 // 45  78   file  include  Makefile  README.md
+
+
 
 #include "minishell.h"
 
