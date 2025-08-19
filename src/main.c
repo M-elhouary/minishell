@@ -6,11 +6,12 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/19 04:38:33 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 05:11:35 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 
 
 int	main(int ac, char **av, char **env)
@@ -33,8 +34,10 @@ int	main(int ac, char **av, char **env)
 
 	while (1)
 	{
-		signal(SIGINT, sigint_parent_handler);
-		signal(SIGQUIT, SIG_IGN);
+		signal(SIGINT, sigint_interactive);
+        signal(SIGQUIT, sigquit_interactive);
+		// signal(SIGINT, sigint_handler);
+		// signal(SIGQUIT, SIG_IGN); // Ignore SIGQUIT in main loop
 		// Ensure cmd always exists for $? expansion
 		if (!cmd)
 		{
@@ -45,7 +48,9 @@ int	main(int ac, char **av, char **env)
 			cmd->args = NULL;
 			cmd->path = NULL;
 			cmd->redirections = NULL;
+			cmd->print_exit = 0;
 			cmd->next = NULL;
+	
 		}
 
 		line = readline("minishell$ "); // how readline works

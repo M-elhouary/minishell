@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/19 03:53:14 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 05:12:56 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ typedef struct s_command
     int ac;
     char *path;
     char **args;
+	int		print_exit;
     t_redirection *redirections;  // New field
     struct s_command *next;
 } t_command;
@@ -193,10 +194,8 @@ void add_redirection(t_redirection **head, t_redirection *new_redir);
 void free_redirections(t_redirection *redirections);
 
 //signals
-int get_execution_state(void);
-void set_execution_state(int state);
-void	sigint_parent_handler(int sig);
+void	sigquit_interactive(int sig);
+void	sigint_interactive(int sig);
 void	sigint_child_handler(int sig);
-void sigquit_handler(int signum);
 
 #endif

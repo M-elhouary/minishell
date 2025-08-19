@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:00:44 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/19 02:52:01 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 05:08:47 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,16 @@ int	validate_cmd_path(char *path, char *cmd)
 {
 	struct stat st;
 	
+	if (ft_strcmp(cmd, ".") == 0)
+	{
+		fprintf(stderr, "minishell: %s: filename argument required\n", cmd);
+		return (2);
+	}
+	if (ft_strcmp(cmd, "..") == 0)
+	{
+		fprintf(stderr, "minishell: %s: command not found\n", cmd);
+		return (127);
+	}
 	if (access(path, F_OK) != 0)
 	{
 		fprintf(stderr, "minishell: %s: No such file or directory\n", cmd);
@@ -77,21 +87,33 @@ void	exec_child(t_command *cmd, t_env **env)
 	}
 }
 
+// int	wait_child(pid_t pid)
+// {
+// 	int	status;
+	
+// 	if (waitpid(pid, &status, 0) == -1)
+// 	{
+// 		perror("waitpid");
+// 		return (1);
+// 	}
+// 	return (exit_status(status));
+// }
+
 int	wait_child(pid_t pid)
 {
-	int	status;
-	
-	if (waitpid(pid, &status, 0) == -1)
-	{
-		perror("waitpid");
-		return (1);
-	}
-	if (WIFSIGNALED(status))
-	{
-		if (WTERMSIG(status) == SIGINT)
-			write(1, "\n", 1);
-	}
-	return (exit_status(status));	
+    int	status;
+
+    while (waitpid(pid, &status, 0) == -1)
+    {
+        if (errno == EINTR)
+            continue;
+        perror("waitpid");
+        return (1);
+    }
+    // For a single command, print one newline on Ctrl-C
+    if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+        write(STDOUT_FILENO, "\n", 1);
+    return (exit_status(status));
 }
 
 int	check_cmd_path(char *path, char *cmd)
@@ -146,16 +168,52 @@ static int	handle_builtin_execution(t_command *cmd, t_env **env, int original_st
 	return (NOT_BUILTIN);
 }
 
-static int	handle_external_command_mode(t_command *cmd, t_env **env, int fd, int in_child)
+// static int	handle_external_command_mode(t_command *cmd, t_env **env, int fd, int in_child)
+// {
+//     pid_t   pid;
+//     int     validate_res;
+
+//     if (check_cmd_path(cmd->path, cmd->args[0]))
+//         return (127);
+//     validate_res = validate_cmd_path(cmd->path, cmd->args[0]);
+//     if (validate_res != 0)
+//         return (validate_res);
+//     if (in_child)
+//     {
+//         if (handle_redirections(cmd->redirections) != 0)
+//             return (1);
+//         if (fd != STDOUT_FILENO)
+//             dup2(fd, STDOUT_FILENO);
+//         exec_child(cmd, env);
+//     }
+//     pid = fork();
+//     if (pid == -1)
+//     {
+//         perror("fork");
+//         return (1);
+//     }
+//     if (pid == 0)
+//     {
+//         if (handle_redirections(cmd->redirections) != 0)
+//             exit(1);
+//         if (fd != STDOUT_FILENO)
+//             dup2(fd, STDOUT_FILENO);
+//         exec_child(cmd, env);
+//     }
+//     return (wait_child(pid));
+// }
+
+int	handle_external_command_mode(t_command *cmd, t_env **env, int fd, int in_child)
 {
     pid_t   pid;
     int     validate_res;
-
+	
     if (check_cmd_path(cmd->path, cmd->args[0]))
         return (127);
     validate_res = validate_cmd_path(cmd->path, cmd->args[0]);
     if (validate_res != 0)
         return (validate_res);
+
     if (in_child)
     {
         if (handle_redirections(cmd->redirections) != 0)
@@ -164,21 +222,35 @@ static int	handle_external_command_mode(t_command *cmd, t_env **env, int fd, int
             dup2(fd, STDOUT_FILENO);
         exec_child(cmd, env);
     }
+
+    // Parent: ignore SIGINT/SIGQUIT for the foreground child, restore after wait
+    void (*old_int)(int) = signal(SIGINT, SIG_IGN);
+    void (*old_quit)(int) = signal(SIGQUIT, SIG_IGN);
+
     pid = fork();
     if (pid == -1)
     {
+        signal(SIGINT, old_int);
+        signal(SIGQUIT, old_quit);
         perror("fork");
         return (1);
     }
     if (pid == 0)
     {
+        signal(SIGINT, SIG_DFL);
+        signal(SIGQUIT, SIG_DFL);
         if (handle_redirections(cmd->redirections) != 0)
             exit(1);
         if (fd != STDOUT_FILENO)
             dup2(fd, STDOUT_FILENO);
         exec_child(cmd, env);
     }
-    return (wait_child(pid));
+
+    int rc = wait_child(pid);
+
+    signal(SIGINT, old_int);
+    signal(SIGQUIT, old_quit);
+    return rc;
 }
 
 int exec_cmd_ex(t_command *cmd, t_env **env, int fd, int in_child)

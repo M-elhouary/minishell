@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/19 04:44:55 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 05:16:07 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ void	similation_herdoc(char *delimiter, int fd, t_env *env_list,
     int quotes_for_expansion;
     char *line, *clean_delimiter;
 	signal(SIGINT, sigint_child_handler);
-	signal(SIGQUIT, SIG_IGN);
     if (!prepare_delimiter(&clean_delimiter, delimiter, &quotes_for_expansion))
     {
         close(fd);
@@ -69,6 +68,7 @@ static int	process_heredoc_token(t_token *tmp, t_env *env_list, t_command *cmd)
 
 	int wait_result, status, fd;
 	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	if (pid < 0)
 	return (0);
 	pid = fork();

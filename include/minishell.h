@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/19 01:59:45 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/19 03:06:09 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	cd_c(char **args, t_env **env, int fd);
 int	env_c(t_env *env, int fd);
 int	export_c(char **args, t_env **env, int fd);
 int	unset_c(char **args, t_env **env, int fd);
-int	exit_c(char **args, int fd, int exit_status);
+int	exit_c(char **args, int fd, int exit_status, int print_exit);
 t_builtin	exec_builtin(t_command *cmd, t_env **env, int fd);
 
 char	*ft_strcat(char *dst, char *src);
