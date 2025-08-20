@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/19 05:16:07 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 05:55:45 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,15 @@ void	similation_herdoc(char *delimiter, int fd, t_env *env_list,
     while (1)
     {
         line = readline(">");
-        if (!line || ft_strcmp(line, clean_delimiter) == 0)
+		if(!line)
+		{
+			free(line);
+			print_error(delimiter, "warning: here-document at line 1 delimited by end-of-file wanted ==> ");
+            break ;
+		}
+        if (ft_strcmp(line, clean_delimiter) == 0)
         {
             free(line);
-			print_error(delimiter, "warning: here-document at line 1 delimited by end-of-file wanted ==> ");
             break ;
         }
         if (!quotes_for_expansion)
@@ -97,7 +102,7 @@ static int	process_heredoc_token(t_token *tmp, t_env *env_list, t_command *cmd)
 	if (WIFEXITED(status))
 	{
 		cmd->status_exit = WEXITSTATUS(status);
-		return (tmp->next->value = ft_strdup(file_name), free(file_name), 1);
+		return (tmp->next->value = ft_strdup(file_name), free(file_name), cmd->status_exit);
 	}
 	return (free(file_name), 0);
 }
