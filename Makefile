@@ -30,7 +30,9 @@ SRCS_PARSE = src/main.c \
 	   src/parser/parse_command/redirections.c\
 	   src/parser/herdoc/herdoc.c\
 	   src/parser/herdoc/utils.c\
-	   src/garbage_collector.c\
+	   src/garbage_c/garbage_collector.c\
+	   src/garbage_c/gc_help_func.c\
+	   src/garbage_c/gc_help_func2.c\
 	   src/parser/signals.c \
 
 

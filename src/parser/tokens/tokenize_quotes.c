@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:53 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/15 21:39:45 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/21 18:49:35 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ int	handle_quotes(const char *line, int *i)
 	return (1);
 }
 
-// This function extracts a quoted string,
 char	*extract_quoted(const char *line, int *i)
 {
 	char quote;
@@ -51,10 +50,8 @@ char	*extract_quoted(const char *line, int *i)
 	}
 	if (!line[*i])
 	{
-		// Unclosed quote: return from start to end (including opening quote)
 		return (ft_substr(line, start, *i - start));
 	}
-	// Closed quote: return inside quotes
-	(*i)++; // skip closing quote
+	(*i)++;
 	return (ft_substr(line, start + 1, len));
 }

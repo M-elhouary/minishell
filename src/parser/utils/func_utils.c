@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 16:04:05 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/20 23:48:24 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/21 18:47:30 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ char	*ft_strcpy(char *dest, const char *src)
 	{
 		*dest++ = *src++;
 	}
-	*dest = '\0'; // Add null terminator
+	*dest = '\0';
 	return (start);
 }
 
@@ -100,15 +100,12 @@ int	has_unclosed_quote(const char *line)
 	quote = 0;
 	while (line[i])
 	{
-		// If not in a quote and found a quote character, enter quote mode
 		if (!quote && (line[i] == '\'' || line[i] == '"'))
 			quote = line[i];
-		// If in a quote and found matching quote character, exit quote mode
 		else if (quote && line[i] == quote)
 			quote = 0;
 		i++;
 	}
-	// If still in a quote at end of line, there's an unclosed quote
 	return (quote != 0);
 }
 
