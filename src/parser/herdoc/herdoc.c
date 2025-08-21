@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+
+// struc
 typedef struct s_heredoc_ctx
 {
 	char		*delimiter;
