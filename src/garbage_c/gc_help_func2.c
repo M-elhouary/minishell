@@ -1,39 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   func_help.c                                        :+:      :+:    :+:   */
+/*   gc_help_2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/01 21:13:44 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/21 18:53:22 by mel-houa         ###   ########.fr       */
+/*   Created: 2025/08/21 20:27:04 by mel-houa          #+#    #+#             */
+/*   Updated: 2025/08/21 20:28:58 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parse.h"
 
-char	*get_key(char *env_str)
+
+
+#include "minishell.h"
+
+
+void	gc_destroy(t_gc *gc)
 {
-	int		i;
-	char	*key;
+	if (!gc)
+		return ;
+	gc_free_all(gc);
+}
 
-	i = 0;
-	while (env_str[i] && env_str[i] != '=')
-		i++;
-	key = ft_strndup(env_str, i);
-	return (key);
-} 
-
-char	*get_content(char *env_str)
+char	*gc_strndup(t_gc *gc, const char *s, size_t n)
 {
-	int i;
-	char *content;
+	char	*dup;
+	size_t	i;
 
-	i = 0;
-	while (env_str[i] && env_str[i] != '=') 
-		i++;
-	if (!env_str[i])
+	if (!s || !gc)
 		return (NULL);
-	content = ft_strdup(env_str + i + 1);
-	return (content);
+	dup = gc_malloc(gc, n + 1);
+	if (!dup)
+		return (NULL);
+	i = 0;
+	while (i < n && s[i])
+	{
+		dup[i] = s[i];
+		i++;
+	}
+	dup[i] = '\0';
+	return (dup);
 }

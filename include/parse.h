@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/21 06:25:40 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/21 20:52:30 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,29 +144,20 @@ void	add_cmd_node(t_command **head, t_command *new);
 
 
 // herdoc
-int handl_herdoc(t_token *token, t_env *env_list, t_command *cmd);
 int handl_herdoc_gc(t_token *token, t_env *env_list, t_command *cmd, t_gc *gc);
 int is_delimiter_quoted(char *token_value);
-char	*gen_file_name(char *s, int random_nb);
 char	*gen_file_name_gc(char *s, int random_nb, t_gc *gc);
-void	free_and_close(char *clean_delimiter, int fd, char *delimiter);
 void	free_and_close_gc(char *clean_delimiter, int fd, char *delimiter, t_gc *gc);
-void	similation_herdoc(char *delimiter, int fd, t_env *env_list,t_command *cmd);
 void	similation_herdoc_gc(char *delimiter, int fd, t_env *env_list, t_command *cmd);
-int	prepare_delimiter(char **clean_delimiter, char *delimiter, int *quotes_flag);
 int	prepare_delimiter_gc(char **clean_delimiter, char *delimiter, int *quotes_flag, t_gc *gc);
 
 // expansion
-char *handle_exit_status(char **result, int *i, t_command *cmd);
-char *handle_exit_status_gc(char **result, int *i, t_command *cmd, t_gc *gc);
-char	*expand_variables(const char *str, t_env *env, t_command *cmd);
+char	*handle_exit_status_gc(char **result, int *i, t_command *cmd, t_gc *gc);
 char	*expand_variables_gc(const char *str, t_env *env, t_command *cmd, t_gc *gc);
 char	**expand_and_split_gc_updated(const char *word, t_env *env, t_gc *gc, t_command *cmd);
-char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd);
 char	*expand_var_in_string_gc(const char *str, t_env *env, t_command *cmd, t_gc *gc);
 int		has_unquoted_variables(const char *str);
-char *handle_variable(char **result, const char *str, int *i, t_env *env);
-char *handle_variable_gc(char **result, const char *str, int *i, t_env *env, t_gc *gc);
+char	*handle_variable_gc(char **result, const char *str, int *i, t_env *env, t_gc *gc);
 
 
 // Utility functions

@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:03:01 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/21 06:32:27 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/21 23:11:57 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,7 @@ char	*random_char_gc(char *s, int random_nb, t_gc *gc)
 	gc_itoa = gc_strdup(gc, itoa_result);
 	gc_s = gc_strdup(gc, s);
 	result = ft_strjoin_free_gc(gc_itoa, gc_s, gc);
-	free(itoa_result); // ft_itoa memory must be freed with free()
-	random_nb++;
+	free(itoa_result); 
 	return (result);
 }
 int	is_delimiter_quoted(char *token_value)
@@ -47,10 +46,10 @@ char	*gen_file_name_gc(char *s, int random_nb, t_gc *gc)
 	name = random_char_gc(s, random_nb, gc);
 	prefix = gc_strdup(gc, "/tmp/.heredoc_");
 	result = ft_strjoin_free_gc(prefix, name, gc);
+	printf("%s\n", result);
 	return (result);
 }
 
-/* Helper function to free resources and close fd */
 void	free_and_close_gc(char *clean_delimiter, int fd, char *delimiter, t_gc *gc)
 {
 	(void)clean_delimiter;

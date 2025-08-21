@@ -6,13 +6,12 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:34 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/21 16:48:49 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/21 18:50:34 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// creat new nod == new command
 t_command	*create_cmd_node_gc(char **args, t_redirection *redirections, t_gc *gc)
 {
 	t_command	*new_cmd;
@@ -28,7 +27,6 @@ t_command	*create_cmd_node_gc(char **args, t_redirection *redirections, t_gc *gc
 	new_cmd->next = NULL;
 	return (new_cmd);
 }
-// add new command to linkliste
 void	add_cmd_node(t_command **head, t_command *new)
 {
 	t_command	*tmp;

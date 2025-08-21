@@ -6,14 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:42 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/10 15:47:23 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/21 19:15:19 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
-
 
 void	count_tokens(t_token *temp, int *arg_count, int *in_count, int *out_count)
 {
