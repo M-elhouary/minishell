@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/16 22:42:44 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/21 06:25:40 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ typedef struct s_command
     int ac;
     char *path;
     char **args;
+	int		print_exit;
     t_redirection *redirections;  // New field
     struct s_command *next;
 } t_command;
@@ -123,7 +124,7 @@ t_token	*tokenize_gc(char *line, t_env *env, t_gc *gc, t_command *cmd);
 int		check_syntax_token(t_token *token, t_command *cmd);
 int		free_token(t_token *token);
 int		handle_quotes(const char *line, int *i);
-char	*extract_word(char *line, int *i);
+char	*extract_word_gc(char *line, int *i, t_gc *gc);
 int	has_unclosed_quote(const char *line);
 int handle_empty_expansion(t_token **tokens, t_gc *gc);
 int create_and_add_token(t_token **tokens, char *value,  t_token_type type, t_gc *gc);
@@ -134,49 +135,62 @@ int add_split_words(t_token **tokens, char **split_words, t_gc *gc);
 int handle_double_char_op(t_token **tokens, char *line, int *i, t_gc *gc);
 
 // parse command
-t_command	*parse_commands(t_token *tokens);
+t_command	*parse_commands_gc(t_token *tokens, t_gc *gc);
 void		free_commands(t_command *commands);
 int			check_flags(t_token *temp, int *append_flag, int *heredoc_flag);
 void	count_tokens(t_token *temp, int *arg_count, int *in_count, int *out_count);
-t_command	*create_cmd_node(char **args, t_redirection *redirections);
+t_command	*create_cmd_node_gc(char **args, t_redirection *redirections, t_gc *gc);
 void	add_cmd_node(t_command **head, t_command *new);
 
 
 // herdoc
-void handl_herdoc(t_token *token, t_env *env_list, t_command *cmd);
+int handl_herdoc(t_token *token, t_env *env_list, t_command *cmd);
+int handl_herdoc_gc(t_token *token, t_env *env_list, t_command *cmd, t_gc *gc);
 int is_delimiter_quoted(char *token_value);
-char *gen_file_name(int index, char *s);
+char	*gen_file_name(char *s, int random_nb);
+char	*gen_file_name_gc(char *s, int random_nb, t_gc *gc);
 void	free_and_close(char *clean_delimiter, int fd, char *delimiter);
+void	free_and_close_gc(char *clean_delimiter, int fd, char *delimiter, t_gc *gc);
 void	similation_herdoc(char *delimiter, int fd, t_env *env_list,t_command *cmd);
+void	similation_herdoc_gc(char *delimiter, int fd, t_env *env_list, t_command *cmd);
 int	prepare_delimiter(char **clean_delimiter, char *delimiter, int *quotes_flag);
+int	prepare_delimiter_gc(char **clean_delimiter, char *delimiter, int *quotes_flag, t_gc *gc);
 
 // expansion
 char *handle_exit_status(char **result, int *i, t_command *cmd);
+char *handle_exit_status_gc(char **result, int *i, t_command *cmd, t_gc *gc);
 char	*expand_variables(const char *str, t_env *env, t_command *cmd);
-char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc, t_command *cmd);
+char	*expand_variables_gc(const char *str, t_env *env, t_command *cmd, t_gc *gc);
+char	**expand_and_split_gc_updated(const char *word, t_env *env, t_gc *gc, t_command *cmd);
 char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd);
+char	*expand_var_in_string_gc(const char *str, t_env *env, t_command *cmd, t_gc *gc);
 int		has_unquoted_variables(const char *str);
 char *handle_variable(char **result, const char *str, int *i, t_env *env);
+char *handle_variable_gc(char **result, const char *str, int *i, t_env *env, t_gc *gc);
 
 
 // Utility functions
 int     has_quotes(const char *str);
 char	*remove_syntactic_quotes(char *str);
 char	*ft_strjoin_free(char *s1, char *s2);
+char	*ft_strjoin_free_gc(char *s1, char *s2, t_gc *gc);
 int		is_metacharacter(char c);
 int		is_redirection(t_token_type type);
 void	print_error(char *error, char *detail);
 int		is_space(char c);
 char	*ft_strndup(const char *s, size_t n);
+char	*ft_strndup_gc(t_gc *gc, const char *s, size_t n);
 int		skip_spaces(const char *line, int *i);
 int		ft_strcmp(const char *s1, const char *s2);
 char	*ft_strcpy(char *dest, const char *src);
 char	*remove_quotes(char *str);
+char	*remove_quotes_gc(char *str, t_gc *gc);
 
 // Garbage Collector functions
 void	gc_init(t_gc *gc);
 void	*gc_malloc(t_gc *gc, size_t size);
 char	*gc_strdup(t_gc *gc, const char *s);
+char	*gc_strndup(t_gc *gc, const char *s, size_t n);
 char	**gc_split(t_gc *gc, char const *s, char c);
 void	gc_free_all(t_gc *gc);
 void	gc_destroy(t_gc *gc);
@@ -188,14 +202,13 @@ char	**env_to_array(t_env *env);
 void	free_env_array(char **envp);
 
 // Redirection functions
-t_redirection *create_redirection(t_redir_type type, char *file);
+t_redirection *create_redirection_gc(t_redir_type type, char *file, t_gc *gc);
 void add_redirection(t_redirection **head, t_redirection *new_redir);
 void free_redirections(t_redirection *redirections);
 
 //signals
-int get_execution_state(void);
-void set_execution_state(int state);
-void sigint_handler(int signum);
-void sigquit_handler(int signum);
+void	sigquit_interactive(int sig);
+void	sigint_interactive(int sig);
+void	sigint_child_handler(int sig);
 
 #endif
