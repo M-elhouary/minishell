@@ -6,13 +6,13 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/19 05:20:24 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/20 23:48:25 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// Main function refactored to use helpers
+// Main function refactored to use helpers - legacy version
 char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd)
 {
 	int	i;
@@ -39,7 +39,34 @@ char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd)
 	return (result);
 }
 
-// Handle quoted substrings  expanding variables if needed
+// Main function refactored to use helpers
+char	*expand_var_in_string_gc(const char *str, t_env *env, t_command *cmd, t_gc *gc)
+{
+	int	i;
+
+	char *result, *tmp;
+	//empty string to start with for func ft_strjoin_free use 
+	//
+	result = gc_strdup(gc, ""); 
+	
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '$' && str[i + 1] == '?')
+			result = handle_exit_status_gc(&result, &i, cmd, gc);
+		else if (str[i] == '$' && (ft_isalpha(str[i + 1]) || str[i + 1] == '_'))
+			result = handle_variable_gc(&result, str, &i, env, gc);
+		else
+		{
+			tmp = gc_strndup(gc, str + i, 1);
+			result = ft_strjoin_free_gc(result, tmp, gc);
+			i++;
+		}
+	}
+	return (result);
+}
+
+// Handle quoted substrings  expanding variables if needed - legacy version
 static char	*process_quoted(const char *str, int *i, t_env *env, t_command *cmd)
 {
 	char	quote;
@@ -66,7 +93,7 @@ static char	*process_quoted(const char *str, int *i, t_env *env, t_command *cmd)
 		return (expnd);
 }
 
-// Handle unquoted substrings and  expanding variables
+// Handle unquoted substrings and  expanding variables - legacy version
 static char	*process_unquoted(const char *str, int *i, t_env *env,
 		t_command *cmd)
 {
@@ -83,7 +110,7 @@ static char	*process_unquoted(const char *str, int *i, t_env *env,
 	return (result);
 }
 
-//  to process the main loop of expand_variables
+//  to process the main loop of expand_variables - legacy version
 //  for expand_variables processes the main loop
 static char	*expand_variables_loop(const char *str, t_env *env, int *i_ptr,
 		t_command *cmd)
@@ -111,7 +138,77 @@ static char	*expand_variables_loop(const char *str, t_env *env, int *i_ptr,
 	return (result);
 }
 
-// Expand all variables in a string, handling quotes
+// Handle quoted substrings  expanding variables if needed
+static char	*process_quoted_gc(const char *str, int *i, t_env *env, t_command *cmd, t_gc *gc)
+{
+	char	quote;
+	int		start;
+	char	*expnd;
+	char	*result;
+
+	quote = str[*i];
+	(*i)++;
+	start = *i;
+	while (str[*i] && str[*i] != quote)
+		(*i)++;
+	if (!str[*i])
+		return (gc_strdup(gc, ""));
+	expnd = gc_strndup(gc, str + start, *i - start);
+	(*i)++;
+	if (quote == '"')
+	{
+		result = expand_var_in_string_gc(expnd, env, cmd, gc);
+		return (result);
+	}
+	else
+		return (expnd);
+}
+
+// Handle unquoted substrings and  expanding variables
+static char	*process_unquoted_gc(const char *str, int *i, t_env *env,
+		t_command *cmd, t_gc *gc)
+{
+	int		start;
+	char	*expnd;
+	char	*result;
+
+	start = *i;
+	while (str[*i] && str[*i] != '\'' && str[*i] != '"')
+		(*i)++;
+	expnd = gc_strndup(gc, str + start, *i - start);
+	result = expand_var_in_string_gc(expnd, env, cmd, gc);
+	return (result);
+}
+
+//  to process the main loop of expand_variables
+//  for expand_variables processes the main loop
+static char	*expand_variables_loop_gc(const char *str, t_env *env, int *i_ptr,
+		t_command *cmd, t_gc *gc)
+{
+	char	*result;
+	char	*expnd;
+	int		i;
+
+	result = gc_strdup(gc, "");
+	i = *i_ptr;
+	while (str[i])
+	{
+		if (str[i] == '\'' || str[i] == '"')
+		{
+			expnd = process_quoted_gc(str, &i, env, cmd, gc);
+			result = ft_strjoin_free_gc(result, expnd, gc);
+		}
+		else
+		{
+			expnd = process_unquoted_gc(str, &i, env, cmd, gc);
+			result = ft_strjoin_free_gc(result, expnd, gc);
+		}
+	}
+	*i_ptr = i;
+	return (result);
+}
+
+// Expand all variables in a string, handling quotes - legacy version  
 char	*expand_variables(const char *str, t_env *env, t_command *cmd)
 {
 	char *result;
@@ -119,5 +216,16 @@ char	*expand_variables(const char *str, t_env *env, t_command *cmd)
 	if (!str)
 		return (ft_strdup("")); // why allocate memory for empty string?
 	result = expand_variables_loop(str, env, &i, cmd);
+	return (result);
+}
+
+// Expand all variables in a string, handling quotes
+char	*expand_variables_gc(const char *str, t_env *env, t_command *cmd, t_gc *gc)
+{
+	char *result;
+	int i = 0;
+	if (!str)
+		return (gc_strdup(gc, "")); // why allocate memory for empty string?
+	result = expand_variables_loop_gc(str, env, &i, cmd, gc);
 	return (result);
 }

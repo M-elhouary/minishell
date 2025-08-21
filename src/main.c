@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/19 05:11:35 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/21 16:59:16 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int	main(int ac, char **av, char **env)
 	t_env *env_list;
 	t_gc gc;
 	int exit_code;
+	int last_exit_status = 0;  // Persistent exit status storage
 
 	(void)ac;
 	(void)av;
@@ -41,10 +42,10 @@ int	main(int ac, char **av, char **env)
 		// Ensure cmd always exists for $? expansion
 		if (!cmd)
 		{
-			cmd = malloc(sizeof(t_command));
+			cmd = malloc(sizeof(t_command));  // Use malloc - don't let GC manage it
 			if (!cmd)
 				return (1);
-			cmd->status_exit = 0;
+			cmd->status_exit = last_exit_status;  // Restore previous exit status
 			cmd->args = NULL;
 			cmd->path = NULL;
 			cmd->redirections = NULL;
@@ -76,38 +77,28 @@ int	main(int ac, char **av, char **env)
 			gc_free_all(&gc);
 			continue ;
 		}
-		if(handl_herdoc(tokens, env_list, cmd))
+		if(handl_herdoc_gc(tokens, env_list, cmd, &gc))
 			continue;
 		// Only create new command if syntax is correct
-		tmp_cmd = parse_commands(tokens);
-		//  printf("%d\n", cmd->status_exit);
+		tmp_cmd = parse_commands_gc(tokens, &gc);
+		// printf("%d\n", cmd->status_exit);
 		if (tmp_cmd)
 		{
-			// Save the previous exit status in the new command
-			int prev_status = cmd->status_exit;
-
-			// Free old cmd safely
-			free_commands(cmd);
-
-			// Use new command and restore exit status
-			cmd = tmp_cmd;
-			cmd->status_exit = prev_status;
-
-			tmp_cmd = cmd;
-			while (tmp_cmd)
+			// Set paths for the new command
+			t_command *current = tmp_cmd;
+			while (current)
 			{
-				if (tmp_cmd->args && tmp_cmd->args[0])
-					tmp_cmd->path = locate_cmd(tmp_cmd->args[0], env_list);
-				tmp_cmd = tmp_cmd->next;
+				if (current->args && current->args[0])
+					current->path = locate_cmd(current->args[0], env_list);
+				current = current->next;
 			}
 
-			// Set path and execute
-			// cmd->path = locate_cmd(cmd->args[0]);
-			// exit_code = exec_cmd(cmd, &env_list, 1);
-			exit_code = exec_pipeline(cmd, &env_list);
-
-			// Update exit status for next command
+			// Execute using the new command from parse_commands_gc
+			exit_code = exec_pipeline(tmp_cmd, &env_list);
+			// Update exit status in persistent cmd for next command
 			cmd->status_exit = exit_code;
+			last_exit_status = exit_code;  // Save exit status persistently
+			// printf("%d\n", cmd->status_exit);
 		//  printf("exec  %d\n", cmd->status_exit);
 
 			// if (exit_code != 0)
@@ -120,9 +111,10 @@ int	main(int ac, char **av, char **env)
 		gc_free_all(&gc);
 	}
 
-	// Final cleanup
+	// Final cleanup  
+	// Free the persistent cmd object
 	if (cmd)
-		free_commands(cmd);
+		free(cmd);
 	gc_destroy(&gc);
 	return (0);
 }

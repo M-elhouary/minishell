@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/19 02:23:02 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/20 23:39:27 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,10 @@ int	herdoc_token(char **split_words, char *word, t_token_glbst *glbst)
 	split_words = gc_malloc(glbst->gc, sizeof(char *) * 2);
 	if (!split_words)
 	{
-		free(word);
 		return (0);
 	}
-	split_words[0] = gc_strdup(glbst->gc, word);
+	split_words[0] = word;
 	split_words[1] = NULL;
-	free(word);
 	return (add_split_words(glbst->tokens, split_words, glbst->gc));
 }
 
@@ -78,7 +76,7 @@ static int	process_word_gc(char *line, int *i, t_token_glbst *glbst)
 	split_words = NULL;
 	// Extract the word from the line 
 	// used for make word  not have quotes and spaces and matchracters
-	word = extract_word(line, i);
+	word = extract_word_gc(line, i, glbst->gc);
 	if (!word)
 		return (0);
 	//case special characters  >>  dilimiter
@@ -88,14 +86,11 @@ static int	process_word_gc(char *line, int *i, t_token_glbst *glbst)
 	has_vars = has_unquoted_variables(word);
 	// Expand variables in the word
 	// if there are unquoted variables, expand them
-	expanded = expand_variables(word, glbst->env, glbst->cmd);
+	expanded = expand_variables_gc(word, glbst->env, glbst->cmd, glbst->gc);
 	// has_vars and expanded only check if the expansion resulted in an empty string
 	if (has_vars && (!expanded || !*expanded))
-		return (free(word), free(expanded),
-			handle_empty_expansion(glbst->tokens, glbst->gc));
-	free(expanded);
-	split_words = expand_and_split_gc(word, glbst->env, glbst->gc, glbst->cmd);
-	free(word);
+		return (handle_empty_expansion(glbst->tokens, glbst->gc));
+	split_words = expand_and_split_gc_updated(word, glbst->env, glbst->gc, glbst->cmd);
 	if (!split_words)
 		return (1);
 	return (add_split_words(glbst->tokens, split_words, glbst->gc));

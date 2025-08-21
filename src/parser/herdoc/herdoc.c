@@ -6,108 +6,144 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/19 05:55:45 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/21 07:01:42 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// if del on qotes not expanded
+typedef struct s_heredoc_ctx
+{
+	char		*delimiter;
+	int			fd;
+	t_env		*env_list;
+	t_command	*cmd;
+	t_gc		*gc;
+}	t_heredoc_ctx;
 
-static void	process_herdoc_line(char *line, int fd, t_env *env_list,
-		t_command *cmd)
+static int	prepare_heredoc_delimiter(t_heredoc_ctx *ctx, char **clean_delimiter)
+{
+	int	quotes_for_expansion;
+
+	// Always use non-GC version in child process for safety
+	if (!prepare_delimiter(clean_delimiter, ctx->delimiter, 
+			&quotes_for_expansion))
+	{
+		close(ctx->fd);
+		free(ctx->delimiter);
+		return (0);
+	}
+	return (quotes_for_expansion);
+}
+
+static void	process_heredoc_line(char *line, t_heredoc_ctx *ctx, int quotes_flag)
 {
 	char	*expanded;
 
-	expanded = expand_var_in_string(line, env_list, cmd);
-	free(line);
-	write(fd, expanded, ft_strlen(expanded));
-	write(fd, "\n", 1);
-	free(expanded);
+	if (!quotes_flag)
+	{
+		expanded = expand_var_in_string(line, ctx->env_list, ctx->cmd);
+		free(line);
+		write(ctx->fd, expanded, ft_strlen(expanded));
+		write(ctx->fd, "\n", 1);
+		free(expanded);
+	}
+	else
+	{
+		write(ctx->fd, line, ft_strlen(line));
+		write(ctx->fd, "\n", 1);
+		free(line);
+	}
 }
 
-void	similation_herdoc(char *delimiter, int fd, t_env *env_list,
+void	similation_herdoc_gc(char *delimiter, int fd, t_env *env_list, 
 		t_command *cmd)
 {
-    int quotes_for_expansion;
-    char *line, *clean_delimiter;
+	t_heredoc_ctx	ctx;
+	char			*line;
+	char			*clean_delimiter;
+	int				quotes_flag;
+
+	ctx = (t_heredoc_ctx){delimiter, fd, env_list, cmd, NULL};
 	signal(SIGINT, sigint_child_handler);
-    if (!prepare_delimiter(&clean_delimiter, delimiter, &quotes_for_expansion))
-    {
-        close(fd);
-        free(delimiter);
-        return;
-    }
-    while (1)
-    {
-        line = readline(">");
-		if(!line)
+	quotes_flag = prepare_heredoc_delimiter(&ctx, &clean_delimiter);
+	if (quotes_flag == 0 && !clean_delimiter)
+	{
+		free(delimiter);
+		close(fd);
+		exit(1);
+	}
+	while (1)
+	{
+		line = readline(">");
+		if (!line)
+		{
+			print_error(delimiter, "warning: here-document at line 1 delimited by end-of-file wanted ==> ");
+			break ;
+		}
+		if (ft_strcmp(line, clean_delimiter) == 0)
 		{
 			free(line);
-			print_error(delimiter, "warning: here-document at line 1 delimited by end-of-file wanted ==> ");
-            break ;
+			break ;
 		}
-        if (ft_strcmp(line, clean_delimiter) == 0)
-        {
-            free(line);
-            break ;
-        }
-        if (!quotes_for_expansion)
-            process_herdoc_line(line, fd, env_list, cmd);
-        else
-        {
-            write(fd, line, ft_strlen(line));
-            write(fd, "\n", 1);
-            free(line);
-        }
-    }
-    free_and_close(clean_delimiter, fd, delimiter);
+		process_heredoc_line(line, &ctx, quotes_flag);
+	}
+	free(clean_delimiter);
+	free(delimiter);
+	close(fd);
 }
 
-/* Process a heredoc token */
-static int	process_heredoc_token(t_token *tmp, t_env *env_list, t_command *cmd)
+static int	process_heredoc_token_gc(t_token *tmp, t_env *env_list, t_command *cmd, t_gc *gc)
 {
-	char	*file_name;
-	static int random_nb;
-	int	pid = 0;
+	char		*file_name;
+	int			pid_for_name;
+	int			pid;
+	int			wait_result;
+	int			status;
+	int			fd;
 
-	int wait_result, status, fd;
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	if (pid < 0)
-	return (0);
+	// First fork to get PID for file name generation
+	pid_for_name = fork();
+	if (pid_for_name < 0)
+		return (0);
+	if (pid_for_name == 0)
+		exit(0);
+	// Wait for first child and generate file name
+	waitpid(pid_for_name, NULL, 0);//>>
+	file_name = gen_file_name_gc(tmp->value, pid_for_name, gc);
+	fd = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+	if (fd < 0)
+		return (0);
+	// Second fork for heredoc processing
 	pid = fork();
-	if (pid != 0)
-	{
-		random_nb = pid;
-		file_name = gen_file_name(tmp->value, random_nb);
-		fd = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0600);
-		if (fd < 0)
-			return (free(file_name), 0);
-	}
-	if (pid == 0)
-		exit (0);
-	pid = fork();
 	if (pid == 0)
 	{
-		similation_herdoc(ft_strdup(tmp->next->value), fd, env_list, cmd);
+		similation_herdoc_gc(strdup(tmp->next->value), fd, env_list, cmd);
 		exit(0);
 	}
-	close(fd); // Close fd in parent process immediately
+	close(fd);
 	wait_result = waitpid(pid, &status, 0);
-	//this mean failed to wait for child process
 	if (wait_result == -1)
-		return (free(file_name), 0);
-		//this mean child process exited successfully
+		return (0);
 	if (WIFEXITED(status))
 	{
 		cmd->status_exit = WEXITSTATUS(status);
-		return (tmp->next->value = ft_strdup(file_name), free(file_name), cmd->status_exit);
+		if (cmd->status_exit == 130)  // Interrupted by SIGINT
+			return (130);
+		tmp->next->value = file_name;
+		return (cmd->status_exit);
 	}
-	return (free(file_name), 0);
+	if (WIFSIGNALED(status))
+	{
+		cmd->status_exit = 128 + WTERMSIG(status);
+		return (cmd->status_exit);
+	}
+	return (0);
 }
 
-int	handl_herdoc(t_token *token, t_env *env_list, t_command *cmd)
+int	handl_herdoc_gc(t_token *token, t_env *env_list, t_command *cmd, t_gc *gc)
 {
 	t_token	*tmp;
 
@@ -119,7 +155,7 @@ int	handl_herdoc(t_token *token, t_env *env_list, t_command *cmd)
 		if (tmp->type == HEREDOC && tmp->next && tmp->next->type == ARGUMENT
 			&& !tmp->next->is_empty_expansion)
 		{
-			if (process_heredoc_token(tmp, env_list, cmd))
+			if (process_heredoc_token_gc(tmp, env_list, cmd, gc))
 				return (1) ; // Stop if heredoc processing failed or was interrupted
 		}
 		if (tmp)
