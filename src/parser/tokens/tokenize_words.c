@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:58 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/15 02:21:03 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/20 23:48:25 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,31 @@ char	*remove_quotes(char *str)
 	return (new);
 }
 
+char	*remove_quotes_gc(char *str, t_gc *gc)
+{
+	char	*new;
+	int		i;
+	int		j;
 
-char	*extract_word(char *line, int *i)
+	i = 0;
+	j = 0;
+	if (!str)
+		return (NULL);
+	new = gc_malloc(gc, ft_strlen(str) + 1);
+	if (!new)
+		return (NULL);
+	while (str[i])
+	{
+		if (str[i] != '\'' && str[i] != '\"')
+			new[j++] = str[i];
+		i++;
+	}
+	new[j] = '\0';
+	return (new);
+}
+
+
+char	*extract_word_gc(char *line, int *i, t_gc *gc)
 {
     int		j = 0;
     char	*word;
@@ -63,7 +86,7 @@ char	*extract_word(char *line, int *i)
     }
     
     // Allocate and copy the word
-    word = malloc(word_len + 1);
+    word = gc_malloc(gc, word_len + 1);
     if (!word)
         return (NULL);
         
