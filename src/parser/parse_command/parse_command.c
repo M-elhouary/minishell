@@ -6,12 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 00:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/21 18:50:51 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/22 10:50:32 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
-
 
 static void	creat_node_redir(t_redir_type type, char *value,
 		t_redirection **redirections, t_gc *gc)
@@ -22,7 +21,8 @@ static void	creat_node_redir(t_redir_type type, char *value,
 	add_redirection(redirections, new_redir);
 }
 
-static void	help_fill_arrays(t_token *current, t_redirection **redirections, t_gc *gc)
+static void	help_fill_arrays(t_token *current, t_redirection **redirections,
+		t_gc *gc)
 {
 	if (current->type == REDIR_IN)
 	{
@@ -40,13 +40,15 @@ static void	help_fill_arrays(t_token *current, t_redirection **redirections, t_g
 	{
 		current = current->next;
 		if (current)
-			creat_node_redir(REDIR_TYPE_APPEND, current->value, redirections, gc);
+			creat_node_redir(REDIR_TYPE_APPEND, current->value, redirections,
+				gc);
 	}
 	else if (current->type == HEREDOC)
 	{
 		current = current->next;
 		if (current)
-			creat_node_redir(REDIR_TYPE_HEREDOC, current->value, redirections, gc);
+			creat_node_redir(REDIR_TYPE_HEREDOC, current->value, redirections,
+				gc);
 	}
 }
 
@@ -73,15 +75,17 @@ static t_token	*fill_arrays(t_token *current, char **args,
 	return (current);
 }
 
-static t_token	*process_command_node(t_token *current, t_command **cmd_list, t_gc *gc)
+static t_token	*process_command_node(t_token *current, t_command **cmd_list,
+		t_gc *gc)
 {
 	char			**args;
 	t_redirection	*redirections;
 	int				arg_count;
+	t_token			*tmp;
 
 	redirections = NULL;
 	arg_count = 0;
-	t_token *tmp = current; 
+	tmp = current;
 	while (tmp && tmp->type != PIPE)
 	{
 		if ((tmp->type == COMMAND || tmp->type == ARGUMENT)

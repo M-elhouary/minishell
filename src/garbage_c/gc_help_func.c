@@ -1,24 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   help_func.c                                        :+:      :+:    :+:   */
+/*   gc_help_func.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 19:31:20 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/21 20:27:11 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/22 10:51:57 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
- 
+
 void	gc_init(t_gc *gc)
 {
 	if (!gc)
 		return ;
 	gc->head = NULL;
 }
-
 
 void	copy_strings_gc(char *result, char *s1, char *s2)
 {
@@ -54,8 +53,6 @@ char	*ft_strjoin_free_gc(char *s1, char *s2, t_gc *gc)
 	return (result);
 }
 
-
-
 void	gc_free_all(t_gc *gc)
 {
 	t_gc_node	*current;
@@ -73,12 +70,3 @@ void	gc_free_all(t_gc *gc)
 	}
 	gc->head = NULL;
 }
-
-
-
-
-
-
-
-
-

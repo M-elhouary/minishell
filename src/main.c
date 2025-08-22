@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/21 19:05:41 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/22 10:48:57 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,26 +28,25 @@ int	main(int ac, char **av, char **env)
 	gc_init(&gc);
 	cmd = NULL;
 	env_list = my_env(env);
-	
+
 	while (1)
 	{
 		signal(SIGINT, sigint_interactive);
-        signal(SIGQUIT, sigquit_interactive);
+		signal(SIGQUIT, sigquit_interactive);
 		if (!cmd)
 		{
-			cmd = malloc(sizeof(t_command)); 
+			cmd = malloc(sizeof(t_command));
 			if (!cmd)
 				return (1);
-			cmd->status_exit = last_exit_status;  
+			cmd->status_exit = last_exit_status;
 			cmd->args = NULL;
 			cmd->path = NULL;
 			cmd->redirections = NULL;
 			cmd->print_exit = 0;
 			cmd->next = NULL;
-	
 		}
 
-		line = readline("minishell$ "); 
+		line = readline("minishell$ ");
 		if (!line)
 			break ;
 		if (!*line)
@@ -59,7 +58,7 @@ int	main(int ac, char **av, char **env)
 		tokens = tokenize_gc(line, env_list, &gc, cmd);
 		if (!tokens)
 		{
-			free(line);                               
+			free(line);
 			continue ;
 		}
 		if (!check_syntax_token(tokens, cmd))
@@ -68,8 +67,8 @@ int	main(int ac, char **av, char **env)
 			gc_free_all(&gc);
 			continue ;
 		}
-		if(handl_herdoc_gc(tokens, env_list, cmd, &gc))
-			continue;
+		if (handl_herdoc_gc(tokens, env_list, cmd, &gc))
+			continue ;
 		tmp_cmd = parse_commands_gc(tokens, &gc);
 		if (tmp_cmd)
 		{

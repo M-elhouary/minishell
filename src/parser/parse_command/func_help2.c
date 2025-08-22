@@ -6,13 +6,14 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:34 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/21 18:50:34 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/22 10:50:25 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_command	*create_cmd_node_gc(char **args, t_redirection *redirections, t_gc *gc)
+t_command	*create_cmd_node_gc(char **args, t_redirection *redirections,
+		t_gc *gc)
 {
 	t_command	*new_cmd;
 
@@ -29,7 +30,7 @@ t_command	*create_cmd_node_gc(char **args, t_redirection *redirections, t_gc *gc
 }
 void	add_cmd_node(t_command **head, t_command *new)
 {
-	t_command	*tmp;
+	t_command *tmp;
 
 	if (!head || !new)
 		return ;

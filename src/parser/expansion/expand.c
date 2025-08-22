@@ -6,20 +6,19 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/21 20:54:13 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/22 10:51:12 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
-char	*expand_var_in_string_gc(const char *str, t_env *env, t_command *cmd, t_gc *gc)
+char	*expand_var_in_string_gc(const char *str, t_env *env, t_command *cmd,
+		t_gc *gc)
 {
 	int	i;
 
 	char *result, *tmp;
-	result = gc_strdup(gc, ""); 
-	
+	result = gc_strdup(gc, "");
 	i = 0;
 	while (str[i])
 	{
@@ -37,8 +36,8 @@ char	*expand_var_in_string_gc(const char *str, t_env *env, t_command *cmd, t_gc 
 	return (result);
 }
 
-
-static char	*process_quoted_gc(const char *str, int *i, t_env *env, t_command *cmd, t_gc *gc)
+static char	*process_quoted_gc(const char *str, int *i, t_env *env,
+		t_command *cmd, t_gc *gc)
 {
 	char	quote;
 	int		start;
@@ -78,7 +77,6 @@ static char	*process_unquoted_gc(const char *str, int *i, t_env *env,
 	return (result);
 }
 
-
 static char	*expand_variables_loop_gc(const char *str, t_env *env, int *i_ptr,
 		t_command *cmd, t_gc *gc)
 {
@@ -105,12 +103,13 @@ static char	*expand_variables_loop_gc(const char *str, t_env *env, int *i_ptr,
 	return (result);
 }
 
-char	*expand_variables_gc(const char *str, t_env *env, t_command *cmd, t_gc *gc)
+char	*expand_variables_gc(const char *str, t_env *env, t_command *cmd,
+		t_gc *gc)
 {
 	char *result;
 	int i = 0;
 	if (!str)
-		return (gc_strdup(gc, "")); 
+		return (gc_strdup(gc, ""));
 	result = expand_variables_loop_gc(str, env, &i, cmd, gc);
 	return (result);
 }

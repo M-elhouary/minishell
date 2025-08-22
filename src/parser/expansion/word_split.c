@@ -23,8 +23,6 @@ static int	count_words_in_expanded(const char *str)
 	return (count);
 }
 
-
-
 static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 {
 	char	**words;
@@ -54,8 +52,8 @@ static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 	return (words);
 }
 
-
-char	**expand_and_split_gc_updated(const char *word, t_env *env, t_gc *gc, t_command *cmd)
+char	**expand_and_split_gc_updated(const char *word, t_env *env, t_gc *gc,
+		t_command *cmd)
 {
 	char	*expanded;
 	char	**split_words;
@@ -64,7 +62,7 @@ char	**expand_and_split_gc_updated(const char *word, t_env *env, t_gc *gc, t_com
 	if (!has_unquoted_variables(word))
 	{
 		expanded = expand_variables_gc(word, env, cmd, gc);
-		result = gc_malloc(gc, sizeof(char *) * 2); 
+		result = gc_malloc(gc, sizeof(char *) * 2);
 		if (!result)
 			return (NULL);
 		result[0] = expanded;

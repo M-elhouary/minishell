@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 21:13:44 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/21 18:53:22 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/22 10:51:43 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*get_key(char *env_str)
 		i++;
 	key = ft_strndup(env_str, i);
 	return (key);
-} 
+}
 
 char	*get_content(char *env_str)
 {
@@ -30,7 +30,7 @@ char	*get_content(char *env_str)
 	char *content;
 
 	i = 0;
-	while (env_str[i] && env_str[i] != '=') 
+	while (env_str[i] && env_str[i] != '=')
 		i++;
 	if (!env_str[i])
 		return (NULL);

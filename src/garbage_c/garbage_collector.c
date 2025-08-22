@@ -6,14 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:25 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/21 20:24:13 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/22 10:51:51 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "minishell.h"
-
-
 
 void	*gc_malloc(t_gc *gc, size_t size)
 {
