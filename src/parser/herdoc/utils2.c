@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 10:17:23 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 10:50:58 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 06:56:47 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 int	process_readline_input(char *line, char *clean_delimiter)
 {
 	if (!line)
-		return (0); // EOF
+		return (0);
 	if (ft_strcmp(line, clean_delimiter) == 0)
 	{
 		free(line);
-		return (-1); // Delimiter found
+		return (-1);
 	}
-	return (1); // Continue reading
+	return (1);
 }
 
 void	write_raw_line(char *line, int fd)
@@ -54,7 +54,7 @@ void	heredoc_readline_loop(t_heredoc_ctx *ctx, char *clean_delimiter,
 		if (read_result == 0)
 		{
 			print_error(ctx->delimiter,
-				"warning: here-document at line 1 delimited by end-of-file wanted ==> ");
+				"warning: here-document wanted> ");
 			break ;
 		}
 		if (read_result == -1)
@@ -68,8 +68,8 @@ void	heredoc_readline_loop(t_heredoc_ctx *ctx, char *clean_delimiter,
 
 int	fork_for_file_name(t_token *tmp, t_gc *gc, char **file_name, int *fd)
 {
-	static int random_nb;
-	int pid;
+	static int	random_nb;
+	int			pid;
 
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);

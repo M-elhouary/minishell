@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/22 11:15:10 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 07:36:32 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ typedef struct s_token_ctx
 	t_env					*env;
 	t_gc					*gc;
 	t_command				*cmd;
-}							t_token_ctx;
+}							t_token_glbst;
 
 // ================================================== parse command struct && enum =======================================================
 
@@ -196,7 +196,7 @@ t_command					*create_cmd_node_gc(char **args,
 								t_redirection *redirections, t_gc *gc);
 void						add_cmd_node(t_command **head, t_command *new);
 
-// =================================================== Here document functions =======================================================
+// =================================================== Herdoc functions =======================================================
 
 int							execute_heredoc_child(t_token *tmp, int fd,
 								t_heredoc_params *params);
@@ -226,7 +226,7 @@ char						*handle_exit_status_gc(char **result, int *i,
 								t_command *cmd, t_gc *gc);
 char						*expand_variables_gc(const char *str, t_env *env,
 								t_command *cmd, t_gc *gc);
-char						**expand_and_split_gc_updated(const char *word,
+char						**expand_and_split_gc(const char *word,
 								t_env *env, t_gc *gc, t_command *cmd);
 char						*expand_var_in_string_gc(const char *str,
 								t_env *env, t_command *cmd, t_gc *gc);

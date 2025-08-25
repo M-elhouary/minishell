@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:03:01 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 10:50:52 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 06:54:37 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ char	*random_char_gc(char *s, int random_nb, t_gc *gc)
 	free(itoa_result);
 	return (result);
 }
+
 int	is_delimiter_quoted(char *token_value)
 {
 	int	len;
@@ -34,7 +35,7 @@ int	is_delimiter_quoted(char *token_value)
 		return (0);
 	len = ft_strlen(token_value);
 	return ((token_value[0] == '\'' || token_value[0] == '\"')
-			&& token_value[len - 1] == token_value[0]);
+		&& token_value[len - 1] == token_value[0]);
 }
 
 char	*gen_file_name_gc(char *s, int random_nb, t_gc *gc)
@@ -46,7 +47,6 @@ char	*gen_file_name_gc(char *s, int random_nb, t_gc *gc)
 	name = random_char_gc(s, random_nb, gc);
 	prefix = gc_strdup(gc, "/tmp/.heredoc_");
 	result = ft_strjoin_free_gc(prefix, name, gc);
-	printf("%s\n", result);
 	return (result);
 }
 

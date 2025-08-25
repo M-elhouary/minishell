@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 10:51:12 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/23 11:54:26 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ char	*expand_var_in_string_gc(const char *str, t_env *env, t_command *cmd,
 		t_gc *gc)
 {
 	int	i;
+	char (*tmp), (*result);
 
-	char *result, *tmp;
 	result = gc_strdup(gc, "");
 	i = 0;
 	while (str[i])

@@ -1,39 +1,47 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   func_help.c                                        :+:      :+:    :+:   */
+/*   func_utils3.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/01 21:13:44 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/23 11:31:58 by mel-houa         ###   ########.fr       */
+/*   Created: 2025/08/25 06:49:41 by mel-houa          #+#    #+#             */
+/*   Updated: 2025/08/25 06:53:22 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parse.h"
+#include "minishell.h"
 
-char	*get_key(char *env_str)
+int	has_quotes(const char *str)
 {
-	int		i;
-	char	*key;
+	int	i;
 
 	i = 0;
-	while (env_str[i] && env_str[i] != '=')
+	if (!str)
+		return (0);
+	while (str[i])
+	{
+		if (str[i] == '\'' || str[i] == '\"')
+			return (1);
 		i++;
-	key = ft_strndup(env_str, i);
-	return (key);
+	}
+	return (0);
 }
 
-char	*get_content(char *env_str)
+int	has_unclosed_quote(const char *line)
 {
 	int		i;
-	char	*content;
+	char	quote;
 
 	i = 0;
-	while (env_str[i] && env_str[i] != '=')
+	quote = 0;
+	while (line[i])
+	{
+		if (!quote && (line[i] == '\'' || line[i] == '"'))
+			quote = line[i];
+		else if (quote && line[i] == quote)
+			quote = 0;
 		i++;
-	if (!env_str[i])
-		return (NULL);
-	content = ft_strdup(env_str + i + 1);
-	return (content);
+	}
+	return (quote != 0);
 }

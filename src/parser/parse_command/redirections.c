@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 16:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/20 23:39:34 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 07:00:37 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ void	add_redirection(t_redirection **head, t_redirection *new_redir)
 
 void	free_redirections(t_redirection *redirections)
 {
-	t_redirection *current;
-	t_redirection *next;
+	t_redirection	*current;
+	t_redirection	*next;
 
 	current = redirections;
 	while (current)

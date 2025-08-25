@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 00:27:53 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 10:51:19 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/24 08:37:30 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ char	*handle_exit_status_gc(char **result, int *i, t_command *cmd, t_gc *gc)
 	char	*exit_str;
 	char	*new_result;
 
-	// convert exit status to string
 	exit_str = ft_itoa(cmd->status_exit);
 	new_result = ft_strjoin_free_gc(*result, gc_strdup(gc, exit_str), gc);
 	free(exit_str);

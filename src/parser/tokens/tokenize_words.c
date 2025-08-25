@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:58 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 10:49:47 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 06:46:13 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ char	*extract_word_gc(char *line, int *i, t_gc *gc)
 	while (line[*i + word_len] && (!is_space(line[*i + word_len]) || quote))
 	{
 		if (!quote && (line[*i + word_len] == '\'' || line[*i
-				+ word_len] == '"'))
+					+ word_len] == '"'))
 			quote = line[*i + word_len];
 		else if (quote && line[*i + word_len] == quote)
 			quote = 0;

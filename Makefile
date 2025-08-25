@@ -23,6 +23,7 @@ SRCS_PARSE = src/main.c \
        src/parser/environment/func_help.c\
 	   src/parser/utils/func_utils.c \
 	   src/parser/utils/func_utils2.c \
+	   src/parser/utils/func_utils3.c \
 	   src/parser/syntax_checker.c\
 	   src/parser/parse_command/parse_command.c \
 	   src/parser/parse_command/func_help.c\

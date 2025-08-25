@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 00:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 10:50:32 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 07:04:05 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,34 +21,32 @@ static void	creat_node_redir(t_redir_type type, char *value,
 	add_redirection(redirections, new_redir);
 }
 
-static void	help_fill_arrays(t_token *current, t_redirection **redirections,
+static void	help_fill_arrays(t_token *current, t_redirection **red,
 		t_gc *gc)
 {
 	if (current->type == REDIR_IN)
 	{
 		current = current->next;
 		if (current)
-			creat_node_redir(REDIR_TYPE_IN, current->value, redirections, gc);
+			creat_node_redir(REDIR_TYPE_IN, current->value, red, gc);
 	}
 	else if (current->type == REDIR_OUT)
 	{
 		current = current->next;
 		if (current)
-			creat_node_redir(REDIR_TYPE_OUT, current->value, redirections, gc);
+			creat_node_redir(REDIR_TYPE_OUT, current->value, red, gc);
 	}
 	else if (current->type == REDIR_APPEND)
 	{
 		current = current->next;
 		if (current)
-			creat_node_redir(REDIR_TYPE_APPEND, current->value, redirections,
-				gc);
+			creat_node_redir(REDIR_TYPE_APPEND, current->value, red, gc);
 	}
 	else if (current->type == HEREDOC)
 	{
 		current = current->next;
 		if (current)
-			creat_node_redir(REDIR_TYPE_HEREDOC, current->value, redirections,
-				gc);
+			creat_node_redir(REDIR_TYPE_HEREDOC, current->value, red, gc);
 	}
 }
 

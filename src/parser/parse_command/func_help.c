@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:42 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 10:50:19 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 07:01:04 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ void	free_string_array(char **array)
 
 void	free_commands(t_command *commands)
 {
-	t_command *current;
-	t_command *next;
+	t_command	*current;
+	t_command	*next;
 
 	current = commands;
 	while (current)

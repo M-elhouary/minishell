@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   word_split.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/25 07:05:59 by mel-houa          #+#    #+#             */
+/*   Updated: 2025/08/25 07:35:41 by mel-houa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	count_words_in_expanded(const char *str)
@@ -28,8 +40,8 @@ static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 	char	**words;
 	int		word_count;
 	int		start;
-
 	int i, j;
+
 	word_count = count_words_in_expanded(expanded);
 	if (word_count == 0)
 		return (NULL);
@@ -52,7 +64,7 @@ static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 	return (words);
 }
 
-char	**expand_and_split_gc_updated(const char *word, t_env *env, t_gc *gc,
+char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc,
 		t_command *cmd)
 {
 	char	*expanded;
