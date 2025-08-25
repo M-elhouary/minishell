@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 00:13:38 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 11:16:50 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 06:46:29 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,14 @@ void	add_token(t_token **head, t_token *new)
 	}
 }
 
-t_token	*get_last_token(t_token_ctx *ctx)
+t_token	*get_last_token(t_token_glbst *glbst)
 {
 	t_token	*last;
 
 	last = NULL;
-	if (*ctx->tokens)
+	if (*glbst->tokens)
 	{
-		last = *ctx->tokens;
+		last = *glbst->tokens;
 		while (last->next)
 			last = last->next;
 	}

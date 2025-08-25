@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:53 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/21 18:49:35 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 06:37:42 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ int	handle_quotes(const char *line, int *i)
 
 char	*extract_quoted(const char *line, int *i)
 {
-	char quote;
-	int start;
-	int len;
+	char	quote;
+	int		start;
+	int		len;
 
 	quote = line[*i];
 	start = *i;

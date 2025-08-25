@@ -6,23 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 16:04:05 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/21 18:47:30 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 06:53:10 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	print_error(char *error, char *detail)
-{
-	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	if (detail)
-	{
-		ft_putstr_fd(detail, STDERR_FILENO);
-		ft_putstr_fd(": ", STDERR_FILENO);
-	}
-	ft_putstr_fd(error, STDERR_FILENO);
-	ft_putstr_fd("\n", STDERR_FILENO);
-}
 
 char	*ft_strndup(const char *s, size_t n)
 {
@@ -63,6 +51,7 @@ char	*ft_strndup_gc(t_gc *gc, const char *s, size_t n)
 	dup[i] = '\0';
 	return (dup);
 }
+
 int	is_space(char c)
 {
 	return ((c >= 9 && c <= 13) || c == 32);
@@ -75,7 +64,7 @@ int	ft_strcmp(const char *s1, const char *s2)
 		s1++;
 		s2++;
 	}
-	return (unsigned char)(*s1) - (unsigned char)(*s2);
+	return ((unsigned char)(*s1) - (unsigned char)(*s2));
 }
 
 char	*ft_strcpy(char *dest, const char *src)
@@ -89,38 +78,4 @@ char	*ft_strcpy(char *dest, const char *src)
 	}
 	*dest = '\0';
 	return (start);
-}
-
-int	has_unclosed_quote(const char *line)
-{
-	int		i;
-	char	quote;
-
-	i = 0;
-	quote = 0;
-	while (line[i])
-	{
-		if (!quote && (line[i] == '\'' || line[i] == '"'))
-			quote = line[i];
-		else if (quote && line[i] == quote)
-			quote = 0;
-		i++;
-	}
-	return (quote != 0);
-}
-
-int	has_quotes(const char *str)
-{
-	int	i;
-
-	i = 0;
-	if (!str)
-		return (0);
-	while (str[i])
-	{
-		if (str[i] == '\'' || str[i] == '\"')
-			return (1);
-		i++;
-	}
-	return (0);
 }

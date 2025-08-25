@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:02:34 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 10:50:25 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 07:01:49 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,10 @@ t_command	*create_cmd_node_gc(char **args, t_redirection *redirections,
 	new_cmd->next = NULL;
 	return (new_cmd);
 }
+
 void	add_cmd_node(t_command **head, t_command *new)
 {
-	t_command *tmp;
+	t_command	*tmp;
 
 	if (!head || !new)
 		return ;

@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 10:50:46 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/23 19:45:02 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ int	handl_herdoc_gc(t_token *token, t_env *env_list, t_command *cmd, t_gc *gc)
 		{
 			if (process_heredoc_token(tmp, env_list, cmd, gc))
 				return (1);
-			// Stop if heredoc processing failed or was interrupted
 		}
 		if (tmp)
 			tmp = tmp->next;

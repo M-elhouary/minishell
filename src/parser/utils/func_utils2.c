@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 23:30:02 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 10:49:25 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 06:49:15 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,16 @@ int	is_redirection(t_token_type type)
 {
 	return (type == REDIR_IN || type == REDIR_OUT || type == REDIR_APPEND
 		|| type == HEREDOC);
+}
+
+void	print_error(char *error, char *detail)
+{
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	if (detail)
+	{
+		ft_putstr_fd(detail, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+	}
+	ft_putstr_fd(error, STDERR_FILENO);
+	ft_putstr_fd("\n", STDERR_FILENO);
 }
