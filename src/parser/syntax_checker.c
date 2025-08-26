@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 11:19:36 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/26 09:05:23 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/26 10:13:38 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static int	check_redirection(t_token *tokens)
 	tmp = tokens;
 	while (tmp)
 	{
-		if (is_operater(tmp->type))
+		if (tmp->type != PIPE && is_operater(tmp->type))
 		{
 			if (!tmp->next)
 			{
