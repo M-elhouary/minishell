@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 09:04:44 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/26 21:04:51 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,12 @@ typedef struct s_heredoc_params
 	t_command				*cmd;
 	t_gc					*gc;
 }							t_heredoc_params;
+typedef struct s_var_ctx
+{
+	t_env	*env;
+	t_gc	*gc;
+}	t_var_ctx;
+
 // ================================================ Garbage Collector functions ======================================================
 
 void						gc_init(t_gc *gc);
@@ -225,7 +231,7 @@ char						*expand_var_in_string_gc(const char *str,
 								t_env *env, t_command *cmd, t_gc *gc);
 int							has_unquoted_variables(const char *str);
 char						*handle_variable_gc(char **result, const char *str,
-								int *i, t_env *env, t_gc *gc);
+								int *i, t_var_ctx *ctx);
 
 //  ===============================================    Utility functions  ===================================================
 int							has_quotes(const char *str);
