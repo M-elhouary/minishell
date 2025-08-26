@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 10:17:23 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/25 06:56:47 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 23:54:33 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,7 @@ int	fork_for_file_name(t_token *tmp, t_gc *gc, char **file_name, int *fd)
 	static int	random_nb;
 	int			pid;
 
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
+
 	pid = fork();
 	if (pid < 0)
 		return (-1);

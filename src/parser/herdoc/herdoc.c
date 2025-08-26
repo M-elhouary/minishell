@@ -6,20 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 15:18:28 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/23 19:45:02 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 23:50:52 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// unset: `-TEST': not a valid identifier
-// minishell$ unset
-// unset: not enough arguments
-// minishell$ unset lll
-// minishell$ unset 55L
-// unset: `55L': not a valid identifier
-
-// Global variable for cleanup in signal handler
 
 static int	process_heredoc_token(t_token *tmp, t_env *env_list, t_command *cmd,
 		t_gc *gc)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/19 03:06:09 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/25 23:40:49 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,12 @@ int		exit_status(int status);
 
 int		handle_redirections(t_redirection *redirections);
 
-/* Execution state management */
-int get_execution_state(void);
-void set_execution_state(int state);
+// /* Execution state management */
+// int get_execution_state(void);
+// void set_execution_state(int state);
 
-/* Signal handling functions */
-void sigint_handler(int sig);
-void sigquit_handler(int sig);
+// /* Signal handling functions */
+// void sigint_handler(int sig);
+// void sigquit_handler(int sig);
 
 #endif

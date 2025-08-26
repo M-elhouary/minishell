@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 10:48:57 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 23:35:43 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@ int	main(int ac, char **av, char **env)
 	t_env *env_list;
 	t_gc gc;
 	int exit_code;
-	int last_exit_status = 0;
-
+	int last_exit_status;
+	
 	(void)ac;
+	last_exit_status = 0;
 	(void)av;
 	gc_init(&gc);
 	cmd = NULL;
 	env_list = my_env(env);
-
 	while (1)
 	{
 		signal(SIGINT, sigint_interactive);
@@ -76,10 +76,9 @@ int	main(int ac, char **av, char **env)
 			while (current)
 			{
 				if (current->args && current->args[0])
-					current->path = locate_cmd(current->args[0], env_list);
+				current->path = locate_cmd(current->args[0], env_list);
 				current = current->next;
 			}
-
 			exit_code = exec_pipeline(tmp_cmd, &env_list);
 			cmd->status_exit = exit_code;
 		}

@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/25 07:36:32 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 08:48:29 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,10 +105,6 @@ typedef struct s_gc
 	t_gc_node				*head;
 }							t_gc;
 
-
-
-
-
 //  ================================================ herdoc  struct ===================================================
 
 typedef struct s_heredoc_ctx
@@ -126,7 +122,6 @@ typedef struct s_heredoc_params
 	t_command				*cmd;
 	t_gc					*gc;
 }							t_heredoc_params;
-
 // ================================================ Garbage Collector functions ======================================================
 
 void						gc_init(t_gc *gc);
@@ -138,9 +133,6 @@ void						gc_free_all(t_gc *gc);
 void						gc_destroy(t_gc *gc);
 
 char						*ft_strcat(char *dst, char *src);
-
-
-
 // =================================================== Environment ===========================================
 
 typedef struct s_env
