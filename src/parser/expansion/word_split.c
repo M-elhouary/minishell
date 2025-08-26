@@ -1,6 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   word_split.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/25 07:05:59 by mel-houa          #+#    #+#             */
+/*   Updated: 2025/08/25 07:35:41 by mel-houa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-// Count the number of words in a string separated by spaces
 static int	count_words_in_expanded(const char *str)
 {
 	int	count;
@@ -24,72 +35,13 @@ static int	count_words_in_expanded(const char *str)
 	return (count);
 }
 
-// Split a string into words (by spaces)  return array of words
-static char	**split_expanded_word(const char *expanded)
+static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 {
 	char	**words;
 	int		word_count;
 	int		start;
-
 	int i, j;
-	word_count = count_words_in_expanded(expanded);
-	if (word_count == 0)
-		return (NULL);
-	words = malloc(sizeof(char *) * (word_count + 1));
-	if (!words)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (expanded[i] && j < word_count)
-	{
-		while (expanded[i] && is_space(expanded[i]))
-			i++;
-		start = i;
-		while (expanded[i] && !is_space(expanded[i]))
-			i++;
-		if (i > start)
-		{
-			words[j] = ft_strndup(expanded + start, i - start);
-			j++;
-		}
-	}
-	words[j] = NULL;
-	return (words);
-}
 
-// Expand variables in a word then split the result into words
-char	**expand_and_split(const char *word, t_env *env, t_command *cmd)
-{
-	char	*expanded;
-	char	**split_words;
-	char	**result;
-
-	if (!has_unquoted_variables(word))
-	{
-		expanded = expand_variables(word, env, cmd);
-		result = malloc(sizeof(char *) * 2);
-		if (!result)
-			return (free(expanded), NULL);
-		result[0] = expanded;
-		result[1] = NULL;
-		return (result);
-	}
-	expanded = expand_variables(word, env, cmd);
-	if (!expanded || !*expanded)
-	{
-		free(expanded);
-		return (NULL);
-	}
-	split_words = split_expanded_word(expanded);
-	free(expanded);
-	return (split_words);
-}
-
-// Like split_expanded_word
-static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
-{
-	char	**words;
-	int i, j, start, word_count;
 	word_count = count_words_in_expanded(expanded);
 	if (word_count == 0)
 		return (NULL);
@@ -106,16 +58,12 @@ static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 		while (expanded[i] && !is_space(expanded[i]))
 			i++;
 		if (i > start)
-		{
-			words[j] = gc_strdup(gc, ft_strndup(expanded + start, i - start));
-			j++;
-		}
+			words[j++] = gc_strndup(gc, expanded + start, i - start);
 	}
 	words[j] = NULL;
 	return (words);
 }
 
-// Expand variables in a word split result ??
 char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc,
 		t_command *cmd)
 {
@@ -125,22 +73,19 @@ char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc,
 
 	if (!has_unquoted_variables(word))
 	{
-		expanded = expand_variables(word, env, cmd);
-		result = gc_malloc(gc, sizeof(char *) * 2); // why multiple 2
+		expanded = expand_variables_gc(word, env, cmd, gc);
+		result = gc_malloc(gc, sizeof(char *) * 2);
 		if (!result)
-			return (free(expanded), NULL);
-		result[0] = gc_strdup(gc, expanded);
+			return (NULL);
+		result[0] = expanded;
 		result[1] = NULL;
-		free(expanded);
 		return (result);
 	}
-	expanded = expand_variables(word, env, cmd);
+	expanded = expand_variables_gc(word, env, cmd, gc);
 	if (!expanded || !*expanded)
 	{
-		free(expanded);
 		return (NULL);
 	}
 	split_words = split_expanded_word_gc(expanded, gc);
-	free(expanded);
 	return (split_words);
 }

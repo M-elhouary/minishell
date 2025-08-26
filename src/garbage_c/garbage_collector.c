@@ -6,19 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:25 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/04 16:48:21 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/22 10:51:51 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "minishell.h"
-
-void	gc_init(t_gc *gc)
-{
-	if (!gc)
-		return ;
-	gc->head = NULL;
-}
 
 void	*gc_malloc(t_gc *gc, size_t size)
 {
@@ -57,29 +49,27 @@ char	*gc_strdup(t_gc *gc, const char *s)
 	return (dup);
 }
 
-char	**gc_split(t_gc *gc, char const *s, char c)
+static void	free_temp_split(char **temp_split)
+{
+	int	i;
+
+	i = 0;
+	while (temp_split[i])
+		free(temp_split[i++]);
+	free(temp_split);
+}
+
+static char	**copy_to_gc(t_gc *gc, char **temp_split)
 {
 	char	**result;
-	char	**temp_split;
 	int		i;
 
-	if (!s || !gc)
-		return (NULL);
-	temp_split = ft_split(s, c);
-	if (!temp_split)
-		return (NULL);
 	i = 0;
 	while (temp_split[i])
 		i++;
 	result = gc_malloc(gc, sizeof(char *) * (i + 1));
 	if (!result)
-	{
-		i = 0;
-		while (temp_split[i])
-			free(temp_split[i++]);
-		free(temp_split);
 		return (NULL);
-	}
 	i = 0;
 	while (temp_split[i])
 	{
@@ -88,31 +78,23 @@ char	**gc_split(t_gc *gc, char const *s, char c)
 		i++;
 	}
 	result[i] = NULL;
-	free(temp_split);
 	return (result);
 }
 
-void	gc_free_all(t_gc *gc)
+char	**gc_split(t_gc *gc, char const *s, char c)
 {
-	t_gc_node	*current;
-	t_gc_node	*next;
+	char	**temp_split;
+	char	**result;
 
-	if (!gc)
-		return ;
-	current = gc->head;
-	while (current)
-	{
-		next = current->next;
-		free(current->ptr);
-		free(current);
-		current = next;
-	}
-	gc->head = NULL;
-}
-
-void	gc_destroy(t_gc *gc)
-{
-	if (!gc)
-		return ;
-	gc_free_all(gc);
+	if (!s || !gc)
+		return (NULL);
+	temp_split = ft_split(s, c);
+	if (!temp_split)
+		return (NULL);
+	result = copy_to_gc(gc, temp_split);
+	if (!result)
+		free_temp_split(temp_split);
+	else
+		free(temp_split);
+	return (result);
 }

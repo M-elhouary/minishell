@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 17:15:23 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/14 00:35:28 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/21 18:49:43 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ char	*remove_syntactic_quotes(char *str)
 	len = ft_strlen(str);
 	if (len >= 2)
 	{
-		// Only remove matching outer quotes
 		if ((str[0] == '\'' && str[len - 1] == '\'') || (str[0] == '"'
 				&& str[len - 1] == '"'))
 		{
@@ -49,7 +48,6 @@ int	free_token(t_token *token)
 	return (1);
 }
 
-// Create empty expansion token for variable that expands to nothing
 int	handle_empty_expansion(t_token **tokens, t_gc *gc)
 {
 	t_token	*new;
@@ -62,7 +60,6 @@ int	handle_empty_expansion(t_token **tokens, t_gc *gc)
 	return (1);
 }
 
-// Helper function to create and add a token in one step
 int	create_and_add_token(t_token **tokens, char *value, t_token_type type,
 		t_gc *gc)
 {
