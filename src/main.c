@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/26 07:03:15 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/26 08:01:29 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@ int	main(int ac, char **av, char **env)
 	int	prev_cmd;
 
 	(void)ac;
+	last_exit_status = 0;
 	(void)av;
 	gc_init(&gc);
 	cmd = NULL;
 	env_list = my_env(env);
-
 	while (1)
 	{
 		signal(SIGINT, sigint_interactive);
@@ -83,7 +83,7 @@ int	main(int ac, char **av, char **env)
 			while (current)
 			{
 				if (current->args && current->args[0])
-					current->path = locate_cmd(current->args[0], env_list);
+				current->path = locate_cmd(current->args[0], env_list);
 				current = current->next;
 			}
 

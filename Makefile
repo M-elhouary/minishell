@@ -1,15 +1,7 @@
 NAME = minishell
-CC = cc -g
+CC = cc
 CFLAGS = -Wall -Wextra -Werror -Iinclude -Ilibft
 
-# Colors for output
-GREEN = \033[0;32m
-BLUE = \033[0;34m
-YELLOW = \033[0;33m
-RED = \033[0;31m
-NC = \033[0m
-
-# Source and Object Files
 SRCS_PARSE = src/main.c \
        src/parser/tokens/tokenize.c\
        src/parser/tokens/tokenize_words.c \
@@ -63,40 +55,27 @@ SRCS_EXEC = src/exec/utils.c \
 SRCS = $(SRCS_PARSE) $(SRCS_EXEC)
 OBJS = $(SRCS:.c=.o)
 
-# Libft
 LIBFT_DIR = libft
 LIBFT_A = $(LIBFT_DIR)/libft.a
 
-# Rules
 all: $(NAME)
 
 $(NAME): $(LIBFT_A) $(OBJS)
-	@printf "\033[0;34mLinking $(NAME)...\033[0m\n"
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT_A) -lreadline -o $(NAME)
-	@printf "\033[0;32m✓ $(NAME) compiled successfully!\033[0m\n"
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT_A) -lreadline -o $(NAME)
 
 %.o: %.c
-	@printf "\033[0;33mCompiling $<\033[0m\n"
-	@$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(LIBFT_A):
-	@printf "\033[0;34mBuilding libft...\033[0m\n"
-	@make -C $(LIBFT_DIR) -s
+	make -C $(LIBFT_DIR)
 
 clean:
-	@printf "\033[0;31mCleaning object files...\033[0m\n"
-	@rm -f $(OBJS)
-	@find . -name '*.o' -delete
-	@make -C $(LIBFT_DIR) clean -s
-	@printf "\033[0;32m✓ Clean completed\033[0m\n"
+	rm -f $(OBJS)
+	make -C $(LIBFT_DIR) clean
 
 fclean: clean
-	@printf "\033[0;31mRemoving $(NAME)...\033[0m\n"
-	@rm -f $(NAME) parse
-	@make -C $(LIBFT_DIR) fclean -s
-	@printf "\033[0;32m✓ Full clean completed\033[0m\n"
-
+	rm -f $(NAME) parse
+	make -C $(LIBFT_DIR) fclean
 re: fclean all
 
-.PHONY: all clean fclean re
 .PHONY: all clean fclean re

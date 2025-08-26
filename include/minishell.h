@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 03:46:32 by hayabusa         ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2025/08/26 08:01:56 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 # ifndef MINISHELL_H
 #define MINISHELL_H
@@ -95,9 +96,9 @@ int		exit_status(int status);
 
 int		handle_redirections(t_redirection *redirections);
 
-/* Execution state management */
-int get_execution_state(void);
-void set_execution_state(int state);
+// /* Execution state management */
+// int get_execution_state(void);
+// void set_execution_state(int state);
 
 /* Signal handling functions */
 void sigint_handler(int sig);
