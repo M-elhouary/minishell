@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 10:48:57 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/26 07:03:15 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ int	main(int ac, char **av, char **env)
 	t_gc gc;
 	int exit_code;
 	int last_exit_status = 0;
+	int	prev_cmd;
 
 	(void)ac;
 	(void)av;
@@ -48,7 +49,11 @@ int	main(int ac, char **av, char **env)
 
 		line = readline("minishell$ ");
 		if (!line)
+		{
+			if (isatty(STDIN_FILENO))
+				write(STDERR_FILENO, "exit\n", 5);
 			break ;
+		}
 		if (!*line)
 		{
 			free(line);
@@ -63,6 +68,7 @@ int	main(int ac, char **av, char **env)
 		}
 		if (!check_syntax_token(tokens, cmd))
 		{
+			last_exit_status = cmd->status_exit;
 			free(line);
 			gc_free_all(&gc);
 			continue ;
@@ -72,6 +78,7 @@ int	main(int ac, char **av, char **env)
 		tmp_cmd = parse_commands_gc(tokens, &gc);
 		if (tmp_cmd)
 		{
+			prev_cmd = cmd->status_exit;
 			t_command *current = tmp_cmd;
 			while (current)
 			{
@@ -80,8 +87,9 @@ int	main(int ac, char **av, char **env)
 				current = current->next;
 			}
 
-			exit_code = exec_pipeline(tmp_cmd, &env_list);
+			exit_code = exec_pipe(tmp_cmd, &env_list);
 			cmd->status_exit = exit_code;
+			last_exit_status = exit_code;
 		}
 
 		free(line);
@@ -90,5 +98,5 @@ int	main(int ac, char **av, char **env)
 	if (cmd)
 		free(cmd);
 	gc_destroy(&gc);
-	return (0);
+	return (last_exit_status);
 }

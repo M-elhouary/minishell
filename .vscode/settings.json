@@ -3,6 +3,9 @@
 		"exec.h": "c",
 		"minishell.h": "c",
 		"stdio.h": "c",
-		"parse.h": "c"
+		"parse.h": "c",
+		"algorithm": "c",
+		"format": "c",
+		"libft.h": "c"
 	}
 }

@@ -3,16 +3,45 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:52:49 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/14 06:41:13 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/26 04:02:26 by hayabusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-long	atol_s(const char *str, char **endptr)
+int	skipspaces(int i, char *str)
+{
+	while (str[i] == 32 || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	return (i);
+}
+
+long	check_overflow(char *str, int *i, int sign)
+{
+	long	res;
+
+	while (str[*i] != '\0' && str[*i] >= '0' && str[*i] <= '9')
+	{
+		if (sign == 1)
+		{
+			if (res > (LONG_MAX - (str[*i] - 48)) / 10)
+				break;
+		}
+		else
+		{
+			if (res > (-(LONG_MIN + (str[*i] - 48))) / 10)
+				break;
+		}
+		res = res * 10 + (str[*i] - 48);
+		i++;
+	}
+	return (res);
+}
+
+long	atol_s(char *str, char **endptr)
 {
 	long	res;
 	int		i;
@@ -21,29 +50,15 @@ long	atol_s(const char *str, char **endptr)
 	res = 0;
 	i = 0;
 	sign = 1;
-	while (str[i] == 32 || (str[i] >= 9 && str[i] <= 13))
-		i++;
+	i = skipspaces(i, str);
 	if (str[i] == '+' || str[i] == '-')
 	{
 		if (str[i] == '-')
 			sign = -1;
 		i++;
 	}
-	while (str[i] != '\0' && str[i] >= '0' && str[i] <= '9')
-	{
-		if (sign == 1)
-		{
-			if (res > (LONG_MAX - (str[i] - 48)) / 10)
-				break;
-		}
-		else
-		{
-			if (res > (-(LONG_MIN + (str[i] - 48))) / 10)
-				break;
-		}
-		res = res * 10 + (str[i] - 48);
-		i++;
-	}
+	res = check_overflow(str, &i, sign);
+	i = skipspaces(i, str);
 	*endptr = (char *)(str + i);
 	return (res * sign);
 }

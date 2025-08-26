@@ -41,14 +41,23 @@ SRCS_PARSE = src/main.c \
 
 SRCS_EXEC = src/exec/utils.c \
 			src/exec/locate_cmd.c \
+			src/exec/locate_cmd_path.c \
+			src/exec/locate_cmd_split.c \
 			src/exec/exec_cmd.c \
 			src/exec/builtin_functs.c \
 			src/exec/builin.c \
-			src/exec/cd.c \
-			src/exec/export.c \
+			src/exec/b_cd.c \
+			src/exec/b_export.c \
+			src/exec/export_empty_var.c \
 			src/exec/_env.c \
 			src/exec/print.c \
-			src/exec/pipe.c \
+			src/exec/pipe_loop.c \
+			src/exec/pipe_exec.c \
+			src/exec/pipe_wait_children.c \
+			src/exec/pipe_utils.c \
+			src/exec/exec_cmd_external.c\
+			src/exec/exec_cmd_utils.c \
+			src/exec/exec_cmd_process.c \
 			src/exec/redirections.c
 
 SRCS = $(SRCS_PARSE) $(SRCS_EXEC)

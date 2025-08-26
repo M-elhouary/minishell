@@ -3,19 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 01:19:45 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/18 01:23:34 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/25 10:22:11 by hayabusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
-
-
-// > out | ls
 int	handle_input_redirection(char *file)
 {
 	int	fd;
@@ -77,19 +73,6 @@ int	handle_heredoc_redirection(char *file)
 	return (0);
 }
 
-int	process_single_redirection(t_redirection *redir)
-{
-	if (redir->type == REDIR_TYPE_IN)
-		return (handle_input_redirection(redir->file));
-	else if (redir->type == REDIR_TYPE_OUT)
-		return (handle_output_redirection(redir->file));
-	else if (redir->type == REDIR_TYPE_APPEND)
-		return (handle_append_redirection(redir->file));
-	else if (redir->type == REDIR_TYPE_HEREDOC)
-		return (handle_heredoc_redirection(redir->file));
-	return (0);
-}
-
 int	handle_redirections(t_redirection *redirections)
 {
 	t_redirection	*current;
@@ -97,8 +80,14 @@ int	handle_redirections(t_redirection *redirections)
 	current = redirections;
 	while (current)
 	{
-		if (process_single_redirection(current) != 0)
-			return (1);
+		if (current->type == REDIR_TYPE_IN)
+			return (handle_input_redirection(current->file));
+		else if (current->type == REDIR_TYPE_OUT)
+			return (handle_output_redirection(current->file));
+		else if (current->type == REDIR_TYPE_APPEND)
+			return (handle_append_redirection(current->file));
+		else if (current->type == REDIR_TYPE_HEREDOC)
+			return (handle_heredoc_redirection(current->file));
 		current = current->next;
 	}
 	return (0);
