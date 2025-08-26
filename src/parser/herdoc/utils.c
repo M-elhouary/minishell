@@ -6,20 +6,18 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 12:03:01 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/16 21:48:48 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 02:22:49 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*random_char(int index, char *s)
+char	*random_char(char *s, int random_nb)
 {
 	char	*tmp;
-	char	*charset;
-
-	charset = ft_strdup("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
-	tmp = ft_strjoin(charset + index, s);
-	free(charset);
+	
+	tmp = ft_strjoin(ft_itoa(random_nb), s);
+	random_nb++;
 	return (tmp);
 }
 int	is_delimiter_quoted(char *token_value)
@@ -33,13 +31,13 @@ int	is_delimiter_quoted(char *token_value)
 			&& token_value[len - 1] == token_value[0]);
 }
 
-char	*gen_file_name(int index, char *s)
+char	*gen_file_name(char *s, int random_nb)
 {
 	char	*name;
 	char	*tmp;
 
-	name = random_char(index, s);
-	tmp = ft_strjoin("/tmp/heredoc_", name);
+	name = random_char(s, random_nb);
+	tmp = ft_strjoin("/tmp/.heredoc_", name);
 	free(name);
 	return (tmp);
 }

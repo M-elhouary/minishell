@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_functs.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 03:56:15 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/19 02:00:15 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/25 13:14:14 by hayabusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,67 +75,41 @@ int	env_c(t_env *env, int fd)
 
 	while (current)
 	{
-		write(fd, current->key, ft_strlen(current->key));
-		write(fd, "=", 1);
-		write(fd, current->content, ft_strlen(current->content));
-		write(fd, "\n", 1);
+		if (!current->exported_only && current->content)
+		{	
+			write(fd, current->key, ft_strlen(current->key));
+			write(fd, "=", 1);
+			write(fd, current->content, ft_strlen(current->content));
+			write(fd, "\n", 1);
+		}
 		current = current->next;
 	}
 	return (BUILTIN_SUCCESS);
 }
 
-int	unset_c(char **args, t_env **env, int fd)
+int	unset_c(char **args, t_env **env)
 {
 	int	i;
-	int	j;
 	int	res;
 
 	res = BUILTIN_SUCCESS;
-	if (!args[1])
-	{
-		print("unset: not enough arguments\n", fd);
-		return (BUILTIN_ERROR);
-	}
 	i = 1;
 	while (args[i])
 	{
-		if (!ft_isalpha(args[i][0]) && args[i][0] != '_')
-		{
-			print("unset: `", fd);
-			print(args[i], fd);
-			print("': not a valid identifier\n", fd);
-			res = BUILTIN_ERROR;
-		}
-		else
-		{
-			j = 1;
-			while (args[i][j])
-			{
-				if (!ft_isalpha(args[i][j]) && args[i][j] != '_' &&
-					!(args[i][j] >= '0' && args[i][j] <= '9'))
-				{
-					print("unset: `", fd);
-					print(args[i], fd);
-					print("': not a valid identifier\n", fd);
-					res = BUILTIN_ERROR;
-					break;
-				}
-				j++;
-			}
-			if (args[i][j] == '\0')
-				unset_env_value(env, args[i]);
-		}
+		unset_env_value(env, args[i]);
 		i++;
 	}
 	return (res);
 }
 
-int	exit_c(char **args, int fd, int exit_status)
+int	exit_c(char **args, int fd, int exit_status, int print_exit)
 {
 	long	exit_code;
 	char	*endptr;
 
-	print("exit\n", 2);
+	// printf("%d\n", print_exit);
+	if (print_exit)
+		print("exit\n", 2);
 	exit_code = exit_status;
 	if (args[1])
 	{

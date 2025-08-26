@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:12 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/15 22:09:10 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/26 06:30:52 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ t_env	*env_new_node(char *key, char *content)
 		return (NULL);
 	new_node->key = key;
 	new_node->content = content;
+	new_node->exported_only = 0;
 	new_node->next = NULL;
 	return (new_node);
 }

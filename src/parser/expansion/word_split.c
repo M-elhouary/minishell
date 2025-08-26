@@ -89,10 +89,7 @@ char	**expand_and_split(const char *word, t_env *env, t_command *cmd)
 static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 {
 	char	**words;
-	int		word_count;
-	int		start;
-
-	int i, j;
+	int i, j, start, word_count;
 	word_count = count_words_in_expanded(expanded);
 	if (word_count == 0)
 		return (NULL);
@@ -129,7 +126,7 @@ char	**expand_and_split_gc(const char *word, t_env *env, t_gc *gc,
 	if (!has_unquoted_variables(word))
 	{
 		expanded = expand_variables(word, env, cmd);
-		result = gc_malloc(gc, sizeof(char *) * 2); //
+		result = gc_malloc(gc, sizeof(char *) * 2); // why multiple 2
 		if (!result)
 			return (free(expanded), NULL);
 		result[0] = gc_strdup(gc, expanded);

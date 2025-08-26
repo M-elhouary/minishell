@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/18 20:30:44 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/19 05:20:24 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ char	*expand_var_in_string(const char *str, t_env *env, t_command *cmd)
 	{
 		if (str[i] == '$' && str[i + 1] == '?')
 			result = handle_exit_status(&result, &i, cmd);
-		else if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
+		else if (str[i] == '$' && (ft_isalpha(str[i + 1]) || str[i + 1] == '_'))
 			result = handle_variable(&result, str, &i, env);
 		else
 		{

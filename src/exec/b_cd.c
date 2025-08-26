@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cd.c                                               :+:      :+:    :+:   */
+/*   b_cd.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:25:53 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/12 02:23:28 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/26 05:41:30 by hayabusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,24 +18,8 @@ int	err_(char *str)
 	return (BUILTIN_ERROR);
 }
 
-// `cd -`
-static char	*handle_cd_dash(t_env **env, int fd)
-{
-	char	*path;
-
-	path = get_env_value("OLDPWD", *env);
-	if (!path)
-	{
-		err_("cd: OLDPWD not set");
-		return (NULL);
-	}
-	print(path, fd);
-	print("\n", fd);
-	return (path);
-}
-
 // `cd` with no arguments
-static char	*handle_cd_home(t_env **env)
+char	*handle_cd_home(t_env **env)
 {
 	char	*path;
 
@@ -49,10 +33,8 @@ static char	*handle_cd_home(t_env **env)
 }
 
 // path selector
-static char	*get_cd_target(char **args, t_env **env, int fd)
+char	*get_cd_target(char **args, t_env **env)
 {
-	if (args[1] && ft_strcmp(args[1], "-") == 0)
-		return (handle_cd_dash(env, fd));
 	if (!args[1])
 		return (handle_cd_home(env));
 	if (args[2])
@@ -63,25 +45,11 @@ static char	*get_cd_target(char **args, t_env **env, int fd)
 	return (args[1]);
 }
 
-static char	*save_oldpwd(void)
-{
-	char	cwd_buff[PATH_MAX];
-
-	if (getcwd(cwd_buff, sizeof(cwd_buff)))
-		return (ft_strdup(cwd_buff));
-	return (NULL);
-}
-
 // Updates OLDPWD and PWD after changing directory
-static void	update_pwd_vars(t_env **env, char *oldpwd)
+void	update_pwd_vars(t_env **env)
 {
 	char	cwd_buff[PATH_MAX];
 
-	if (oldpwd)
-	{
-		set_env_value(env, "OLDPWD", oldpwd);
-		free(oldpwd);
-	}
 	if (getcwd(cwd_buff, sizeof(cwd_buff)))
 		set_env_value(env, "PWD", cwd_buff);
 }
@@ -89,19 +57,17 @@ static void	update_pwd_vars(t_env **env, char *oldpwd)
 int	cd_c(char **args, t_env **env, int fd)
 {
 	char	*path;
-	char	*oldpwd;
 
-	path = get_cd_target(args, env, fd);
+	(void)fd;
+	path = get_cd_target(args, env);
 	if (!path)
 		return (BUILTIN_ERROR);
-	oldpwd = save_oldpwd();
 	if (chdir(path) == -1)
 	{
 		perror("cd");
-		free(oldpwd);
 		return (BUILTIN_ERROR);
 	}
-	update_pwd_vars(env, oldpwd);
+	update_pwd_vars(env);
 	return (BUILTIN_SUCCESS);
 }
 

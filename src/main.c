@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/19 00:49:30 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/26 05:47:19 by hayabusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 int	main(int ac, char **av, char **env)
 {
@@ -22,6 +21,7 @@ int	main(int ac, char **av, char **env)
 	t_env *env_list;
 	t_gc gc;
 	int exit_code;
+	int	last_exit_status;
 
 	(void)ac;
 	(void)av;
@@ -29,27 +29,36 @@ int	main(int ac, char **av, char **env)
 	gc_init(&gc);
 	cmd = NULL;
 	env_list = my_env(env);
-	
+	last_exit_status = 0;
+
 	while (1)
 	{
-		signal(SIGINT, sigint_handler);
-		signal(SIGQUIT, SIG_IGN); // Ignore SIGQUIT in main loop
+		signal(SIGINT, sigint_interactive);
+        signal(SIGQUIT, SIG_IGN);/////////////////////////////////////////
+		// signal(SIGINT, sigint_handler);
+		// signal(SIGQUIT, SIG_IGN); // Ignore SIGQUIT in main loop
 		// Ensure cmd always exists for $? expansion
 		if (!cmd)
 		{
 			cmd = malloc(sizeof(t_command));
 			if (!cmd)
 				return (1);
-			cmd->status_exit = 0;
+			cmd->status_exit = last_exit_status;
 			cmd->args = NULL;
 			cmd->path = NULL;
 			cmd->redirections = NULL;
+			cmd->print_exit = 0;
 			cmd->next = NULL;
+	
 		}
 
 		line = readline("minishell$ "); // how readline works
 		if (!line)
+		{
+			if (isatty(STDIN_FILENO))
+				write(STDERR_FILENO, "exit\n", 5);
 			break ;
+		}
 		if (!*line)
 		{
 			free(line);
@@ -66,14 +75,19 @@ int	main(int ac, char **av, char **env)
 		// Check syntax and continue if error (status already set in check_syntax_token)
 		if (!check_syntax_token(tokens, cmd))
 		{
+			last_exit_status = cmd->status_exit;
 			free(line);
 			gc_free_all(&gc);
 			continue ;
 		}
-		handl_herdoc(tokens, env_list, cmd);
+		if(handl_herdoc(tokens, env_list, cmd))
+		{
+			last_exit_status = cmd->status_exit;
+			continue;
+		}
 		// Only create new command if syntax is correct
 		tmp_cmd = parse_commands(tokens);
-		// printf("%s\n", tmp_cmd->args[0]);
+		//  printf("%d\n", cmd->status_exit);
 		if (tmp_cmd)
 		{
 			// Save the previous exit status in the new command
@@ -97,11 +111,15 @@ int	main(int ac, char **av, char **env)
 			// Set path and execute
 			// cmd->path = locate_cmd(cmd->args[0]);
 			// exit_code = exec_cmd(cmd, &env_list, 1);
-			exit_code = exec_pipeline(cmd, &env_list);
+			exit_code = exec_pipe(cmd, &env_list);
 
 			// Update exit status for next command
 			cmd->status_exit = exit_code;
+			last_exit_status = exit_code;
+		//  printf("exec  %d\n", cmd->status_exit);
 
+			// if (exit_code != 0)
+			// 	printf("[Exit code: %d]\n", exit_code);
 			// if (exit_code != 0)
 			// 	printf("[Exit code: %d]\n", exit_code);
 		}
@@ -114,5 +132,5 @@ int	main(int ac, char **av, char **env)
 	if (cmd)
 		free_commands(cmd);
 	gc_destroy(&gc);
-	return (0);
+	return (last_exit_status);
 }

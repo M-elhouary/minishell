@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/16 22:42:44 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 13:10:20 by hayabusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ typedef struct s_env
 {
 	char			*key;
 	char			*content;
+	int				exported_only;
 	struct s_env	*next;
 }	t_env;
 
@@ -77,9 +78,9 @@ typedef struct s_redirection
 typedef struct s_command
 {
     int status_exit;
-    int ac;
     char *path;
     char **args;
+	int		print_exit;
     t_redirection *redirections;  // New field
     struct s_command *next;
 } t_command;
@@ -143,9 +144,9 @@ void	add_cmd_node(t_command **head, t_command *new);
 
 
 // herdoc
-void handl_herdoc(t_token *token, t_env *env_list, t_command *cmd);
+int handl_herdoc(t_token *token, t_env *env_list, t_command *cmd);
 int is_delimiter_quoted(char *token_value);
-char *gen_file_name(int index, char *s);
+char	*gen_file_name(char *s, int random_nb);
 void	free_and_close(char *clean_delimiter, int fd, char *delimiter);
 void	similation_herdoc(char *delimiter, int fd, t_env *env_list,t_command *cmd);
 int	prepare_delimiter(char **clean_delimiter, char *delimiter, int *quotes_flag);
@@ -193,9 +194,8 @@ void add_redirection(t_redirection **head, t_redirection *new_redir);
 void free_redirections(t_redirection *redirections);
 
 //signals
-int get_execution_state(void);
-void set_execution_state(int state);
-void sigint_handler(int signum);
-void sigquit_handler(int signum);
+void	sigquit_interactive(int sig);
+void	sigint_interactive(int sig);
+void	sigint_child_handler(int sig);
 
 #endif
