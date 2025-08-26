@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 11:19:36 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/23 11:20:49 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/26 09:05:23 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ static int	check_pipe_end(t_token *tokens)
 	}
 	return (1);
 }
-
 static int	check_redirection(t_token *tokens)
 {
 	t_token	*tmp;
@@ -61,7 +60,7 @@ static int	check_redirection(t_token *tokens)
 	tmp = tokens;
 	while (tmp)
 	{
-		if (is_redirection(tmp->type))
+		if (is_operater(tmp->type))
 		{
 			if (!tmp->next)
 			{
@@ -69,7 +68,7 @@ static int	check_redirection(t_token *tokens)
 					NULL);
 				return (0);
 			}
-			if (is_redirection(tmp->next->type))
+			if (is_operater(tmp->next->type))
 			{
 				print_error("syntax error near unexpected token",
 					tmp->next->value);

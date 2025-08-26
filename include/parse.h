@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/25 08:48:29 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/26 09:04:44 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ typedef struct s_env
 {
 	char					*key;
 	char					*content;
+	int						exported_only;
 	struct s_env			*next;
 }							t_env;
 
@@ -232,7 +233,7 @@ char						*remove_syntactic_quotes(char *str);
 char						*ft_strjoin_free(char *s1, char *s2);
 char						*ft_strjoin_free_gc(char *s1, char *s2, t_gc *gc);
 int							is_metacharacter(char c);
-int							is_redirection(t_token_type type);
+int							is_operater(t_token_type type);
 void						print_error(char *error, char *detail);
 int							is_space(char c);
 char						*ft_strndup(const char *s, size_t n);
