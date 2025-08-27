@@ -3,69 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_functs.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 03:56:15 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/25 13:14:14 by hayabusa         ###   ########.fr       */
+/*   Updated: 2025/08/26 10:17:30 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	echo_c(char **args, int fd)
+int	pwd_c(t_env *env)
 {
-	int	i;
-	int	newline;
-
-	i = 1;
-	newline = 1;
-	int j = 1;
-	while (args[i] && args[i][j - 1] == '-' && args[i][j] && args[i][j] != '-')
-	{
-		while (args[i][j])
-		{
-			if (args[i][j] == 'n')
-				j++;
-			else
-				break;
-		}
-		if (args[i][j] != 'n' && args[i][j])
-			break;
-		j = 1;
-		newline = 0;
-		i++;
-	}
-	if (!args[i])
-	{
-		if (newline)
-			write(fd, "\n", 1);
-		return (BUILTIN_SUCCESS);
-	}
-	while (args[i])
-	{
-		write(fd, args[i], ft_strlen(args[i]));
-		if (args[i + 1])
-			write(fd, " ", 1);
-		i++;
-	}
-	if (newline)
-		write(fd, "\n", 1);
-	return (BUILTIN_SUCCESS);
-}
-
-int	pwd_c(int fd)
-{
-	char	*cwd;
+	// char	*cwd;
 	
-	cwd = getcwd(NULL, 0);
-	if (!cwd)
-	{
-		perror("pwd");
-		return (BUILTIN_ERROR);
-	}
-	write(fd, cwd, ft_strlen(cwd));
-	write(fd, "\n", 1);
-	free(cwd);
+	printf("%s\n", get_env_value("PWD", env));
+	// cwd = getcwd(NULL, 0);
+	// if (!cwd)
+	// {
+		// perror("pwd");
+		// return (BUILTIN_ERROR);
+	// }
+	// write(fd, cwd, ft_strlen(cwd));
+	// write(fd, "\n", 1);
+	// free(cwd);
 	return (BUILTIN_SUCCESS);
 }
 
@@ -107,10 +67,10 @@ int	exit_c(char **args, int fd, int exit_status, int print_exit)
 	long	exit_code;
 	char	*endptr;
 
-	// printf("%d\n", print_exit);
 	if (print_exit)
 		print("exit\n", 2);
 	exit_code = exit_status;
+	printf("%ld\n", exit_code);
 	if (args[1])
 	{
 		if (args[2])
@@ -127,15 +87,5 @@ int	exit_c(char **args, int fd, int exit_status, int print_exit)
 			exit(2);
 		}
 	}
-	exit((unsigned char)exit_code);
+	exit(exit_code);
 }
-
-
-// ➜  minish git:(exec) ✗ ./minishell 
-// minishell$ lll
-// minishell: lll: command not found
-// minishell$ exit
-// exit
-// ➜  minish git:(exec) ✗ echo $?
-// 0 
-// it should not be 0 but it should be the last exit status in this case 127

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 03:46:32 by hayabusa         ###   ########.fr       */
+/*   Updated: 2025/08/26 10:07:27 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void		free_cmd(t_command *cmd);
 long		atol_s(char *str, char **endptr);
 
 int	echo_c(char **args, int fd);
-int	pwd_c(int fd);
+int	pwd_c(t_env *env);
 int	cd_c(char **args, t_env **env, int fd);
 int	env_c(t_env *env, int fd);
 int	export_c(char **args, t_env **env, int fd);
@@ -94,6 +94,7 @@ int		exec_pipe(t_command *cmd_list, t_env **env);
 int		exit_status(int status);
 
 int		handle_redirections(t_redirection *redirections);
+int		process_single_redirection(t_redirection *redir);
 
 /* Execution state management */
 int get_execution_state(void);

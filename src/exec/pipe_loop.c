@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_loop.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 13:18:32 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/25 17:52:24 by hayabusa         ###   ########.fr       */
+/*   Updated: 2025/08/26 08:47:35 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	parent_after_fork_close_update(t_pipe_state *state)
 		close(state->prev_read_fd);
 	if (!state->pipe_created)
 	{
-		close(state->current_pipe[1]); // keep only the read end for next cmd
+		close(state->current_pipe[1]);
 		state->prev_read_fd = state->current_pipe[0];
 	}
 	else

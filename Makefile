@@ -38,7 +38,6 @@ SRCS_PARSE = src/main.c \
 	   src/garbage_c/gc_help_func2.c\
 	   src/parser/signals.c \
 
-
 SRCS_EXEC = src/exec/utils.c \
 			src/exec/locate_cmd.c \
 			src/exec/locate_cmd_path.c \
@@ -48,8 +47,9 @@ SRCS_EXEC = src/exec/utils.c \
 			src/exec/builin.c \
 			src/exec/b_cd.c \
 			src/exec/b_export.c \
-			src/exec/export_empty_var.c \
-			src/exec/_env.c \
+			src/exec/b_echo.c \
+			src/exec/env_set.c \
+			src/exec/env_to_arr.c \
 			src/exec/print.c \
 			src/exec/pipe_loop.c \
 			src/exec/pipe_exec.c \
@@ -58,7 +58,8 @@ SRCS_EXEC = src/exec/utils.c \
 			src/exec/exec_cmd_external.c\
 			src/exec/exec_cmd_utils.c \
 			src/exec/exec_cmd_process.c \
-			src/exec/redirections.c
+			src/exec/redirections.c \
+			src/exec/redir_helper.c
 
 SRCS = $(SRCS_PARSE) $(SRCS_EXEC)
 OBJS = $(SRCS:.c=.o)

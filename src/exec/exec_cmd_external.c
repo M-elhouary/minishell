@@ -1,10 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec_cmd_external.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 10:52:09 by houardi           #+#    #+#             */
+/*   Updated: 2025/08/26 10:52:10 by houardi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	exec_child(t_command *cmd, t_env **env)
 {
 	char	**env_arr;
 
-	/* Reset signals to default in child processes */
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	env_arr = env_to_array(*env);
@@ -49,8 +60,6 @@ int	wait_child(pid_t pid)
     return (exit_status(status));
 }
 
-
-
 void	setup_child_signals_and_exec(t_command *cmd, t_env **env, int fd)
 {
 	signal(SIGINT, SIG_DFL);
@@ -83,7 +92,6 @@ int	fork_and_exec(t_command *cmd, t_env **env, int fd)
 	}
 	if (pid == 0)
 		setup_child_signals_and_exec(cmd, env, fd);
-
 	rc = wait_child(pid);
 	signal(SIGINT, old_int);
 	signal(SIGQUIT, old_quit);

@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:25:53 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 07:06:11 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/26 08:31:50 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ int	err_(char *str)
 	return (BUILTIN_ERROR);
 }
 
-// `cd` with no arguments
 char	*handle_cd_home(t_env **env)
 {
 	char	*path;
@@ -32,7 +31,6 @@ char	*handle_cd_home(t_env **env)
 	return (path);
 }
 
-// path selector
 char	*get_cd_target(char **args, t_env **env)
 {
 	if (!args[1])
@@ -45,7 +43,6 @@ char	*get_cd_target(char **args, t_env **env)
 	return (args[1]);
 }
 
-// Updates OLDPWD and PWD after changing directory
 void	update_pwd_vars(t_env **env)
 {
 	char	cwd_buff[PATH_MAX];
