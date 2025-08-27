@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:00:44 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 08:30:16 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 02:48:38 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int exec_cmd(t_command *cmd, t_env **env, int fd, int in_child)
 	original_stdin = -1;
 	original_stdout = -1;
 	if ((!cmd || !cmd->args || !cmd->args[0]) && !cmd->redirections)
-		return (1);  
+		return (1);
 	if (!in_child)
 	{
 		if (setup_redirections_and_fd(cmd, fd, &original_stdin, &original_stdout) != 0)

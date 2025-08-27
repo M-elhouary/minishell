@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/26 10:52:55 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 02:49:41 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 // sudo
 // last_status on exit cmd
 // ls on unset path
+/////////////////////
 
 int	main(int ac, char **av, char **env)
 {
