@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 00:27:53 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/26 21:04:50 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/27 03:22:38 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,17 +45,21 @@ int	has_unquoted_variables(const char *str)
 			in_quotes = 0;
 			quote_char = 0;
 		}
-		else if (!in_quotes && str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i
-				+ 1] == '_'))
+		else if (!in_quotes && str[i] == '$'
+			&& (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
 			return (1);
 		i++;
 	}
 	return (0);
 }
-char	*handle_variable_gc(char **result, const char *str, int *i, t_var_ctx *ctx)
+
+char	*handle_variable_gc(char **result, const char *str, int *i,
+		t_var_ctx *ctx)
 {
-	int start;
-	char *tmp, *var_value, *new_result;
+	int		start;
+	char	(*tmp);
+	char	(*var_value);
+	char	(*new_result);
 
 	(*i)++;
 	start = *i;
@@ -63,12 +67,12 @@ char	*handle_variable_gc(char **result, const char *str, int *i, t_var_ctx *ctx)
 		(*i)++;
 	tmp = gc_strndup(ctx->gc, str + start, *i - start);
 	var_value = get_env_value(tmp, ctx->env);
-
 	if (var_value && *var_value)
-		new_result = ft_strjoin_free_gc(*result, gc_strdup(ctx->gc, var_value), ctx->gc);
+		new_result = ft_strjoin_free_gc(*result, gc_strdup(ctx->gc, var_value),
+				ctx->gc);
 	else
-		new_result = ft_strjoin_free_gc(*result, gc_strdup(ctx->gc, ""), ctx->gc);
-
+		new_result = ft_strjoin_free_gc(*result, gc_strdup(ctx->gc, ""),
+				ctx->gc);
 	free(var_value);
 	return (new_result);
 }

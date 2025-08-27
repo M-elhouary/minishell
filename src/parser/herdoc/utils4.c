@@ -1,27 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redirections.c                                     :+:      :+:    :+:   */
+/*   utils4.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/12 01:19:45 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 10:01:26 by houardi          ###   ########.fr       */
+/*   Created: 2025/08/27 03:08:07 by mel-houa          #+#    #+#             */
+/*   Updated: 2025/08/27 03:08:39 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	handle_redirections(t_redirection *redirections)
+int	get_herdoc_fd(int fd)
 {
-	t_redirection	*current;
+	static int	herdoc_fd;
 
-	current = redirections;
-	while (current)
-	{
-		if (process_single_redirection(current) != 0)
-			return (1);
-		current = current->next;
-	}
-	return (0);
+	if (fd != -1)
+		herdoc_fd = fd;
+	return (herdoc_fd);
 }

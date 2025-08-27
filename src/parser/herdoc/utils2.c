@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 10:17:23 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/25 23:54:33 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/27 07:07:29 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,7 @@ void	heredoc_readline_loop(t_heredoc_ctx *ctx, char *clean_delimiter,
 		read_result = process_readline_input(line, clean_delimiter);
 		if (read_result == 0)
 		{
-			print_error(ctx->delimiter,
-				"warning: here-document wanted> ");
+			print_error(ctx->delimiter, "warning: here-document wanted> ");
 			break ;
 		}
 		if (read_result == -1)
@@ -71,7 +70,6 @@ int	fork_for_file_name(t_token *tmp, t_gc *gc, char **file_name, int *fd)
 	static int	random_nb;
 	int			pid;
 
-
 	pid = fork();
 	if (pid < 0)
 		return (-1);
@@ -80,10 +78,19 @@ int	fork_for_file_name(t_token *tmp, t_gc *gc, char **file_name, int *fd)
 		random_nb = pid;
 		*file_name = gen_file_name_gc(tmp->next->value, random_nb, gc);
 		*fd = open(*file_name, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+		get_herdoc_fd(*fd);
 		if (*fd < 0)
 			return (-1);
 	}
 	if (pid == 0)
+	{
+		t_clean **cleanchild;
+		cleanchild = grepclean();
+		cleanup_env((*cleanchild)->env);
+		gc_free_all((*cleanchild)->gc);
+		free((*cleanchild)->cmd);
+		free(*cleanchild);
 		exit(0);
+	}
 	return (0);
 }

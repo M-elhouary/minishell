@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/26 21:04:48 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/27 03:16:05 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,15 @@ typedef struct s_expand_ctx
 	t_env		*env;
 	t_command	*cmd;
 	t_gc		*gc;
-}	t_expand_ctx;
+}				t_expand_ctx;
 
 char	*expand_var_in_string_gc(const char *str, t_env *env, t_command *cmd,
 		t_gc *gc)
 {
-	int	i;
-	char (*tmp), (*result);
-	t_var_ctx var_ctx;
+	char		*tmp;
+	char		*result;
+	t_var_ctx	var_ctx;
+	int			i;
 
 	result = gc_strdup(gc, "");
 	var_ctx = (t_var_ctx){env, gc};
@@ -84,7 +85,8 @@ static char	*process_unquoted_gc(const char *str, int *i, t_expand_ctx *ctx)
 	return (result);
 }
 
-static char	*expand_variables_loop_gc(const char *str, int *i_ptr, t_expand_ctx *ctx)
+static char	*expand_variables_loop_gc(const char *str, int *i_ptr,
+		t_expand_ctx *ctx)
 {
 	char	*result;
 	char	*expnd;
@@ -112,10 +114,11 @@ static char	*expand_variables_loop_gc(const char *str, int *i_ptr, t_expand_ctx 
 char	*expand_variables_gc(const char *str, t_env *env, t_command *cmd,
 		t_gc *gc)
 {
-	char *result;
-	int i = 0;
-	t_expand_ctx ctx;
-	
+	char			*result;
+	int				i;
+	t_expand_ctx	ctx;
+
+	i = 0;
 	if (!str)
 		return (gc_strdup(gc, ""));
 	ctx = (t_expand_ctx){env, cmd, gc};

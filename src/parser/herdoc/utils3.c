@@ -3,26 +3,49 @@
 /*                                                        :::      ::::::::   */
 /*   utils3.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 10:28:32 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/25 23:54:56 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/27 07:17:14 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	g_herdoc_fd = -1;
+
+
+t_clean **grepclean(void)
+{
+	static t_clean  *cleanchild = NULL;
+	if (!cleanchild)
+	{
+		cleanchild = malloc(sizeof(t_clean));
+		if (!cleanchild)
+			exit(1);
+		cleanchild->env = NULL;
+		cleanchild->cmd = NULL;
+		cleanchild->gc = NULL;
+	}
+	return (&cleanchild);
+}
+
+
 
 void	heredoc_cleanup_handler(int sig)
 {
+	int	fd;
+
+	t_clean **cleanchild;
+	cleanchild = grepclean();
 	(void)sig;
+	fd = get_herdoc_fd(-1);
 	write(STDOUT_FILENO, "\n", 1);
-	if (g_herdoc_fd >= 0)
-	{
-		close(g_herdoc_fd);
-		g_herdoc_fd = -1;
-	}
+	cleanup_env((*cleanchild)->env);
+	gc_free_all((*cleanchild)->gc);
+	free((*cleanchild)->cmd);
+	free(*cleanchild);
+	if (get_herdoc_fd(-1) >= 0)
+		close(fd);
 	exit(130);
 }
 
@@ -31,13 +54,11 @@ static int	signal_and_delimiter(char *delimiter, int fd,
 {
 	int	quotes_for_expansion;
 
-	g_herdoc_fd = fd;
 	signal(SIGINT, heredoc_cleanup_handler);
 	if (!prepare_delimiter_gc(clean_delimiter, delimiter, &quotes_for_expansion,
 			gc))
 	{
 		close(fd);
-		g_herdoc_fd = -1;
 		free(delimiter);
 		return (-1);
 	}
@@ -46,10 +67,9 @@ static int	signal_and_delimiter(char *delimiter, int fd,
 
 static void	heredoc_cleanup(char *clean_delimiter, char *delimiter, int fd)
 {
-	free(clean_delimiter);
-	free(delimiter);
+	(void)clean_delimiter;
+	(void)delimiter;
 	close(fd);
-	g_herdoc_fd = -1;
 }
 
 void	similation_herdoc(char *delimiter, int fd, t_heredoc_params *params)
@@ -73,14 +93,19 @@ int	execute_heredoc_child(t_token *tmp, int fd, t_heredoc_params *params)
 	int	pid;
 	int	wait_result;
 	int	status;
-	
+
 	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
 	pid = fork();
 	if (pid == 0)
 	{
 		similation_herdoc(gc_strdup(params->gc, tmp->next->value), fd, params);
 		close(fd);
+		t_clean **cleanchild;
+		cleanchild = grepclean();
+		cleanup_env((*cleanchild)->env);
+		gc_free_all((*cleanchild)->gc);
+		free((*cleanchild)->cmd);
+		free(*cleanchild);
 		exit(0);
 	}
 	wait_result = waitpid(pid, &status, 0);
@@ -88,6 +113,6 @@ int	execute_heredoc_child(t_token *tmp, int fd, t_heredoc_params *params)
 	if (wait_result == -1)
 		return (0);
 	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	return (0);
+		params->cmd->status_exit = WEXITSTATUS(status);
+	return (params->cmd->status_exit);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:52:49 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 04:02:26 by hayabusa         ###   ########.fr       */
+/*   Updated: 2025/08/26 10:14:29 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ long	check_overflow(char *str, int *i, int sign)
 				break;
 		}
 		res = res * 10 + (str[*i] - 48);
-		i++;
+		(*i)++;
 	}
 	return (res);
 }

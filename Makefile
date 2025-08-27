@@ -1,6 +1,6 @@
 NAME = minishell
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -Iinclude -Ilibft
+CC = cc -g
+CFLAGS = -Wall -Wextra -Iinclude -Ilibft
 
 SRCS_PARSE = src/main.c \
        src/parser/tokens/tokenize.c\
@@ -13,6 +13,7 @@ SRCS_PARSE = src/main.c \
 	   src/parser/expansion/utils.c \
        src/parser/environment/env.c\
        src/parser/environment/func_help.c\
+       src/parser/environment/clean.c\
 	   src/parser/utils/func_utils.c \
 	   src/parser/utils/func_utils2.c \
 	   src/parser/utils/func_utils3.c \
@@ -25,11 +26,11 @@ SRCS_PARSE = src/main.c \
 	   src/parser/herdoc/utils.c\
 	   src/parser/herdoc/utils2.c\
 	   src/parser/herdoc/utils3.c\
+	   src/parser/herdoc/utils4.c\
 	   src/garbage_c/garbage_collector.c\
 	   src/garbage_c/gc_help_func.c\
 	   src/garbage_c/gc_help_func2.c\
 	   src/parser/signals.c \
-
 
 SRCS_EXEC = src/exec/utils.c \
 			src/exec/locate_cmd.c \
@@ -40,8 +41,9 @@ SRCS_EXEC = src/exec/utils.c \
 			src/exec/builin.c \
 			src/exec/b_cd.c \
 			src/exec/b_export.c \
-			src/exec/export_empty_var.c \
-			src/exec/_env.c \
+			src/exec/b_echo.c \
+			src/exec/env_set.c \
+			src/exec/env_to_arr.c \
 			src/exec/print.c \
 			src/exec/pipe_loop.c \
 			src/exec/pipe_exec.c \
@@ -50,7 +52,8 @@ SRCS_EXEC = src/exec/utils.c \
 			src/exec/exec_cmd_external.c\
 			src/exec/exec_cmd_utils.c \
 			src/exec/exec_cmd_process.c \
-			src/exec/redirections.c
+			src/exec/redirections.c \
+			src/exec/redir_helper.c
 
 SRCS = $(SRCS_PARSE) $(SRCS_EXEC)
 OBJS = $(SRCS:.c=.o)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 21:04:51 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/27 06:52:21 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,13 @@ typedef struct s_var_ctx
 	t_gc	*gc;
 }	t_var_ctx;
 
+typedef struct s_clean
+{
+	t_env	*env;
+	t_command	*cmd;
+	t_gc	*gc;
+}	t_clean;
+
 // ================================================ Garbage Collector functions ======================================================
 
 void						gc_init(t_gc *gc);
@@ -157,6 +164,7 @@ int							set_env_value(t_env **env, char *key, char *value);
 int							unset_env_value(t_env **env, char *key);
 char						**env_to_array(t_env *env);
 void						free_env_array(char **envp);
+void 						cleanup_env(t_env *env_list);
 
 // ================================================= Tokens functions ========================================================
 
@@ -196,7 +204,7 @@ t_command					*create_cmd_node_gc(char **args,
 void						add_cmd_node(t_command **head, t_command *new);
 
 // =================================================== Herdoc functions =======================================================
-
+int 						get_herdoc_fd(int fd);
 int							execute_heredoc_child(t_token *tmp, int fd,
 								t_heredoc_params *params);
 void						similation_herdoc(char *delimiter, int fd,

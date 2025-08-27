@@ -1,27 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redirections.c                                     :+:      :+:    :+:   */
+/*   clean.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/12 01:19:45 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 10:01:26 by houardi          ###   ########.fr       */
+/*   Created: 2025/08/26 23:19:12 by mel-houa          #+#    #+#             */
+/*   Updated: 2025/08/27 03:40:46 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	handle_redirections(t_redirection *redirections)
+void	cleanup_env(t_env *env_list)
 {
-	t_redirection	*current;
-
-	current = redirections;
-	while (current)
+    t_env   *tmp;
+        
+	while (env_list)
 	{
-		if (process_single_redirection(current) != 0)
-			return (1);
-		current = current->next;
+		tmp = env_list->next;
+		free(env_list->key);
+		free(env_list->content);
+		free(env_list);
+		env_list = tmp;
 	}
-	return (0);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec_cmd_utils.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 10:52:21 by houardi           #+#    #+#             */
+/*   Updated: 2025/08/27 03:56:40 by houardi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	exit_status(int status)
@@ -21,9 +33,9 @@ int	check_cmd_path(char *path, char *cmd)
 	if (!path)
 	{
 		if (ft_strchr(cmd, '/'))
-			fprintf(stderr, "minishell: %s: No such file or directory\n", cmd);
+			print("No such file or directory\n", 2);
 		else
-			fprintf(stderr, "minishell: %s: command not found\n", cmd);
+			print("Command not found\n", 2);
 		return (127);
 	}
 	else
@@ -37,22 +49,22 @@ int	validate_cmd_path(char *path, char *cmd)
 
 	if (ft_strcmp(cmd, ".") == 0)
 	{
-		fprintf(stderr, "minishell: %s: filename argument required\n", cmd);
+		print("filename argument required\n", 2);
 		return (2);
 	}
 	if (access(path, F_OK) != 0)
 	{
-		fprintf(stderr, "minishell: %s: No such file or directory\n", cmd);
+		print("No such file or directory\n", 2);
 		return (127);
 	}
 	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
 	{
-		fprintf(stderr, "minishell: %s: Is a directory\n", cmd);
+		print("Is a directory\n", 2);
 		return (126);
 	}
 	if (access(path, X_OK) != 0)
 	{
-		fprintf(stderr, "minishell: %s: Permission denied\n", cmd);
+		print("Permission denied\n", 2);
 		return (126);
 	}
 	return (0);

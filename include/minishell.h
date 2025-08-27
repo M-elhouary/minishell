@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/08/26 08:01:56 by mel-houa         ###   ########.fr       */
+/*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
+/*   Updated: 2025/08/27 06:57:13 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void		free_cmd(t_command *cmd);
 long		atol_s(char *str, char **endptr);
 
 int	echo_c(char **args, int fd);
-int	pwd_c(int fd);
+int	pwd_c(t_env *env);
 int	cd_c(char **args, t_env **env, int fd);
 int	env_c(t_env *env, int fd);
 int	export_c(char **args, t_env **env, int fd);
@@ -95,6 +95,7 @@ int		exec_pipe(t_command *cmd_list, t_env **env);
 int		exit_status(int status);
 
 int		handle_redirections(t_redirection *redirections);
+int		process_single_redirection(t_redirection *redir);
 
 // /* Execution state management */
 // int get_execution_state(void);
@@ -125,6 +126,9 @@ void		remove_export_node(t_export **head, char *var);
 void		free_export_list(t_export *head);
 int			export_list_size(t_export *head);
 int			export_empty_var(t_export **export_list, char *var);
+
+
+t_clean **grepclean(void);
 
 /* Single global variable to track last observed signal (0 if none) */
 extern volatile sig_atomic_t g_last_signal;

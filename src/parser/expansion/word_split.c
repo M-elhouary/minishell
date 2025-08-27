@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 07:05:59 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/25 07:35:41 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/27 03:23:33 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ static char	**split_expanded_word_gc(const char *expanded, t_gc *gc)
 	char	**words;
 	int		word_count;
 	int		start;
-	int i, j;
 
+	int (i), (j);
 	word_count = count_words_in_expanded(expanded);
 	if (word_count == 0)
 		return (NULL);

@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 11:19:36 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/26 10:13:38 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/27 03:26:52 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ static int	check_pipe_end(t_token *tokens)
 	}
 	return (1);
 }
+
 static int	check_redirection(t_token *tokens)
 {
 	t_token	*tmp;
