@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   _env.c                                             :+:      :+:    :+:   */
+/*   env_set.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 03:51:57 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/25 13:29:16 by hayabusa         ###   ########.fr       */
+/*   Updated: 2025/08/26 09:07:03 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,20 @@ int	set_env_value(t_env **env, char *key, char *value)
 		free(new_value);
 		return (1);
 	}
-	env_add_node(env, env_new_node(new_key, new_value));
+	return (env_add_node(env, env_new_node(new_key, new_value)), 0);
+}
+
+int add_new_key(char *new_key, t_env **current)
+{
+	if (!(new_key))
+		return (1);
+	*current = env_new_node(new_key, NULL);
+	if (!(*current))
+	{
+		free(new_key);
+		return (1);
+	}
+	(*current)->exported_only = 1;
 	return (0);
 }
 
@@ -63,17 +76,9 @@ int	set_env_exported_only(t_env **env, char *key)
 		current = current->next;
 	}
 	new_key = ft_strdup(key);
-	if (!new_key)
+	if (add_new_key(new_key, &current) == 1)
 		return (1);
-	current = env_new_node(new_key, NULL);
-	if (!current)
-	{
-		free(new_key);
-		return (1);
-	}
-	current->exported_only = 1;
-	env_add_node(env, current);
-	return (0);
+	return (env_add_node(env, current), 0);
 }
 
 int	unset_env_value(t_env **env, char *key)
@@ -98,53 +103,6 @@ int	unset_env_value(t_env **env, char *key)
 		current = current->next;
 	}
 	return (1);
-}
-
-char	**env_to_array(t_env *env)
-{
-	t_env *current = env;
-	char **envp;
-	int count = 0;
-	int i = 0;
-	int key_len, content_len;
-	
-	// Count only variables that should be in the environment
-	while (current)
-	{
-		if (!current->exported_only && current->content != NULL)
-			count++;
-		current = current->next;
-	}
-	envp = malloc(sizeof(char*) * (count + 1));
-	if (!envp)
-		return (NULL);
-	current = env;
-	while (current && i < count)
-	{
-		// Skip exported_only variables and variables with NULL content
-		if (current->exported_only || current->content == NULL)
-		{
-			current = current->next;
-			continue;
-		}
-		key_len = ft_strlen(current->key);
-		content_len = ft_strlen(current->content);
-		envp[i] = malloc(key_len + content_len + 2);
-		if (!envp[i])
-		{
-			while (--i >= 0)
-				free(envp[i]);
-			free(envp);
-			return (NULL);
-		}
-		ft_strcpy(envp[i], current->key);
-		ft_strcat(envp[i], "=");
-		ft_strcat(envp[i], current->content);
-		current = current->next;
-		i++;
-	}
-	envp[count] = NULL;
-	return (envp);
 }
 
 void	free_env_array(char **envp)
