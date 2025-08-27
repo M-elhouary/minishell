@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:03:03 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/25 07:37:52 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/26 08:44:37 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,9 @@ static int	process_word_gc(char *line, int *i, t_token_glbst *glbst)
 	has_vars = has_unquoted_variables(word);
 	expanded = expand_variables_gc(word, glbst->env, glbst->cmd, glbst->gc);
 	if (has_vars && (!expanded || !*expanded))
+	{
 		return (handle_empty_expansion(glbst->tokens, glbst->gc));
+	}
 	split_words = expand_and_split_gc(word, glbst->env, glbst->gc,
 			glbst->cmd);
 	if (!split_words)

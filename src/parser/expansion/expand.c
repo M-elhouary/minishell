@@ -6,26 +6,35 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/23 11:54:26 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/26 21:04:48 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+typedef struct s_expand_ctx
+{
+	t_env		*env;
+	t_command	*cmd;
+	t_gc		*gc;
+}	t_expand_ctx;
 
 char	*expand_var_in_string_gc(const char *str, t_env *env, t_command *cmd,
 		t_gc *gc)
 {
 	int	i;
 	char (*tmp), (*result);
+	t_var_ctx var_ctx;
 
 	result = gc_strdup(gc, "");
+	var_ctx = (t_var_ctx){env, gc};
 	i = 0;
 	while (str[i])
 	{
 		if (str[i] == '$' && str[i + 1] == '?')
 			result = handle_exit_status_gc(&result, &i, cmd, gc);
 		else if (str[i] == '$' && (ft_isalpha(str[i + 1]) || str[i + 1] == '_'))
-			result = handle_variable_gc(&result, str, &i, env, gc);
+			result = handle_variable_gc(&result, str, &i, &var_ctx);
 		else
 		{
 			tmp = gc_strndup(gc, str + i, 1);
@@ -36,8 +45,7 @@ char	*expand_var_in_string_gc(const char *str, t_env *env, t_command *cmd,
 	return (result);
 }
 
-static char	*process_quoted_gc(const char *str, int *i, t_env *env,
-		t_command *cmd, t_gc *gc)
+static char	*process_quoted_gc(const char *str, int *i, t_expand_ctx *ctx)
 {
 	char	quote;
 	int		start;
@@ -50,20 +58,19 @@ static char	*process_quoted_gc(const char *str, int *i, t_env *env,
 	while (str[*i] && str[*i] != quote)
 		(*i)++;
 	if (!str[*i])
-		return (gc_strdup(gc, ""));
-	expnd = gc_strndup(gc, str + start, *i - start);
+		return (gc_strdup(ctx->gc, ""));
+	expnd = gc_strndup(ctx->gc, str + start, *i - start);
 	(*i)++;
 	if (quote == '"')
 	{
-		result = expand_var_in_string_gc(expnd, env, cmd, gc);
+		result = expand_var_in_string_gc(expnd, ctx->env, ctx->cmd, ctx->gc);
 		return (result);
 	}
 	else
 		return (expnd);
 }
 
-static char	*process_unquoted_gc(const char *str, int *i, t_env *env,
-		t_command *cmd, t_gc *gc)
+static char	*process_unquoted_gc(const char *str, int *i, t_expand_ctx *ctx)
 {
 	int		start;
 	char	*expnd;
@@ -72,31 +79,30 @@ static char	*process_unquoted_gc(const char *str, int *i, t_env *env,
 	start = *i;
 	while (str[*i] && str[*i] != '\'' && str[*i] != '"')
 		(*i)++;
-	expnd = gc_strndup(gc, str + start, *i - start);
-	result = expand_var_in_string_gc(expnd, env, cmd, gc);
+	expnd = gc_strndup(ctx->gc, str + start, *i - start);
+	result = expand_var_in_string_gc(expnd, ctx->env, ctx->cmd, ctx->gc);
 	return (result);
 }
 
-static char	*expand_variables_loop_gc(const char *str, t_env *env, int *i_ptr,
-		t_command *cmd, t_gc *gc)
+static char	*expand_variables_loop_gc(const char *str, int *i_ptr, t_expand_ctx *ctx)
 {
 	char	*result;
 	char	*expnd;
 	int		i;
 
-	result = gc_strdup(gc, "");
+	result = gc_strdup(ctx->gc, "");
 	i = *i_ptr;
 	while (str[i])
 	{
 		if (str[i] == '\'' || str[i] == '"')
 		{
-			expnd = process_quoted_gc(str, &i, env, cmd, gc);
-			result = ft_strjoin_free_gc(result, expnd, gc);
+			expnd = process_quoted_gc(str, &i, ctx);
+			result = ft_strjoin_free_gc(result, expnd, ctx->gc);
 		}
 		else
 		{
-			expnd = process_unquoted_gc(str, &i, env, cmd, gc);
-			result = ft_strjoin_free_gc(result, expnd, gc);
+			expnd = process_unquoted_gc(str, &i, ctx);
+			result = ft_strjoin_free_gc(result, expnd, ctx->gc);
 		}
 	}
 	*i_ptr = i;
@@ -108,8 +114,11 @@ char	*expand_variables_gc(const char *str, t_env *env, t_command *cmd,
 {
 	char *result;
 	int i = 0;
+	t_expand_ctx ctx;
+	
 	if (!str)
 		return (gc_strdup(gc, ""));
-	result = expand_variables_loop_gc(str, env, &i, cmd, gc);
+	ctx = (t_expand_ctx){env, cmd, gc};
+	result = expand_variables_loop_gc(str, &i, &ctx);
 	return (result);
 }

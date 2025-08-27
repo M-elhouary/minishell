@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 00:27:53 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/26 06:53:36 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/26 21:04:50 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,7 @@ int	has_unquoted_variables(const char *str)
 	}
 	return (0);
 }
-char	*handle_variable_gc(char **result, const char *str, int *i, t_env *env,
-		t_gc *gc)
+char	*handle_variable_gc(char **result, const char *str, int *i, t_var_ctx *ctx)
 {
 	int start;
 	char *tmp, *var_value, *new_result;
@@ -62,13 +61,13 @@ char	*handle_variable_gc(char **result, const char *str, int *i, t_env *env,
 	start = *i;
 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
 		(*i)++;
-	tmp = gc_strndup(gc, str + start, *i - start);
-	var_value = get_env_value(tmp, env);
+	tmp = gc_strndup(ctx->gc, str + start, *i - start);
+	var_value = get_env_value(tmp, ctx->env);
 
 	if (var_value && *var_value)
-		new_result = ft_strjoin_free_gc(*result, gc_strdup(gc, var_value), gc);
+		new_result = ft_strjoin_free_gc(*result, gc_strdup(ctx->gc, var_value), ctx->gc);
 	else
-		new_result = ft_strjoin_free_gc(*result, gc_strdup(gc, ""), gc);
+		new_result = ft_strjoin_free_gc(*result, gc_strdup(ctx->gc, ""), ctx->gc);
 
 	free(var_value);
 	return (new_result);

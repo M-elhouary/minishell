@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+
 # ifndef MINISHELL_H
 #define MINISHELL_H
 
@@ -96,9 +97,9 @@ int		exit_status(int status);
 int		handle_redirections(t_redirection *redirections);
 int		process_single_redirection(t_redirection *redir);
 
-/* Execution state management */
-int get_execution_state(void);
-void set_execution_state(int state);
+// /* Execution state management */
+// int get_execution_state(void);
+// void set_execution_state(int state);
 
 /* Signal handling functions */
 void sigint_handler(int sig);

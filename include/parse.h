@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:50:17 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 06:53:25 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/26 21:04:51 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,10 +105,6 @@ typedef struct s_gc
 	t_gc_node				*head;
 }							t_gc;
 
-
-
-
-
 //  ================================================ herdoc  struct ===================================================
 
 typedef struct s_heredoc_ctx
@@ -126,6 +122,11 @@ typedef struct s_heredoc_params
 	t_command				*cmd;
 	t_gc					*gc;
 }							t_heredoc_params;
+typedef struct s_var_ctx
+{
+	t_env	*env;
+	t_gc	*gc;
+}	t_var_ctx;
 
 // ================================================ Garbage Collector functions ======================================================
 
@@ -138,9 +139,6 @@ void						gc_free_all(t_gc *gc);
 void						gc_destroy(t_gc *gc);
 
 char						*ft_strcat(char *dst, char *src);
-
-
-
 // =================================================== Environment ===========================================
 
 typedef struct s_env
@@ -233,7 +231,7 @@ char						*expand_var_in_string_gc(const char *str,
 								t_env *env, t_command *cmd, t_gc *gc);
 int							has_unquoted_variables(const char *str);
 char						*handle_variable_gc(char **result, const char *str,
-								int *i, t_env *env, t_gc *gc);
+								int *i, t_var_ctx *ctx);
 
 //  ===============================================    Utility functions  ===================================================
 int							has_quotes(const char *str);
@@ -241,7 +239,7 @@ char						*remove_syntactic_quotes(char *str);
 char						*ft_strjoin_free(char *s1, char *s2);
 char						*ft_strjoin_free_gc(char *s1, char *s2, t_gc *gc);
 int							is_metacharacter(char c);
-int							is_redirection(t_token_type type);
+int							is_operater(t_token_type type);
 void						print_error(char *error, char *detail);
 int							is_space(char c);
 char						*ft_strndup(const char *s, size_t n);

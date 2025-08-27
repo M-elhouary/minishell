@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 10:28:32 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/25 06:58:22 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/25 23:54:56 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,9 @@ int	execute_heredoc_child(t_token *tmp, int fd, t_heredoc_params *params)
 	int	pid;
 	int	wait_result;
 	int	status;
-
+	
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	pid = fork();
 	if (pid == 0)
 	{

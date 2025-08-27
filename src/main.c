@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
 /*   Updated: 2025/08/27 03:20:57 by houardi          ###   ########.fr       */
@@ -31,11 +31,11 @@ int	main(int ac, char **av, char **env)
 	int	prev_cmd;
 
 	(void)ac;
+	last_exit_status = 0;
 	(void)av;
 	gc_init(&gc);
 	cmd = NULL;
 	env_list = my_env(env);
-
 	while (1)
 	{
 		signal(SIGINT, sigint_interactive);
