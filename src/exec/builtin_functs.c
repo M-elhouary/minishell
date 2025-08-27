@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 03:56:15 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 10:17:30 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 03:51:54 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,7 @@
 
 int	pwd_c(t_env *env)
 {
-	// char	*cwd;
-	
 	printf("%s\n", get_env_value("PWD", env));
-	// cwd = getcwd(NULL, 0);
-	// if (!cwd)
-	// {
-		// perror("pwd");
-		// return (BUILTIN_ERROR);
-	// }
-	// write(fd, cwd, ft_strlen(cwd));
-	// write(fd, "\n", 1);
-	// free(cwd);
 	return (BUILTIN_SUCCESS);
 }
 
@@ -69,14 +58,12 @@ int	exit_c(char **args, int fd, int exit_status, int print_exit)
 
 	if (print_exit)
 		print("exit\n", 2);
-	exit_code = exit_status;
-	printf("%ld\n", exit_code);
 	if (args[1])
 	{
 		if (args[2])
 		{
 			print("exit: too many arguments\n", fd);
-			return (BUILTIN_ERROR);
+			return (1);
 		}
 		exit_code = atol_s(args[1], &endptr);
 		if (*endptr != '\0' || args[1][0] == '\0')
@@ -86,6 +73,9 @@ int	exit_c(char **args, int fd, int exit_status, int print_exit)
 			print(": numeric argument required\n", fd);
 			exit(2);
 		}
+		exit(exit_code);
 	}
+	else
+		exit_code = exit_status;
 	exit(exit_code);
 }

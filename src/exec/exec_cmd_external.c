@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 10:52:09 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 10:52:10 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 03:56:06 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@ void	exec_child(t_command *cmd, t_env **env)
 	env_arr = env_to_array(*env);
 	if (!env_arr)
 	{
-		fprintf(stderr, "env err\n");
+		print("env err\n", 2);
 		exit(1);
 	}
 	execve(cmd->path, cmd->args, env_arr);
 	free_env_array(env_arr);
 	if (errno == ENOEXEC)
 	{
-		fprintf(stderr, "minishell: %s: cannot execute file\n", cmd->args[0]);
+		print("cannot execute file\n", 2);
 		exit (126);
 	}
 	else
@@ -101,7 +101,19 @@ int	fork_and_exec(t_command *cmd, t_env **env, int fd)
 int	handle_external_command_mode(t_command *cmd, t_env **env, int fd, int in_child)
 {
 	int	validate_res;
+	char *path_env;
 
+	if (!cmd->path && !ft_strchr(cmd->args[0], '/'))
+	{
+		path_env = get_env_value("PATH", *env);
+		if (!path_env || !*path_env)
+		{
+			free(path_env);
+			print("No such file or directory\n", 2);
+			return (127);
+		}
+		free(path_env);
+	}
 	if (check_cmd_path(cmd->path, cmd->args[0]))
 		return (127);
 	validate_res = validate_cmd_path(cmd->path, cmd->args[0]);

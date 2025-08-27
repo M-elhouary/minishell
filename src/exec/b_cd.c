@@ -6,17 +6,11 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:25:53 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 08:31:50 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 03:50:54 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	err_(char *str)
-{
-	printf("%s\n", str);
-	return (BUILTIN_ERROR);
-}
 
 char	*handle_cd_home(t_env **env)
 {
@@ -25,7 +19,7 @@ char	*handle_cd_home(t_env **env)
 	path = get_env_value("HOME", *env);
 	if (!path)
 	{
-		err_("cd: Home not set");
+		print("cd: Home not set", 2);
 		return (NULL);
 	}
 	return (path);
@@ -37,7 +31,7 @@ char	*get_cd_target(char **args, t_env **env)
 		return (handle_cd_home(env));
 	if (args[2])
 	{
-		err_("cd: too many arguments");
+		print("cd: too many arguments", 2);
 		return (NULL);
 	}
 	return (args[1]);

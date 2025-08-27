@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 12:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/27 02:49:41 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 03:20:57 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,11 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		}
 		if (handl_herdoc_gc(tokens, env_list, cmd, &gc))
+		{
+			free(line);
+			gc_free_all(&gc);
 			continue ;
+		}
 		tmp_cmd = parse_commands_gc(tokens, &gc);
 		if (tmp_cmd)
 		{
@@ -89,7 +93,15 @@ int	main(int ac, char **av, char **env)
 			while (current)
 			{
 				if (current->args && current->args[0])
-					current->path = locate_cmd(current->args[0], env_list);
+				{
+					char *path = locate_cmd(current->args[0], env_list);
+					if (path)
+					{
+						current->path = gc_strdup(&gc, path);
+						free(path);
+					}
+				}
+				current->status_exit = last_exit_status;  // Set global exit status
 				current = current->next;
 			}
 
