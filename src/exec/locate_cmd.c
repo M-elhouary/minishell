@@ -3,10 +3,11 @@
 /*                                                        :::      ::::::::   */
 /*   locate_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 00:32:24 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/27 02:44:53 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 23:02:52 by mel-houa         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
@@ -17,7 +18,7 @@ void	free_paths(char **paths)
 
 	i = 0;
 	if (!paths)
-		return;
+		return ;
 	while (paths[i])
 	{
 		free(paths[i]);
@@ -26,11 +27,13 @@ void	free_paths(char **paths)
 	free(paths);
 }
 
-
 char	*path_cmd(char *cmd)
 {
+	t_clean	**cleanchild;
+
+	cleanchild = grepclean();
 	if (access(cmd, F_OK) == 0)
-		return (ft_strdup(cmd));
+		return (gc_strdup((*cleanchild)->gc, cmd));
 	return (NULL);
 }
 

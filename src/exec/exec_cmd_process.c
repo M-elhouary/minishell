@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 10:52:16 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/27 02:49:31 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 07:02:51 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,11 @@ void	restore_file_descriptors(int original_stdin, int original_stdout)
 	close(original_stdout);
 }
 
-int	handle_builtin_execution(t_command *cmd, t_env **env, int original_stdin, int original_stdout)
+int	handle_builtin_execution(t_command *cmd, t_env **env,
+	int original_stdin, int original_stdout)
 {
 	t_builtin	built_res;
-	
+
 	built_res = exec_builtin(cmd, env, STDOUT_FILENO);
 	if (built_res != NOT_BUILTIN)
 	{
@@ -35,8 +36,8 @@ int	handle_builtin_execution(t_command *cmd, t_env **env, int original_stdin, in
 
 int	execute_builtin_child_mode(t_command *cmd, t_env **env)
 {
-	t_builtin built_res;
-	
+	t_builtin	built_res;
+
 	built_res = exec_builtin(cmd, env, STDOUT_FILENO);
 	if (built_res != NOT_BUILTIN)
 		return (built_res);
@@ -45,11 +46,12 @@ int	execute_builtin_child_mode(t_command *cmd, t_env **env)
 
 int	process_cmd(t_command *cmd, t_env **env, t_exec_var *ev)
 {
-	int builtin_result;
+	int	builtin_result;
 
 	if (!ev->in_child)
 	{
-		builtin_result = handle_builtin_execution(cmd, env, ev->original_stdin, ev->original_stdout);
+		builtin_result = handle_builtin_execution(cmd, env,
+				ev->original_stdin, ev->original_stdout);
 		if (builtin_result != NOT_BUILTIN)
 			return (builtin_result);
 		restore_file_descriptors(ev->original_stdin, ev->original_stdout);

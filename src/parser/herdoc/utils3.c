@@ -3,20 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   utils3.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 10:28:32 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/27 07:17:14 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/27 22:31:49 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
-
-t_clean **grepclean(void)
+t_clean	**grepclean(void)
 {
-	static t_clean  *cleanchild = NULL;
+	static t_clean	*cleanchild = NULL;
+
 	if (!cleanchild)
 	{
 		cleanchild = malloc(sizeof(t_clean));
@@ -25,17 +24,17 @@ t_clean **grepclean(void)
 		cleanchild->env = NULL;
 		cleanchild->cmd = NULL;
 		cleanchild->gc = NULL;
+		cleanchild->pid = NULL;
+		cleanchild->path = NULL;
 	}
 	return (&cleanchild);
 }
 
-
-
 void	heredoc_cleanup_handler(int sig)
 {
-	int	fd;
+	int		fd;
+	t_clean	**cleanchild;
 
-	t_clean **cleanchild;
 	cleanchild = grepclean();
 	(void)sig;
 	fd = get_herdoc_fd(-1);
@@ -65,13 +64,6 @@ static int	signal_and_delimiter(char *delimiter, int fd,
 	return (quotes_for_expansion);
 }
 
-static void	heredoc_cleanup(char *clean_delimiter, char *delimiter, int fd)
-{
-	(void)clean_delimiter;
-	(void)delimiter;
-	close(fd);
-}
-
 void	similation_herdoc(char *delimiter, int fd, t_heredoc_params *params)
 {
 	t_heredoc_ctx	ctx;
@@ -85,14 +77,15 @@ void	similation_herdoc(char *delimiter, int fd, t_heredoc_params *params)
 	if (quotes_for_expansion == -1)
 		return ;
 	heredoc_readline_loop(&ctx, clean_delimiter, quotes_for_expansion);
-	heredoc_cleanup(clean_delimiter, delimiter, fd);
+	close(fd);
 }
 
 int	execute_heredoc_child(t_token *tmp, int fd, t_heredoc_params *params)
 {
-	int	pid;
-	int	wait_result;
-	int	status;
+	int		pid;
+	int		wait_result;
+	int		status;
+	t_clean	**cleanchild;
 
 	signal(SIGINT, SIG_IGN);
 	pid = fork();
@@ -100,7 +93,6 @@ int	execute_heredoc_child(t_token *tmp, int fd, t_heredoc_params *params)
 	{
 		similation_herdoc(gc_strdup(params->gc, tmp->next->value), fd, params);
 		close(fd);
-		t_clean **cleanchild;
 		cleanchild = grepclean();
 		cleanup_env((*cleanchild)->env);
 		gc_free_all((*cleanchild)->gc);

@@ -1,8 +1,10 @@
 NAME = minishell
-CC = cc -g
+CC = cc
 CFLAGS = -Wall -Wextra -Iinclude -Ilibft
 
-SRCS_PARSE = src/main.c \
+SRCS_PARSE = src/shell_main/main.c \
+	   src/shell_main/func_helper.c\
+	   src/shell_main/func_helper2.c\
        src/parser/tokens/tokenize.c\
        src/parser/tokens/tokenize_words.c \
        src/parser/tokens/tokenize_quotes.c \
@@ -30,7 +32,7 @@ SRCS_PARSE = src/main.c \
 	   src/garbage_c/garbage_collector.c\
 	   src/garbage_c/gc_help_func.c\
 	   src/garbage_c/gc_help_func2.c\
-	   src/parser/signals.c \
+	   src/exec/signals.c\
 
 SRCS_EXEC = src/exec/utils.c \
 			src/exec/locate_cmd.c \
@@ -44,7 +46,6 @@ SRCS_EXEC = src/exec/utils.c \
 			src/exec/b_echo.c \
 			src/exec/env_set.c \
 			src/exec/env_to_arr.c \
-			src/exec/print.c \
 			src/exec/pipe_loop.c \
 			src/exec/pipe_exec.c \
 			src/exec/pipe_wait_children.c \

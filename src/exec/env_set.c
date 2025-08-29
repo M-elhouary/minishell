@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 03:51:57 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 09:07:03 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 06:52:03 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	set_env_value(t_env **env, char *key, char *value)
 	return (env_add_node(env, env_new_node(new_key, new_value)), 0);
 }
 
-int add_new_key(char *new_key, t_env **current)
+int	add_new_key(char *new_key, t_env **current)
 {
 	if (!(new_key))
 		return (1);
@@ -83,9 +83,11 @@ int	set_env_exported_only(t_env **env, char *key)
 
 int	unset_env_value(t_env **env, char *key)
 {
-	t_env *current = *env;
-	t_env *prev = NULL;
+	t_env	*current;
+	t_env	*prev;
 
+	current = *env;
+	prev = NULL;
 	while (current)
 	{
 		if (ft_strcmp(current->key, key) == 0)
@@ -107,10 +109,11 @@ int	unset_env_value(t_env **env, char *key)
 
 void	free_env_array(char **envp)
 {
-	int i = 0;
-	
+	int	i;
+
+	i = 0;
 	if (!envp)
-		return;
+		return ;
 	while (envp[i])
 	{
 		free(envp[i]);

@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 00:00:00 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/25 07:04:05 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/27 23:02:17 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,11 @@ static t_token	*fill_arrays(t_token *current, char **args,
 	arg_count = 0;
 	while (current && current->type != PIPE)
 	{
+		if (ft_strlen(current->value) == 0)
+		{
+			current = current->next;
+			continue ;
+		}	
 		if ((current->type == COMMAND || current->type == ARGUMENT)
 			&& !current->is_empty_expansion)
 			args[arg_count++] = gc_strdup(gc, current->value);

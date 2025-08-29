@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 10:17:23 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/27 07:07:29 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/27 10:22:14 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,9 @@ void	heredoc_readline_loop(t_heredoc_ctx *ctx, char *clean_delimiter,
 
 int	fork_for_file_name(t_token *tmp, t_gc *gc, char **file_name, int *fd)
 {
-	static int	random_nb;
-	int			pid;
+	t_clean	**cleanchild;
 
+	int (pid), (random_nb);
 	pid = fork();
 	if (pid < 0)
 		return (-1);
@@ -84,7 +84,6 @@ int	fork_for_file_name(t_token *tmp, t_gc *gc, char **file_name, int *fd)
 	}
 	if (pid == 0)
 	{
-		t_clean **cleanchild;
 		cleanchild = grepclean();
 		cleanup_env((*cleanchild)->env);
 		gc_free_all((*cleanchild)->gc);

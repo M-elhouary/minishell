@@ -6,18 +6,11 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:55:46 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/27 03:16:05 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/27 10:17:03 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-typedef struct s_expand_ctx
-{
-	t_env		*env;
-	t_command	*cmd;
-	t_gc		*gc;
-}				t_expand_ctx;
 
 char	*expand_var_in_string_gc(const char *str, t_env *env, t_command *cmd,
 		t_gc *gc)

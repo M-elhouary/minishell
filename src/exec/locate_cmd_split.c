@@ -6,7 +6,7 @@
 /*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 10:41:56 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 10:41:57 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 06:57:24 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ char	**allocate_paths_array(char *path_env)
 	paths = malloc(sizeof(char *) * (count + 2));
 	return (paths);
 }
-
 
 void	free_split(char **arr, int size)
 {
@@ -53,13 +52,15 @@ char	**tokenize_path_string(char *path_copy, char **paths)
 
 	i = 0;
 	start = path_copy;
-	while ((delim = ft_strchr(start, ':')))
+	delim = ft_strchr(start, ':');
+	while (delim)
 	{
 		*delim = '\0';
 		i = add_path_segment(paths, start, i);
 		if (i == -1)
 			return (free_split(paths, i), NULL);
 		start = delim + 1;
+		delim = ft_strchr(start, ':');
 	}
 	i = add_path_segment(paths, start, i);
 	if (i == -1)

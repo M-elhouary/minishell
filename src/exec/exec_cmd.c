@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:00:44 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/27 02:48:38 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 22:50:47 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	setup_redirections_and_fd(t_command *cmd, int fd, int *original_stdin, int *original_stdout)
+int	setup_redirections_and_fd(t_command *cmd, int fd,
+	int *original_stdin, int *original_stdout)
 {
 	*original_stdin = dup(STDIN_FILENO);
 	*original_stdout = dup(STDOUT_FILENO);
-
 	if (handle_redirections(cmd->redirections) != 0)
 	{
 		close(*original_stdin);
@@ -25,7 +25,6 @@ int	setup_redirections_and_fd(t_command *cmd, int fd, int *original_stdin, int *
 	}
 	if (fd != STDOUT_FILENO)
 		dup2(fd, STDOUT_FILENO);
-
 	return (0);
 }
 
@@ -38,10 +37,10 @@ int	handle_child_mode_setup(t_command *cmd, int fd)
 	return (0);
 }
 
-int exec_cmd(t_command *cmd, t_env **env, int fd, int in_child)
+int	exec_cmd(t_command *cmd, t_env **env, int fd, int in_child)
 {
 	t_exec_var	ev;
-    int			original_stdin;
+	int			original_stdin;
 	int			original_stdout;
 
 	original_stdin = -1;
@@ -50,7 +49,8 @@ int exec_cmd(t_command *cmd, t_env **env, int fd, int in_child)
 		return (1);
 	if (!in_child)
 	{
-		if (setup_redirections_and_fd(cmd, fd, &original_stdin, &original_stdout) != 0)
+		if (setup_redirections_and_fd(cmd, fd, &original_stdin,
+				&original_stdout) != 0)
 			return (1);
 	}
 	else if (handle_child_mode_setup(cmd, fd) != 0)

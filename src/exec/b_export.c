@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   export.c                                           :+:      :+:    :+:   */
+/*   b_export.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 04:15:25 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 04:45:30 by hayabusa         ###   ########.fr       */
+/*   Updated: 2025/08/27 04:43:18 by houardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ int	validate_export_identifier(char *arg, int fd)
 	j = 1;
 	while (arg[j])
 	{
-		if (!ft_isalpha(arg[j]) && arg[j] != '_' &&
-			!(arg[j] >= '0' && arg[j] <= '9'))
+		if (!ft_isalpha(arg[j]) && arg[j] != '_'
+			&& !(arg[j] >= '0' && arg[j] <= '9'))
 		{
 			print("export: `", fd);
 			print(arg, fd);
@@ -68,51 +68,50 @@ int	validate_export_identifier(char *arg, int fd)
 
 int	process_export_with_value(char *arg, char *equals, t_env **env, int fd)
 {
-    char		*value;
-    int			result;
+	char	*value;
+	int		result;
 
-    if (ft_strcmp(arg, "=") != 0)
-        *equals = '\0';
-    value = equals + 1;
-    result = validate_export_identifier(arg, fd);
-    if (result != BUILTIN_SUCCESS)
-    {
-        *equals = '=';
-        return (result);
-    }
-    if (set_env_value(env, arg, value) != 0)
-    {
-        *equals = '=';
-        return (BUILTIN_ERROR);
-    }
-    *equals = '=';
-    return (BUILTIN_SUCCESS);
+	if (ft_strcmp(arg, "=") != 0)
+		*equals = '\0';
+	value = equals + 1;
+	result = validate_export_identifier(arg, fd);
+	if (result != BUILTIN_SUCCESS)
+	{
+		*equals = '=';
+		return (result);
+	}
+	if (set_env_value(env, arg, value) != 0)
+	{
+		*equals = '=';
+		return (BUILTIN_ERROR);
+	}
+	*equals = '=';
+	return (BUILTIN_SUCCESS);
 }
 
 int	process_export_argument(char *arg, t_env **env, int fd)
 {
-    char		*equals;
-    int			result;
+	char	*equals;
+	int		result;
 
-    equals = ft_strchr(arg, '=');
-    if (!equals)
-    {
-        result = validate_export_identifier(arg, fd);
-        if (result != BUILTIN_SUCCESS)
-            return (result);
-        return (set_env_exported_only(env, arg));
-    }
-    return (process_export_with_value(arg, equals, env, fd));
+	equals = ft_strchr(arg, '=');
+	if (!equals)
+	{
+		result = validate_export_identifier(arg, fd);
+		if (result != BUILTIN_SUCCESS)
+			return (result);
+		return (set_env_exported_only(env, arg));
+	}
+	return (process_export_with_value(arg, equals, env, fd));
 }
 
 int	export_c(char **args, t_env **env, int fd)
 {
 	int			i;
 	int			result;
-	
+
 	if (!args[1])
 		return (print_all_exports(*env, fd));
-	
 	i = 1;
 	while (args[i])
 	{

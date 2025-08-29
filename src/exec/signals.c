@@ -1,18 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print.c                                            :+:      :+:    :+:   */
+/*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/10 00:57:29 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/10 01:06:17 by houardi          ###   ########.fr       */
+/*   Created: 2025/08/14 02:19:33 by mel-houa          #+#    #+#             */
+/*   Updated: 2025/08/27 09:57:45 by hayabusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <minishell.h>
+#include "minishell.h"
 
-void	print(char *s, int fd)
+void	sigint_interactive(int sig)
 {
-	write(fd, s, ft_strlen(s));
+	(void)sig;
+	g_last_signal = SIGINT;
+	write(STDOUT_FILENO, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }

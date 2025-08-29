@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_functs.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 03:56:15 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/27 03:51:54 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 21:41:10 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,13 @@ int	pwd_c(t_env *env)
 
 int	env_c(t_env *env, int fd)
 {
-	t_env	*current = env;
+	t_env	*current;
 
+	current = env;
 	while (current)
 	{
 		if (!current->exported_only && current->content)
-		{	
+		{
 			write(fd, current->key, ft_strlen(current->key));
 			write(fd, "=", 1);
 			write(fd, current->content, ft_strlen(current->content));
@@ -61,21 +62,21 @@ int	exit_c(char **args, int fd, int exit_status, int print_exit)
 	if (args[1])
 	{
 		if (args[2])
-		{
-			print("exit: too many arguments\n", fd);
-			return (1);
-		}
+			return (print("exit: too many arguments\n", fd), 1);
 		exit_code = atol_s(args[1], &endptr);
 		if (*endptr != '\0' || args[1][0] == '\0')
 		{
 			print("minishell: exit: ", fd);
 			print(args[1], fd);
 			print(": numeric argument required\n", fd);
+			clean_all();
 			exit(2);
 		}
+		clean_all();
 		exit(exit_code);
 	}
 	else
 		exit_code = exit_status;
+	clean_all();
 	exit(exit_code);
 }

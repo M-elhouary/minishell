@@ -6,7 +6,7 @@
 /*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 20:27:04 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/22 10:52:04 by mel-houa         ###   ########.fr       */
+/*   Updated: 2025/08/27 21:38:49 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ void	gc_destroy(t_gc *gc)
 
 char	*gc_strndup(t_gc *gc, const char *s, size_t n)
 {
-	char *dup;
-	size_t i;
+	size_t	i;
+	char	*dup;
 
 	if (!s || !gc)
 		return (NULL);

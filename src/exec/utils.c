@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 18:52:49 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/26 10:14:29 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 22:31:01 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,18 @@ long	check_overflow(char *str, int *i, int sign)
 {
 	long	res;
 
+	res = 0;
 	while (str[*i] != '\0' && str[*i] >= '0' && str[*i] <= '9')
 	{
 		if (sign == 1)
 		{
 			if (res > (LONG_MAX - (str[*i] - 48)) / 10)
-				break;
+				break ;
 		}
 		else
 		{
 			if (res > (-(LONG_MIN + (str[*i] - 48))) / 10)
-				break;
+				break ;
 		}
 		res = res * 10 + (str[*i] - 48);
 		(*i)++;
@@ -70,14 +71,19 @@ char	*ft_strcat(char *dst, char *src)
 
 	i = 0;
 	j = 0;
-    while (dst[i])
-        i++;
-    while (src[j])
-    {
-        dst[i] = src[j];
-        i++;
-        j++;
-    }
-    dst[i] = '\0';
-    return (dst);
+	while (dst[i])
+		i++;
+	while (src[j])
+	{
+		dst[i] = src[j];
+		i++;
+		j++;
+	}
+	dst[i] = '\0';
+	return (dst);
+}
+
+void	print(char *s, int fd)
+{
+	write(fd, s, ft_strlen(s));
 }

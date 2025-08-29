@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_wait_children.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/20 01:26:07 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/25 08:23:43 by hayabusa         ###   ########.fr       */
+/*   Updated: 2025/08/27 21:41:39 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,10 @@ void	handle_pipe_signals(int got_sig, int last_cmd_exit)
 {
 	if (got_sig == 130)
 	{
-		g_last_signal = SIGINT;
 		print("\n", 1);
 	}
 	else if (got_sig == 131 && last_cmd_exit == 131)
 	{
-		g_last_signal = SIGQUIT;
 		print("Quit (core dumped)\n", 1);
 	}
 	else

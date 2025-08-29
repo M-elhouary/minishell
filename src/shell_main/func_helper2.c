@@ -1,29 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   helper2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: mel-houa <mel-houa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/14 02:19:33 by mel-houa          #+#    #+#             */
-/*   Updated: 2025/08/26 06:52:10 by houardi          ###   ########.fr       */
+/*   Created: 2025/08/27 21:45:54 by mel-houa          #+#    #+#             */
+/*   Updated: 2025/08/27 21:49:58 by mel-houa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	sigint_interactive(int sig)
+void	clean_all(void)
 {
-	(void)sig;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-}
+	t_clean	**cleanchild;
 
-void	sigquit_interactive(int sig)
-{
-	(void)sig;
-	rl_on_new_line();
-	rl_redisplay();
+	cleanchild = grepclean();
+	cleanup_env((*cleanchild)->env);
+	gc_free_all((*cleanchild)->gc);
+	if ((*cleanchild)->cmd)
+		free((*cleanchild)->cmd);
+	if ((*cleanchild)->pid)
+		free((*cleanchild)->pid);
+	free(*cleanchild);
 }

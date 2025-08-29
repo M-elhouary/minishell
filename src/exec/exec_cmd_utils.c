@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: houardi <houardi@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: hayabusa <hayabusa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 10:52:21 by houardi           #+#    #+#             */
-/*   Updated: 2025/08/27 03:56:40 by houardi          ###   ########.fr       */
+/*   Updated: 2025/08/27 10:14:43 by hayabusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	exit_status(int status)
 {
-	int sig;
+	int	sig;
 
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
@@ -22,7 +22,7 @@ int	exit_status(int status)
 	{
 		sig = WTERMSIG(status);
 		if (sig == SIGPIPE)
-			return 0;
+			return (0);
 		return (128 + sig);
 	}
 	return (status);
@@ -41,7 +41,6 @@ int	check_cmd_path(char *path, char *cmd)
 	else
 		return (0);
 }
-
 
 int	validate_cmd_path(char *path, char *cmd)
 {
@@ -73,9 +72,9 @@ int	validate_cmd_path(char *path, char *cmd)
 void	free_cmd(t_command *cmd)
 {
 	int	i;
-	
+
 	if (!cmd)
-		return;
+		return ;
 	if (cmd->args)
 	{
 		i = 0;
@@ -84,7 +83,7 @@ void	free_cmd(t_command *cmd)
 			free(cmd->args[i]);
 			i++;
 		}
-		free(cmd->args);		
+		free(cmd->args);
 	}
 	if (cmd->path)
 		free(cmd->path);
